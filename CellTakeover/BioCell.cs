@@ -13,6 +13,11 @@ namespace CellTakeover
         {
             OutOfGrid = true
         };
+
+        public static readonly GridCell EmptyCell = new GridCell
+        {
+            OutOfGrid = false
+        };
     }
     internal class BioCell : GridCell
     {
@@ -31,12 +36,15 @@ namespace CellTakeover
         public SurroundingCells GetSurroundingCells(Dictionary<int, BioCell> currentLiveCells)
         {
             var surroundingCells = new SurroundingCells();
+            var checkLeft = true;
 
             if (OnLeftColumn())
             {
                 surroundingCells.TopLeftCell = OutOfGridCell;
                 surroundingCells.LeftCell = OutOfGridCell;
                 surroundingCells.BottomLeftCell = OutOfGridCell;
+
+                checkLeft = false;
             }
             else if (OnRightColumn())
             {
@@ -57,7 +65,23 @@ namespace CellTakeover
                 surroundingCells.BottomRightCell = OutOfGridCell;
             }
 
+            if (checkLeft)
+            {
+                surroundingCells.LeftCell = GetLeftCell(currentLiveCells);
+            }
+
             return surroundingCells;
+        }
+
+        private GridCell GetLeftCell(Dictionary<int, BioCell> currentLiveCells)
+        {
+            var leftCellIndex = CellIndex - 1;
+            if (currentLiveCells.ContainsKey(leftCellIndex))
+            {
+                return currentLiveCells[leftCellIndex];
+            }
+
+            return GridCell.EmptyCell;
         }
 
 
