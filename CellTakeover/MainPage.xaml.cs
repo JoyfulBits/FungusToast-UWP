@@ -1,22 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
 using Microsoft.Toolkit.Uwp.UI.Controls;
-using Color = System.Drawing.Color;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -27,10 +15,11 @@ namespace CellTakeover
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        internal const int NumberOfColumnsAndRows = 50;
+        private readonly Dictionary<int, BioCell> _currentLiveCells = new Dictionary<int, BioCell>();
+        private readonly Dictionary<int, Player> _nextLiveCells = new Dictionary<int, Player>();
+        //private readonly HashSet<int> _deadCells = new HashSet<int>();
 
-        private readonly int[][] _cellValues = new int[NumberOfColumnsAndRows][];
-        private Random _random = new Random();
+        private readonly Random _random = new Random();
 
         private AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
@@ -46,34 +35,29 @@ namespace CellTakeover
 
             _players.Add(new Player
             {
+                PlayerNumber = 1,
                 Name = "Player 1",
-                Color = new SolidColorBrush(Colors.Blue)
+                Color = Colors.Blue
             });
 
             _players.Add(new Player
             {
+                PlayerNumber = 2,
                 Name = "Player 1",
-                Color = new SolidColorBrush(Colors.Red)
+                Color = Colors.Red
             });
-
-            for (int i = 0; i < NumberOfColumnsAndRows; i++)
-            {
-                _cellValues[i] = new int[100];
-            }
         }
 
 
         private void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
             var uniformGrid = sender as UniformGrid;
-            uniformGrid.Columns = NumberOfColumnsAndRows;
-            uniformGrid.Rows = NumberOfColumnsAndRows;
-
-            var numberOfCells = NumberOfColumnsAndRows * NumberOfColumnsAndRows;
+            uniformGrid.Columns = GameSettings.NumberOfColumnsAndRows;
+            uniformGrid.Rows = GameSettings.NumberOfColumnsAndRows;
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
 
-            for (var i = 0; i < numberOfCells; i++)
+            for (var i = 0; i < GameSettings.NumberOfCells; i++)
             {
                 uniformGrid.Children.Add(new Button
                 {
@@ -86,20 +70,44 @@ namespace CellTakeover
                 });
             }
 
-            var cellsPerPlayer = NumberOfColumnsAndRows * NumberOfColumnsAndRows / _players.Count;
-
-            var rangeOfCellsPerPlayer = NumberOfColumnsAndRows * NumberOfColumnsAndRows / _players.Count -
-                                        2 * NumberOfColumnsAndRows;
+            var cellsPerPlayer = GameSettings.NumberOfCells / _players.Count;
 
             for(int i = 0; i < _players.Count; i++)
             {
+                var player = _players[i];
                 var firstCandidateStartCell = cellsPerPlayer * i;
                 //--make sure there is at least 2 rows between starting cells
-                var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - NumberOfColumnsAndRows * 2;
+                var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
                 var startCellIndex = _random.Next(firstCandidateStartCell, endCandidateStartCell);
                 var element = MainGrid.Children[startCellIndex] as Button;
-                element.Background = _players[i].Color;
+                element.Background = new SolidColorBrush(_players[i].Color);
+                element.Content = _players[0].PlayerNumber;
+                _currentLiveCells.Add(startCellIndex, player.MakeCell(i));
             }
         }
+
+        private void Grow_OnClick(object sender, RoutedEventArgs e)
+        {
+            for (var i = 0; i < GameSettings.NumberOfCells; i++)
+            {
+                if (_currentLiveCells.ContainsKey(i))
+                {
+                    Grow(_currentLiveCells[i]);
+                }
+            }
+        }
+
+        private void Grow(BioCell cell)
+        {
+            var surroundingCells = cell.GetSurroundingCells(_currentLiveCells);
+        }
+
+        //private SurroundingCells GetSurroundingCells(int liveCellIndex)
+        //{
+        //    var liveCellRow = NumberOfColumnsAndRows / (liveCellIndex + 1);
+        //    //var surroundingCells = 
+        //    //var liveCellColumn = NumberOfColumnsAndRows
+        //    throw new NotImplementedException();
+        //}
     }
 }
