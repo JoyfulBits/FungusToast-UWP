@@ -27,13 +27,9 @@ namespace Logic
         public IPlayer Player { get; }
         public int CellIndex { get; }
         public Color CellColor { get; }
-        //--allow for old-fashioned property injection
-        public ICellGrowthCalculator CellGrowthCalculator { get; set; }
 
         public BioCell(IPlayer player, int cellIndex, Color cellColor)
         {
-            CellGrowthCalculator = new CellGrowthCalculator();
-
             Player = player;
             CellIndex = cellIndex;
             CellColor = cellColor;
@@ -41,7 +37,7 @@ namespace Logic
             LiveCell = true; 
         }
 
-        public SurroundingCells GetSurroundingCells(Dictionary<int, BioCell> currentLiveCells)
+        public List<BioCell> RunCellGrowth(Dictionary<int, BioCell> currentLiveCells)
         {
             var surroundingCells = new SurroundingCells();
             var checkLeft = true;
@@ -53,7 +49,7 @@ namespace Logic
 
             GetInGridCells( surroundingCells, currentLiveCells, checkLeft, checkBottom, checkTop, checkRight);
 
-            return surroundingCells;
+            return Player.CalculateCellGrowth(this, surroundingCells);
         }
 
         private void GetInGridCells(SurroundingCells surroundingCells, 

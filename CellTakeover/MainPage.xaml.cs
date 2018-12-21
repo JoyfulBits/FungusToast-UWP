@@ -34,19 +34,8 @@ namespace CellTakeover
         {
             InitializeComponent();
 
-            _players.Add(new Player
-            {
-                PlayerNumber = 1,
-                Name = "Player 1",
-                Color = Colors.Blue
-            });
-
-            _players.Add(new Player
-            {
-                PlayerNumber = 2,
-                Name = "Player 1",
-                Color = Colors.Red
-            });
+            _players.Add(new Player("Player 1", Colors.Blue, 1));
+            _players.Add(new Player("Player 2", Colors.Red, 1));
         }
 
 
@@ -100,23 +89,7 @@ namespace CellTakeover
 
         private void Grow(BioCell cell)
         {
-            var surroundingCells = cell.GetSurroundingCells(_currentLiveCells);
-
-            if (surroundingCells.TopLeftCell.Empty)
-            {
-                if (_random.Next(1, 100) <= 10)
-                {
-                    
-                }
-            }
+            var newCells = cell.RunCellGrowth(_currentLiveCells);
         }
-
-        //private SurroundingCells GetSurroundingCells(int liveCellIndex)
-        //{
-        //    var liveCellRow = NumberOfColumnsAndRows / (liveCellIndex + 1);
-        //    //var surroundingCells = 
-        //    //var liveCellColumn = NumberOfColumnsAndRows
-        //    throw new NotImplementedException();
-        //}
     }
 }

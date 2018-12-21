@@ -10,11 +10,18 @@ namespace Logic.Tests.BioCellTests
     public class GetSurroundingCellsTests
     {
         private Mock<IPlayer> _mockPlayer;
+        private SurroundingCells _capturedSurroundingCells = null;
 
         [TestInitialize]
         public void SetUp()
         {
             _mockPlayer = new Mock<IPlayer>();
+
+            _mockPlayer.Setup(mock => mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<SurroundingCells>()))
+                .Returns(new List<BioCell>())
+                .Callback<BioCell, SurroundingCells>((i, o) => {
+                    _capturedSurroundingCells = o;
+                });
         }
 
         [TestMethod]
@@ -25,12 +32,12 @@ namespace Logic.Tests.BioCellTests
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.BottomLeftCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.LeftCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.TopLeftCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.BottomLeftCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.LeftCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.TopLeftCell.OutOfGrid.ShouldBe(true);
         }
 
         [TestMethod]
@@ -41,12 +48,12 @@ namespace Logic.Tests.BioCellTests
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.TopLeftCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.TopCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.TopRightCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.TopLeftCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.TopCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.TopRightCell.OutOfGrid.ShouldBe(true);
         }
 
         [TestMethod]
@@ -57,12 +64,12 @@ namespace Logic.Tests.BioCellTests
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.TopRightCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.RightCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.BottomRightCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.TopRightCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.RightCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.BottomRightCell.OutOfGrid.ShouldBe(true);
         }
 
         [TestMethod]
@@ -73,12 +80,12 @@ namespace Logic.Tests.BioCellTests
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.BottomRightCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.BottomCell.OutOfGrid.ShouldBe(true);
-            actualSurroundingCells.BottomLeftCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.BottomRightCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.BottomCell.OutOfGrid.ShouldBe(true);
+            _capturedSurroundingCells.BottomLeftCell.OutOfGrid.ShouldBe(true);
         }
 
         [TestMethod]
@@ -93,11 +100,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = currentBioCell.GetSurroundingCells(liveCells);
+            currentBioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.LeftCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, leftCellShouldBeEmpty: false);
+            _capturedSurroundingCells.LeftCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, leftCellShouldBeEmpty: false);
         }
 
         [TestMethod]
@@ -114,11 +121,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.TopLeftCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, topLeftCellShouldBeEmpty: false);
+            _capturedSurroundingCells.TopLeftCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, topLeftCellShouldBeEmpty: false);
         }
 
         [TestMethod]
@@ -135,11 +142,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.TopCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, topCellShouldBeEmpty: false);
+            _capturedSurroundingCells.TopCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, topCellShouldBeEmpty: false);
         }
 
         [TestMethod]
@@ -156,11 +163,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.TopRightCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, topRightCellShouldBeEmpty: false);
+            _capturedSurroundingCells.TopRightCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, topRightCellShouldBeEmpty: false);
         }
 
         [TestMethod]
@@ -175,11 +182,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.RightCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, rightCellShouldBeEmpty: false);
+            _capturedSurroundingCells.RightCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, rightCellShouldBeEmpty: false);
         }
 
         [TestMethod]
@@ -196,11 +203,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.BottomRightCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, bottomRightCellShouldBeEmpty: false);
+            _capturedSurroundingCells.BottomRightCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, bottomRightCellShouldBeEmpty: false);
         }
 
         [TestMethod]
@@ -217,11 +224,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.BottomCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, bottomCellShouldBeEmpty: false);
+            _capturedSurroundingCells.BottomCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, bottomCellShouldBeEmpty: false);
         }
 
         [TestMethod]
@@ -229,6 +236,12 @@ namespace Logic.Tests.BioCellTests
         {
             //--arrange
             var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
+            SurroundingCells _capturedSurroundingCells = null;
+            _mockPlayer.Setup(mock => mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<SurroundingCells>()))
+                .Returns(new List<BioCell>())
+                .Callback<BioCell, SurroundingCells>((i, o) => {
+                    _capturedSurroundingCells = o;
+                });
 
             var bioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown);
             var expectedCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, new Color());
@@ -238,11 +251,11 @@ namespace Logic.Tests.BioCellTests
             };
 
             //--act
-            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+            bioCell.RunCellGrowth(liveCells);
 
             //--assert
-            actualSurroundingCells.BottomLeftCell.ShouldBeSameAs(expectedCell);
-            AssertAllEmpty(actualSurroundingCells, bottomLeftCellShouldBeEmpty: false);
+            _capturedSurroundingCells.BottomLeftCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(_capturedSurroundingCells, bottomLeftCellShouldBeEmpty: false);
         }
 
         //[TestMethod]
@@ -250,19 +263,23 @@ namespace Logic.Tests.BioCellTests
         //{
         //    //--arrange
         //    var bioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown);
-        //    var growthCalculatorMock = new Mock<ICellGrowthCalculator>();
-        //    bioCell.CellGrowthCalculator = growthCalculatorMock.Object;
-        //    growthCalculatorMock.Setup(x => x.)
+        //    BioCell capturedBioCell;
+        //    SurroundingCells _capturedSurroundingCells;
+        //    _mockPlayer.Setup(mock => mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<SurroundingCells>()))
+        //        .Returns(new List<BioCell>())
+        //        .Callback<BioCell, SurroundingCells>((i, o) => {
+        //            capturedBioCell = i;
+        //            _capturedSurroundingCells = o;
+        //        });
 
         //    //--act
-        //    var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+        //    var actualNewBioCells = bioCell.RunCellGrowth(new Dictionary<int, BioCell>());
 
         //    //--assert
-        //    actualSurroundingCells.GrowthPattern.ShouldBeEqual();
-        //    AssertAllEmpty(actualSurroundingCells, bottomLeftCellShouldBeEmpty: false);
+            
         //}
 
-        private void AssertAllEmpty(SurroundingCells actualSurroundingCells, 
+        private void AssertAllEmpty(SurroundingCells surroundingCells, 
             bool topLeftCellShouldBeEmpty = true,
             bool leftCellShouldBeEmpty = true,
             bool topCellShouldBeEmpty = true,
@@ -274,42 +291,42 @@ namespace Logic.Tests.BioCellTests
         {
             if (leftCellShouldBeEmpty)
             {
-                actualSurroundingCells.LeftCell.LiveCell.ShouldBeFalse();
+                surroundingCells.LeftCell.LiveCell.ShouldBeFalse();
             }
 
             if (topLeftCellShouldBeEmpty)
             {
-                actualSurroundingCells.TopLeftCell.LiveCell.ShouldBeFalse();
+                surroundingCells.TopLeftCell.LiveCell.ShouldBeFalse();
             }
 
             if (topCellShouldBeEmpty)
             {
-                actualSurroundingCells.TopCell.LiveCell.ShouldBeFalse();
+                surroundingCells.TopCell.LiveCell.ShouldBeFalse();
             }
 
             if (topRightCellShouldBeEmpty)
             {
-                actualSurroundingCells.TopRightCell.LiveCell.ShouldBeFalse();
+                surroundingCells.TopRightCell.LiveCell.ShouldBeFalse();
             }
 
             if (rightCellShouldBeEmpty)
             {
-                actualSurroundingCells.RightCell.LiveCell.ShouldBeFalse();
+                surroundingCells.RightCell.LiveCell.ShouldBeFalse();
             }
 
             if (bottomRightCellShouldBeEmpty)
             {
-                actualSurroundingCells.BottomRightCell.LiveCell.ShouldBeFalse();
+                surroundingCells.BottomRightCell.LiveCell.ShouldBeFalse();
             }
 
             if (bottomCellShouldBeEmpty)
             {
-                actualSurroundingCells.BottomCell.LiveCell.ShouldBeFalse();
+                surroundingCells.BottomCell.LiveCell.ShouldBeFalse();
             }
 
             if (bottomLeftCellShouldBeEmpty)
             {
-                actualSurroundingCells.BottomLeftCell.LiveCell.ShouldBeFalse();
+                surroundingCells.BottomLeftCell.LiveCell.ShouldBeFalse();
             }
         }
     }
