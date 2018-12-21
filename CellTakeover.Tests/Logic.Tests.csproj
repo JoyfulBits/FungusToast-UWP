@@ -7,8 +7,8 @@
     <ProjectGuid>{D77BA91C-C7A1-4337-A829-7CED707AE5E8}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CellTakeover.Tests</RootNamespace>
-    <AssemblyName>CellTakeover.Tests</AssemblyName>
+    <RootNamespace>Logic.Tests</RootNamespace>
+    <AssemblyName>Logic.Tests</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
@@ -162,9 +162,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CellTakeover\CellTakeover.csproj">
-      <Project>{9d2a7d98-3b42-4e4f-a369-016bed040487}</Project>
-      <Name>CellTakeover</Name>
+    <ProjectReference Include="..\Logic\Logic.csproj">
+      <Project>{5720e5a2-01ad-4e7c-9f4d-3697525d5662}</Project>
+      <Name>Logic</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

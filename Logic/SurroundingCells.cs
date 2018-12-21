@@ -1,6 +1,6 @@
-﻿namespace CellTakeover
+﻿namespace Logic
 {
-    internal class SurroundingCells
+    public class SurroundingCells
     {
         public GridCell LeftCell { get; set; }
         public GridCell TopCell { get; set; }

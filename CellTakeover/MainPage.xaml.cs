@@ -5,6 +5,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using Logic;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -100,6 +101,14 @@ namespace CellTakeover
         private void Grow(BioCell cell)
         {
             var surroundingCells = cell.GetSurroundingCells(_currentLiveCells);
+
+            if (surroundingCells.TopLeftCell.Empty)
+            {
+                if (_random.Next(1, 100) <= 10)
+                {
+                    
+                }
+            }
         }
 
         //private SurroundingCells GetSurroundingCells(int liveCellIndex)

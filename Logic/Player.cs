@@ -1,9 +1,8 @@
 ﻿using Windows.UI;
-using Windows.UI.Xaml.Media;
 
-namespace CellTakeover
+namespace Logic
 {
-    internal class Player
+    public class Player
     {
         public string Name { get; set; }
         public Color Color { get; set; }
@@ -11,7 +10,7 @@ namespace CellTakeover
 
         public BioCell MakeCell(int cellIndex)
         {
-            return new BioCell(PlayerNumber, cellIndex, Color);
+            return new BioCell(this, cellIndex, Color);
         }
     }
 }

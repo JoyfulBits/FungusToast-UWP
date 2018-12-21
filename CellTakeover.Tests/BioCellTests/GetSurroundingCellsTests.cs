@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shouldly;
 
-namespace CellTakeover.Tests.BioCellTests
+namespace Logic.Tests.BioCellTests
 {
     [TestClass]
     public class GetSurroundingCellsTests
     {
+        private Player _dummyPlayer = new Player();
+
         [TestMethod]
         public void The_Surrounding_Left_Cells_Are_An_EdgeCell_If_At_The_Left_Column_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(0, 0, Colors.Brown);
+            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -33,7 +30,7 @@ namespace CellTakeover.Tests.BioCellTests
         public void The_Surrounding_Top_Cells_Are_An_EdgeCell_If_At_The_Top_Row_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(0, 0, Colors.Brown);
+            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -49,7 +46,7 @@ namespace CellTakeover.Tests.BioCellTests
         public void The_Surrounding_Right_Cells_Are_An_EdgeCell_If_At_The_Right_Column_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(0, GameSettings.NumberOfColumnsAndRows - 1, Colors.Brown);
+            var bioCell = new BioCell(_dummyPlayer, GameSettings.NumberOfColumnsAndRows - 1, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -65,7 +62,7 @@ namespace CellTakeover.Tests.BioCellTests
         public void The_Surrounding_Bottom_Cells_Are_An_EdgeCell_If_At_The_Bottom_Row_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(0, GameSettings.NumberOfCells - 1, Colors.Brown);
+            var bioCell = new BioCell(_dummyPlayer, GameSettings.NumberOfCells - 1, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -81,8 +78,8 @@ namespace CellTakeover.Tests.BioCellTests
         public void It_Finds_Live_Cells_To_The_Left()
         {
             //--arrange
-            var currentBioCell = new BioCell(0, 1, Colors.Brown);
-            var expectedCell = new BioCell(0, 0, new Color());
+            var currentBioCell = new BioCell(_dummyPlayer, 1, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, 0, new Color());
             var liveCells = new Dictionary<int, BioCell> 
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -102,8 +99,8 @@ namespace CellTakeover.Tests.BioCellTests
             //--arrange
             var secondRowSecondColumnIndex = GameSettings.NumberOfColumnsAndRows + 1;
 
-            var bioCell = new BioCell(0, secondRowSecondColumnIndex, Colors.Brown);
-            var expectedCell = new BioCell(0, 0, new Color());
+            var bioCell = new BioCell(_dummyPlayer, secondRowSecondColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, 0, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -117,25 +114,179 @@ namespace CellTakeover.Tests.BioCellTests
             AssertAllEmpty(actualSurroundingCells, topLeftCellShouldBeEmpty: false);
         }
 
-        private void AssertAllEmpty(SurroundingCells actualSurroundingCells, bool topLeftCellShouldBeEmpty = true,
-            bool leftCellShouldBeEmpty = true)
+        [TestMethod]
+        public void It_Finds_Live_Cells_To_The_Top()
+        {
+            //--arrange
+            var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
+
+            var bioCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, 0, new Color());
+            var liveCells = new Dictionary<int, BioCell>
+            {
+                {expectedCell.CellIndex, expectedCell }
+            };
+
+            //--act
+            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+
+            //--assert
+            actualSurroundingCells.TopCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(actualSurroundingCells, topCellShouldBeEmpty: false);
+        }
+
+        [TestMethod]
+        public void It_Finds_Live_Cells_To_The_Top_Right()
+        {
+            //--arrange
+            var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
+
+            var bioCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, 1, new Color());
+            var liveCells = new Dictionary<int, BioCell>
+            {
+                {expectedCell.CellIndex, expectedCell }
+            };
+
+            //--act
+            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+
+            //--assert
+            actualSurroundingCells.TopRightCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(actualSurroundingCells, topRightCellShouldBeEmpty: false);
+        }
+
+        [TestMethod]
+        public void It_Finds_Live_Cells_To_The_Right()
+        {
+            //--arrange
+            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, 1, new Color());
+            var liveCells = new Dictionary<int, BioCell>
+            {
+                {expectedCell.CellIndex, expectedCell }
+            };
+
+            //--act
+            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+
+            //--assert
+            actualSurroundingCells.RightCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(actualSurroundingCells, rightCellShouldBeEmpty: false);
+        }
+
+        [TestMethod]
+        public void It_Finds_Live_Cells_To_The_Bottom_Right()
+        {
+            //--arrange
+            var secondRowSecondColumnIndex = GameSettings.NumberOfColumnsAndRows + 1;
+
+            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, secondRowSecondColumnIndex, new Color());
+            var liveCells = new Dictionary<int, BioCell>
+            {
+                {expectedCell.CellIndex, expectedCell }
+            };
+
+            //--act
+            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+
+            //--assert
+            actualSurroundingCells.BottomRightCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(actualSurroundingCells, bottomRightCellShouldBeEmpty: false);
+        }
+
+        [TestMethod]
+        public void It_Finds_Live_Cells_To_The_Bottom()
+        {
+            //--arrange
+            var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
+
+            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, new Color());
+            var liveCells = new Dictionary<int, BioCell>
+            {
+                {expectedCell.CellIndex, expectedCell }
+            };
+
+            //--act
+            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+
+            //--assert
+            actualSurroundingCells.BottomCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(actualSurroundingCells, bottomCellShouldBeEmpty: false);
+        }
+
+        [TestMethod]
+        public void It_Finds_Live_Cells_To_The_Bottom_Left()
+        {
+            //--arrange
+            var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
+
+            var bioCell = new BioCell(_dummyPlayer, 1, Colors.Brown);
+            var expectedCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, new Color());
+            var liveCells = new Dictionary<int, BioCell>
+            {
+                {expectedCell.CellIndex, expectedCell }
+            };
+
+            //--act
+            var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+
+            //--assert
+            actualSurroundingCells.BottomLeftCell.ShouldBeSameAs(expectedCell);
+            AssertAllEmpty(actualSurroundingCells, bottomLeftCellShouldBeEmpty: false);
+        }
+
+        private void AssertAllEmpty(SurroundingCells actualSurroundingCells, 
+            bool topLeftCellShouldBeEmpty = true,
+            bool leftCellShouldBeEmpty = true,
+            bool topCellShouldBeEmpty = true,
+            bool topRightCellShouldBeEmpty = true,
+            bool rightCellShouldBeEmpty = true,
+            bool bottomRightCellShouldBeEmpty = true,
+            bool bottomCellShouldBeEmpty = true,
+            bool bottomLeftCellShouldBeEmpty = true)
         {
             if (leftCellShouldBeEmpty)
             {
-                actualSurroundingCells.TopLeftCell.ShouldBeSameAs(GridCell.EmptyCell);
+                actualSurroundingCells.LeftCell.LiveCell.ShouldBeFalse();
             }
 
             if (topLeftCellShouldBeEmpty)
             {
-                actualSurroundingCells.TopLeftCell.ShouldBeSameAs(GridCell.EmptyCell);
+                actualSurroundingCells.TopLeftCell.LiveCell.ShouldBeFalse();
             }
-            actualSurroundingCells.TopCell.ShouldBeSameAs(GridCell.EmptyCell);
-            actualSurroundingCells.TopRightCell.ShouldBeSameAs(GridCell.EmptyCell);
-            actualSurroundingCells.RightCell.ShouldBeSameAs(GridCell.EmptyCell);
-            actualSurroundingCells.BottomRightCell.ShouldBeSameAs(GridCell.EmptyCell);
-            actualSurroundingCells.BottomCell.ShouldBeSameAs(GridCell.EmptyCell);
-            actualSurroundingCells.BottomLeftCell.ShouldBeSameAs(GridCell.EmptyCell);
 
+            if (topCellShouldBeEmpty)
+            {
+                actualSurroundingCells.TopCell.LiveCell.ShouldBeFalse();
+            }
+
+            if (topRightCellShouldBeEmpty)
+            {
+                actualSurroundingCells.TopRightCell.LiveCell.ShouldBeFalse();
+            }
+
+            if (rightCellShouldBeEmpty)
+            {
+                actualSurroundingCells.RightCell.LiveCell.ShouldBeFalse();
+            }
+
+            if (bottomRightCellShouldBeEmpty)
+            {
+                actualSurroundingCells.BottomRightCell.LiveCell.ShouldBeFalse();
+            }
+
+            if (bottomCellShouldBeEmpty)
+            {
+                actualSurroundingCells.BottomCell.LiveCell.ShouldBeFalse();
+            }
+
+            if (bottomLeftCellShouldBeEmpty)
+            {
+                actualSurroundingCells.BottomLeftCell.LiveCell.ShouldBeFalse();
+            }
         }
     }
 }
