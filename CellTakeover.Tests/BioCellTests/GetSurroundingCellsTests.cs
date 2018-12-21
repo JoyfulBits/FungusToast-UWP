@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Windows.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Shouldly;
 
 namespace Logic.Tests.BioCellTests
@@ -8,13 +9,19 @@ namespace Logic.Tests.BioCellTests
     [TestClass]
     public class GetSurroundingCellsTests
     {
-        private Player _dummyPlayer = new Player();
+        private Mock<IPlayer> _mockPlayer;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            _mockPlayer = new Mock<IPlayer>();
+        }
 
         [TestMethod]
         public void The_Surrounding_Left_Cells_Are_An_EdgeCell_If_At_The_Left_Column_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -30,7 +37,7 @@ namespace Logic.Tests.BioCellTests
         public void The_Surrounding_Top_Cells_Are_An_EdgeCell_If_At_The_Top_Row_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -46,7 +53,7 @@ namespace Logic.Tests.BioCellTests
         public void The_Surrounding_Right_Cells_Are_An_EdgeCell_If_At_The_Right_Column_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_dummyPlayer, GameSettings.NumberOfColumnsAndRows - 1, Colors.Brown);
+            var bioCell = new BioCell(_mockPlayer.Object, GameSettings.NumberOfColumnsAndRows - 1, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -62,7 +69,7 @@ namespace Logic.Tests.BioCellTests
         public void The_Surrounding_Bottom_Cells_Are_An_EdgeCell_If_At_The_Bottom_Row_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_dummyPlayer, GameSettings.NumberOfCells - 1, Colors.Brown);
+            var bioCell = new BioCell(_mockPlayer.Object, GameSettings.NumberOfCells - 1, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -78,8 +85,8 @@ namespace Logic.Tests.BioCellTests
         public void It_Finds_Live_Cells_To_The_Left()
         {
             //--arrange
-            var currentBioCell = new BioCell(_dummyPlayer, 1, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, 0, new Color());
+            var currentBioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color());
             var liveCells = new Dictionary<int, BioCell> 
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -99,8 +106,8 @@ namespace Logic.Tests.BioCellTests
             //--arrange
             var secondRowSecondColumnIndex = GameSettings.NumberOfColumnsAndRows + 1;
 
-            var bioCell = new BioCell(_dummyPlayer, secondRowSecondColumnIndex, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, 0, new Color());
+            var bioCell = new BioCell(_mockPlayer.Object, secondRowSecondColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -120,8 +127,8 @@ namespace Logic.Tests.BioCellTests
             //--arrange
             var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
 
-            var bioCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, 0, new Color());
+            var bioCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -141,8 +148,8 @@ namespace Logic.Tests.BioCellTests
             //--arrange
             var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
 
-            var bioCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, 1, new Color());
+            var bioCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 1, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -160,8 +167,8 @@ namespace Logic.Tests.BioCellTests
         public void It_Finds_Live_Cells_To_The_Right()
         {
             //--arrange
-            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, 1, new Color());
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 1, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -181,8 +188,8 @@ namespace Logic.Tests.BioCellTests
             //--arrange
             var secondRowSecondColumnIndex = GameSettings.NumberOfColumnsAndRows + 1;
 
-            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, secondRowSecondColumnIndex, new Color());
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, secondRowSecondColumnIndex, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -202,8 +209,8 @@ namespace Logic.Tests.BioCellTests
             //--arrange
             var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
 
-            var bioCell = new BioCell(_dummyPlayer, 0, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, new Color());
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -223,8 +230,8 @@ namespace Logic.Tests.BioCellTests
             //--arrange
             var secondRowFirstColumnIndex = GameSettings.NumberOfColumnsAndRows;
 
-            var bioCell = new BioCell(_dummyPlayer, 1, Colors.Brown);
-            var expectedCell = new BioCell(_dummyPlayer, secondRowFirstColumnIndex, new Color());
+            var bioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -237,6 +244,23 @@ namespace Logic.Tests.BioCellTests
             actualSurroundingCells.BottomLeftCell.ShouldBeSameAs(expectedCell);
             AssertAllEmpty(actualSurroundingCells, bottomLeftCellShouldBeEmpty: false);
         }
+
+        //[TestMethod]
+        //public void It_Calculates_The_New_Cells()
+        //{
+        //    //--arrange
+        //    var bioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown);
+        //    var growthCalculatorMock = new Mock<ICellGrowthCalculator>();
+        //    bioCell.CellGrowthCalculator = growthCalculatorMock.Object;
+        //    growthCalculatorMock.Setup(x => x.)
+
+        //    //--act
+        //    var actualSurroundingCells = bioCell.GetSurroundingCells(liveCells);
+
+        //    //--assert
+        //    actualSurroundingCells.GrowthPattern.ShouldBeEqual();
+        //    AssertAllEmpty(actualSurroundingCells, bottomLeftCellShouldBeEmpty: false);
+        //}
 
         private void AssertAllEmpty(SurroundingCells actualSurroundingCells, 
             bool topLeftCellShouldBeEmpty = true,

@@ -24,17 +24,21 @@ namespace Logic
     }
     public class BioCell : GridCell
     {
-        public Player Player { get; }
+        public IPlayer Player { get; }
         public int CellIndex { get; }
         public Color CellColor { get; }
+        //--allow for old-fashioned property injection
+        public ICellGrowthCalculator CellGrowthCalculator { get; set; }
 
-        public BioCell(Player player, int cellIndex, Color cellColor)
+        public BioCell(IPlayer player, int cellIndex, Color cellColor)
         {
+            CellGrowthCalculator = new CellGrowthCalculator();
+
             Player = player;
             CellIndex = cellIndex;
             CellColor = cellColor;
             OutOfGrid = false;
-            LiveCell = true;
+            LiveCell = true; 
         }
 
         public SurroundingCells GetSurroundingCells(Dictionary<int, BioCell> currentLiveCells)
@@ -45,42 +49,24 @@ namespace Logic
             var checkRight = true;
             var checkBottom = true;
 
-            if (OnLeftColumn())
-            {
-                surroundingCells.TopLeftCell = OutOfGridCell;
-                surroundingCells.LeftCell = OutOfGridCell;
-                surroundingCells.BottomLeftCell = OutOfGridCell;
-                checkLeft = false;
-            }
-            else if (OnRightColumn())
-            {
-                surroundingCells.TopRightCell = OutOfGridCell;
-                surroundingCells.RightCell = OutOfGridCell;
-                surroundingCells.BottomRightCell = OutOfGridCell;
-                checkRight = false;
-            }
+            checkLeft = GetOutOfGridCells(surroundingCells, ref checkLeft, ref checkRight, ref checkTop, ref checkBottom);
 
-            if (OnTopRow())
-            {
-                surroundingCells.TopLeftCell = OutOfGridCell;
-                surroundingCells.TopCell = OutOfGridCell;
-                surroundingCells.TopRightCell = OutOfGridCell;
-                checkTop = false;
-            }
-            else if (OnBottomRow())
-            {
-                surroundingCells.BottomLeftCell = OutOfGridCell;
-                surroundingCells.BottomCell = OutOfGridCell;
-                surroundingCells.BottomRightCell = OutOfGridCell;
-                checkBottom = false;
-            }
+            GetInGridCells( surroundingCells, currentLiveCells, checkLeft, checkBottom, checkTop, checkRight);
 
+            return surroundingCells;
+        }
+
+        private void GetInGridCells(SurroundingCells surroundingCells, 
+            Dictionary<int, BioCell> currentLiveCells, bool checkLeft, 
+            bool checkBottom, bool checkTop, bool checkRight)
+        {
             if (checkLeft)
             {
                 if (checkBottom)
                 {
                     surroundingCells.BottomLeftCell = GetBottomLeftCell(currentLiveCells);
                 }
+
                 surroundingCells.LeftCell = GetLeftCell(currentLiveCells);
 
                 if (checkTop)
@@ -121,8 +107,42 @@ namespace Logic
 
                 //--skip bottom left as it's already been set or out of grid
             }
+        }
 
-            return surroundingCells;
+        private bool GetOutOfGridCells(SurroundingCells surroundingCells, ref bool checkLeft, ref bool checkRight,
+            ref bool checkTop, ref bool checkBottom)
+        {
+            if (OnLeftColumn())
+            {
+                surroundingCells.TopLeftCell = OutOfGridCell;
+                surroundingCells.LeftCell = OutOfGridCell;
+                surroundingCells.BottomLeftCell = OutOfGridCell;
+                checkLeft = false;
+            }
+            else if (OnRightColumn())
+            {
+                surroundingCells.TopRightCell = OutOfGridCell;
+                surroundingCells.RightCell = OutOfGridCell;
+                surroundingCells.BottomRightCell = OutOfGridCell;
+                checkRight = false;
+            }
+
+            if (OnTopRow())
+            {
+                surroundingCells.TopLeftCell = OutOfGridCell;
+                surroundingCells.TopCell = OutOfGridCell;
+                surroundingCells.TopRightCell = OutOfGridCell;
+                checkTop = false;
+            }
+            else if (OnBottomRow())
+            {
+                surroundingCells.BottomLeftCell = OutOfGridCell;
+                surroundingCells.BottomCell = OutOfGridCell;
+                surroundingCells.BottomRightCell = OutOfGridCell;
+                checkBottom = false;
+            }
+
+            return checkLeft;
         }
 
         private GridCell GetBottomLeftCell(Dictionary<int, BioCell> currentLiveCells)
