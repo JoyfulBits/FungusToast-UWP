@@ -125,8 +125,10 @@
     <Compile Include="GameSettings.cs" />
     <Compile Include="ICellGrowthCalculator.cs" />
     <Compile Include="IPlayer.cs" />
+    <Compile Include="ISurroundingCellCalculator.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SurroundingCellCalculator.cs" />
     <Compile Include="SurroundingCells.cs" />
     <EmbeddedResource Include="Properties\Logic.rd.xml" />
   </ItemGroup>
