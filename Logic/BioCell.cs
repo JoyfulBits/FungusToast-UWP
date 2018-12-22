@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Windows.UI;
 
 namespace Logic
@@ -22,7 +23,7 @@ namespace Logic
 
         public List<BioCell> RunCellGrowth(Dictionary<int, BioCell> currentLiveCells)
         {
-            var surroundingCells = SurroundingCellCalculator.GetSurroundingCells(this, currentLiveCells);
+            SurroundingCells surroundingCells = SurroundingCellCalculator.GetSurroundingCells(this, currentLiveCells);
 
             return Player.CalculateCellGrowth(this, surroundingCells);
         }

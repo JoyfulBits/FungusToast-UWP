@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -74,8 +75,7 @@ namespace CellTakeover
                 var startCellIndex = _random.Next(firstCandidateStartCell, endCandidateStartCell);
                 var element = MainGrid.Children[startCellIndex] as Button;
                 element.Background = new SolidColorBrush(_players[i].Color);
-                element.Content = _players[0].PlayerNumber;
-                _currentLiveCells.Add(startCellIndex, player.MakeCell(i));
+                _currentLiveCells.Add(startCellIndex, player.MakeCell(startCellIndex));
             }
         }
 
@@ -90,9 +90,15 @@ namespace CellTakeover
             }
         }
 
-        private void Grow(BioCell cell)
+        private async void Grow(BioCell cell)
         {
             var newCells = cell.RunCellGrowth(_currentLiveCells);
+            foreach (var newCell in newCells)
+            {
+                var element = MainGrid.Children[newCell.CellIndex] as Button;
+                element.Background = new SolidColorBrush(newCell.CellColor);
+                _currentLiveCells.Add(newCell.CellIndex, newCell);
+            }
         }
     }
 }

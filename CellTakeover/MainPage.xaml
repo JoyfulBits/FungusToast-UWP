@@ -20,7 +20,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource TitleTextBlockStyle}" Text="Cell Takeover" HorizontalAlignment="Center"></TextBlock>
-        <Button Grid.Row="1" Grid.Column="0" Click="Grow_OnClick"></Button>
+        <Button Grid.Row="1" Grid.Column="0" Click="Grow_OnClick" Width="100" Content="Grow!"></Button>
         <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="MainGrid" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
     </Grid>
 </Page>

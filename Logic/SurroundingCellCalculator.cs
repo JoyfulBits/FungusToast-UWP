@@ -116,7 +116,7 @@ namespace Logic
                 return currentLiveCells[bottomLeftCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.BottomLeft);
+            return GridCell.MakeEmptyCell(bottomLeftCellIndex, RelativePosition.BottomLeft);
         }
 
         private GridCell GetLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -127,7 +127,7 @@ namespace Logic
                 return currentLiveCells[leftCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Left);
+            return GridCell.MakeEmptyCell(leftCellIndex, RelativePosition.Left);
         }
 
         private GridCell GetTopLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -138,7 +138,7 @@ namespace Logic
                 return currentLiveCells[topLeftCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.TopLeft);
+            return GridCell.MakeEmptyCell(topLeftCellIndex, RelativePosition.TopLeft);
         }
 
         private GridCell GetTopCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -149,7 +149,7 @@ namespace Logic
                 return currentLiveCells[topCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Top);
+            return GridCell.MakeEmptyCell(topCellIndex, RelativePosition.Top);
         }
 
         private GridCell GetTopRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -160,7 +160,7 @@ namespace Logic
                 return currentLiveCells[topRightCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.TopRight);
+            return GridCell.MakeEmptyCell(topRightCellIndex, RelativePosition.TopRight);
         }
 
         private GridCell GetRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -171,7 +171,7 @@ namespace Logic
                 return currentLiveCells[rightCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Right);
+            return GridCell.MakeEmptyCell(rightCellIndex, RelativePosition.Right);
         }
 
         private GridCell GetBottomRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -182,7 +182,7 @@ namespace Logic
                 return currentLiveCells[bottomRightCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.BottomRight);
+            return GridCell.MakeEmptyCell(bottomRightCellIndex, RelativePosition.BottomRight);
         }
 
         private GridCell GetBottomCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -193,7 +193,7 @@ namespace Logic
                 return currentLiveCells[bottomCellIndex];
             }
 
-            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Bottom);
+            return GridCell.MakeEmptyCell(bottomCellIndex, RelativePosition.Bottom);
         }
 
         private bool OnTopRow(int cellIndex)
