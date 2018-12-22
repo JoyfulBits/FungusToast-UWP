@@ -3,37 +3,17 @@ using Windows.UI;
 
 namespace Logic
 {
-    public class GridCell
-    {
-        public bool OutOfGrid { get; set; }
-        public bool Empty { get; set; }
-        public bool LiveCell { get; set; }
-
-        public static readonly GridCell OutOfGridCell = new GridCell
-        {
-            OutOfGrid = true,
-            Empty = false,
-            LiveCell = false
-        };
-
-        public static readonly GridCell EmptyCell = new GridCell
-        {
-            OutOfGrid = false,
-            Empty = true
-        };
-    }
     public class BioCell : GridCell
     {
         public IPlayer Player { get; }
-        public int CellIndex { get; }
+
         public Color CellColor { get; }
         //--allowing for good old fashioned property injection
         public ISurroundingCellCalculator SurroundingCellCalculator { get; set; }
 
-        public BioCell(IPlayer player, int cellIndex, Color cellColor)
+        public BioCell(IPlayer player, int cellIndex, Color cellColor) : base(cellIndex, false, false, true)
         {
             Player = player;
-            CellIndex = cellIndex;
             CellColor = cellColor;
             OutOfGrid = false;
             LiveCell = true;

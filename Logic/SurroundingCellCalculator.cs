@@ -77,31 +77,31 @@ namespace Logic
         {
             if (OnLeftColumn(cellIndex))
             {
-                surroundingCells.TopLeftCell = BioCell.OutOfGridCell;
-                surroundingCells.LeftCell = BioCell.OutOfGridCell;
-                surroundingCells.BottomLeftCell = BioCell.OutOfGridCell;
+                surroundingCells.TopLeftCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.TopLeft);
+                surroundingCells.LeftCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.Left);
+                surroundingCells.BottomLeftCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.BottomLeft);
                 checkLeft = false;
             }
             else if (OnRightColumn(cellIndex))
             {
-                surroundingCells.TopRightCell = BioCell.OutOfGridCell;
-                surroundingCells.RightCell = BioCell.OutOfGridCell;
-                surroundingCells.BottomRightCell = BioCell.OutOfGridCell;
+                surroundingCells.TopRightCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.TopRight);
+                surroundingCells.RightCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.Right);
+                surroundingCells.BottomRightCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.BottomRight);
                 checkRight = false;
             }
 
             if (OnTopRow(cellIndex))
             {
-                surroundingCells.TopLeftCell = BioCell.OutOfGridCell;
-                surroundingCells.TopCell = BioCell.OutOfGridCell;
-                surroundingCells.TopRightCell = BioCell.OutOfGridCell;
+                surroundingCells.TopLeftCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.TopLeft);
+                surroundingCells.TopCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.Top);
+                surroundingCells.TopRightCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.TopRight);
                 checkTop = false;
             }
             else if (OnBottomRow(cellIndex))
             {
-                surroundingCells.BottomLeftCell = BioCell.OutOfGridCell;
-                surroundingCells.BottomCell = BioCell.OutOfGridCell;
-                surroundingCells.BottomRightCell = BioCell.OutOfGridCell;
+                surroundingCells.BottomLeftCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.BottomLeft);
+                surroundingCells.BottomCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.Bottom);
+                surroundingCells.BottomRightCell = GridCell.MakeOutOfGridCell(cellIndex, RelativePosition.BottomRight);
                 checkBottom = false;
             }
 
@@ -116,7 +116,7 @@ namespace Logic
                 return currentLiveCells[bottomLeftCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.BottomLeft);
         }
 
         private GridCell GetLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -127,7 +127,7 @@ namespace Logic
                 return currentLiveCells[leftCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Left);
         }
 
         private GridCell GetTopLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -138,7 +138,7 @@ namespace Logic
                 return currentLiveCells[topLeftCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.TopLeft);
         }
 
         private GridCell GetTopCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -149,7 +149,7 @@ namespace Logic
                 return currentLiveCells[topCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Top);
         }
 
         private GridCell GetTopRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -160,7 +160,7 @@ namespace Logic
                 return currentLiveCells[topRightCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.TopRight);
         }
 
         private GridCell GetRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -171,7 +171,7 @@ namespace Logic
                 return currentLiveCells[rightCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Right);
         }
 
         private GridCell GetBottomRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -182,7 +182,7 @@ namespace Logic
                 return currentLiveCells[bottomRightCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.BottomRight);
         }
 
         private GridCell GetBottomCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
@@ -193,7 +193,7 @@ namespace Logic
                 return currentLiveCells[bottomCellIndex];
             }
 
-            return GridCell.EmptyCell;
+            return GridCell.MakeEmptyCell(cellIndex, RelativePosition.Bottom);
         }
 
         private bool OnTopRow(int cellIndex)

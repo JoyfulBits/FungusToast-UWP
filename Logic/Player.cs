@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Windows.UI;
 
 namespace Logic
@@ -9,17 +10,19 @@ namespace Logic
         public Color Color { get; set; }
         public int PlayerNumber { get; set; }
 
+        public int BaseCellGrowthPercentageChance { get; set; } = 10;
+        public GrowthScorecard GrowthScorecard { get; set; } = new GrowthScorecard();
 
-        //--allow for old-fashioned property injection
-        public ICellGrowthCalculator CellGrowthCalculator { get; set; }
+        private readonly Random _random = new Random();
+        private ICellGrowthCalculator _cellGrowthCalculator;
 
-        public Player(string name, Color playerCellColor, int playerNumber)
+        public Player(string name, Color playerCellColor, int playerNumber, ICellGrowthCalculator cellGrowthCalculator)
         {
             Name = name;
             Color = playerCellColor;
             PlayerNumber = playerNumber;
 
-            CellGrowthCalculator = new CellGrowthCalculator();
+            _cellGrowthCalculator = cellGrowthCalculator;
         }
 
         public BioCell MakeCell(int cellIndex)
@@ -29,7 +32,29 @@ namespace Logic
 
         public List<BioCell> CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)
         {
-            throw new System.NotImplementedException();
+            return _cellGrowthCalculator.CalculateCellGrowth(cell, GrowthScorecard, surroundingCells);
+            //var newCells = new List<BioCell>();
+            //if (surroundingCells.TopLeftCell.Empty)
+            //{
+            //    if (TryGrowInTopLeftCell(surroundingCells.TopLeftCell.CellIndex, out var newCell))
+            //    {
+            //        newCells.Add(newCell);
+            //    }
+            //}
+
+            //return newCells;
+        }
+
+        private bool TryGrowInTopLeftCell(int emptyIndex, out BioCell newCell)
+        {
+            if (_random.Next(0, 100) < BaseCellGrowthPercentageChance)
+            {
+                newCell = MakeCell(emptyIndex);
+                return true;
+            }
+
+            newCell = null;
+            return false;
         }
     }
 }

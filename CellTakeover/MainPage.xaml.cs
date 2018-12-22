@@ -30,12 +30,15 @@ namespace CellTakeover
 
         private readonly List<Player> _players = new List<Player>();
 
+        //--TODO introduce dependency injection framework
+        private CellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
+
         public MainPage()
         {
             InitializeComponent();
 
-            _players.Add(new Player("Player 1", Colors.Blue, 1));
-            _players.Add(new Player("Player 2", Colors.Red, 1));
+            _players.Add(new Player("Player 1", Colors.Blue, 1, _cellGrowthCalculator));
+            _players.Add(new Player("Player 2", Colors.Red, 1, _cellGrowthCalculator));
         }
 
 
