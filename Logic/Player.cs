@@ -32,29 +32,7 @@ namespace Logic
 
         public List<BioCell> CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)
         {
-            return _cellGrowthCalculator.CalculateCellGrowth(cell, GrowthScorecard, surroundingCells);
-            //var newCells = new List<BioCell>();
-            //if (surroundingCells.TopLeftCell.Empty)
-            //{
-            //    if (TryGrowInTopLeftCell(surroundingCells.TopLeftCell.CellIndex, out var newCell))
-            //    {
-            //        newCells.Add(newCell);
-            //    }
-            //}
-
-            //return newCells;
-        }
-
-        private bool TryGrowInTopLeftCell(int emptyIndex, out BioCell newCell)
-        {
-            if (_random.Next(0, 100) < BaseCellGrowthPercentageChance)
-            {
-                newCell = MakeCell(emptyIndex);
-                return true;
-            }
-
-            newCell = null;
-            return false;
+            return _cellGrowthCalculator.CalculateCellGrowth(cell, this, surroundingCells);
         }
     }
 }

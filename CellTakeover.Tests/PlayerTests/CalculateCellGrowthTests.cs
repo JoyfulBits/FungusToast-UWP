@@ -23,15 +23,15 @@ namespace Logic.Tests.PlayerTests
             _cellGrowthCalculatorMock = new Mock<ICellGrowthCalculator>();
             var expectedCells = new List<BioCell>();
             BioCell capturedBioCell = null;
-            GrowthScorecard capturedGrowthScorecard = null;
+            Player capturedPlayer = null;
             SurroundingCells capturedSurroundingCells = null;
             _cellGrowthCalculatorMock.Setup(mock =>
-                    mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<GrowthScorecard>(), It.IsAny<SurroundingCells>()))
+                    mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<Player>(), It.IsAny<SurroundingCells>()))
                 .Returns(expectedCells)
-                .Callback<BioCell, GrowthScorecard, SurroundingCells>((w, x, y) =>
+                .Callback<BioCell, Player, SurroundingCells>((w, x, y) =>
                 {
                     capturedBioCell = w;
-                    capturedGrowthScorecard = x;
+                    capturedPlayer = x;
                     capturedSurroundingCells = y;
                 });
             _player = new Player("player 1", new Color(), 1, _cellGrowthCalculatorMock.Object);
@@ -54,7 +54,7 @@ namespace Logic.Tests.PlayerTests
 
             //--assert
             capturedBioCell.ShouldBeSameAs(cell);
-            capturedGrowthScorecard.ShouldBeSameAs(_player.GrowthScorecard);
+            capturedPlayer.ShouldBeSameAs(_player);
             capturedSurroundingCells.ShouldBeSameAs(surroundingCells);
             newCells.ShouldBeSameAs(expectedCells);
         }

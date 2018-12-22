@@ -8,5 +8,6 @@ namespace Logic
 {
     public class GrowthScorecard
     {
+        public int BaseGrowthRatePercentage { get; set; } = 10;
     }
 }
