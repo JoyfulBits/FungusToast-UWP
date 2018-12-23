@@ -89,12 +89,10 @@ namespace CellTakeover
 
         private void Grow_OnClick(object sender, RoutedEventArgs e)
         {
-            for (var i = 0; i < GameSettings.NumberOfCells; i++)
+            var currentLiveCellsDictionary = new Dictionary<int, BioCell>(ViewModel.CurrentLiveCells);
+            foreach (var liveCell in currentLiveCellsDictionary)
             {
-                if (ViewModel.CurrentLiveCells.ContainsKey(i))
-                {
-                    Grow(ViewModel.CurrentLiveCells[i]);
-                }
+                Grow(liveCell.Value);
             }
 
             ViewModel.GenerationNumber++;

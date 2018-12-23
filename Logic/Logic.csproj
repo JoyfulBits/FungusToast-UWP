@@ -123,6 +123,7 @@
     <Compile Include="BioCell.cs" />
     <Compile Include="CellGrowthCalculator.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="GenerationAdvancer.cs" />
     <Compile Include="GridCell.cs" />
     <Compile Include="GrowthScorecard.cs" />
     <Compile Include="ICellGrowthCalculator.cs" />
