@@ -50,6 +50,7 @@ namespace CellTakeover
             uniformGrid.Rows = GameSettings.NumberOfColumnsAndRows;
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
+            Thickness noPaddingOrMargin = new Thickness(0);
 
             for (var i = 0; i < GameSettings.NumberOfCells; i++)
             {
@@ -60,7 +61,9 @@ namespace CellTakeover
                     BorderBrush = blackSolidColorBrush,
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Stretch,
-                    HorizontalAlignment = HorizontalAlignment.Stretch
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Margin = noPaddingOrMargin,
+                    Padding = noPaddingOrMargin,
                 });
             }
 
@@ -98,6 +101,7 @@ namespace CellTakeover
             {
                 var element = MainGrid.Children[newCell.CellIndex] as Button;
                 element.Background = new SolidColorBrush(newCell.CellColor);
+                element.Content = newCell.Player.CharacterSymbol;
                 ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
             }
         }

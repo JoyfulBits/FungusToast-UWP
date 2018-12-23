@@ -17,8 +17,8 @@
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40px"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="13*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -29,7 +29,7 @@
                    Style="{StaticResource TitleTextBlockStyle}" 
                    Text="Cell Takeover" HorizontalAlignment="Center"></TextBlock>
 
-        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}">
+        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
                     <StackPanel Padding="5">
