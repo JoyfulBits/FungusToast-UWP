@@ -14,7 +14,8 @@ namespace Logic
             var newCells = new List<BioCell>();
             foreach (var emptyCell in emptyCells)
             {
-                if (_random.Next(0, 99) < player.GrowthScorecard.BaseGrowthRatePercentage)
+                var growthChancePercentage = player.GrowthScorecard.GetGrowthChance(emptyCell.RelativePosition);
+                if (_random.Next(0, 99) < growthChancePercentage)
                 {
                     newCells.Add(player.MakeCell(emptyCell.CellIndex));
                 }
