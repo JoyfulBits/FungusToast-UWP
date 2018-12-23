@@ -1,13 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Logic
 {
     public class GenerationAdvancer
     {
-        //public List<>
+        public List<BioCell> NextGeneration(Dictionary<int, BioCell> currentLiveCells)
+        {
+            var allNewCellsForGeneration = new List<BioCell>();
+            var copyOfCurrentLiveCells = new Dictionary<int, BioCell>(currentLiveCells);
+            foreach (var liveCell in copyOfCurrentLiveCells)
+            {
+                var newCells = liveCell.Value.RunCellGrowth(copyOfCurrentLiveCells);
+                foreach (var newCell in newCells)
+                {
+                    allNewCellsForGeneration.Add(newCell);
+                }
+            }
+
+            return allNewCellsForGeneration;
+        }
     }
 }

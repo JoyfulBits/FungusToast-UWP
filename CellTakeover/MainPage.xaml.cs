@@ -31,6 +31,7 @@ namespace CellTakeover
 
         //--TODO introduce dependency injection framework
         private readonly CellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
+        private readonly GenerationAdvancer _generationAdvancer = new GenerationAdvancer();
 
         public MainPage()
         {
@@ -89,25 +90,20 @@ namespace CellTakeover
 
         private void Grow_OnClick(object sender, RoutedEventArgs e)
         {
-            var currentLiveCellsDictionary = new Dictionary<int, BioCell>(ViewModel.CurrentLiveCells);
-            foreach (var liveCell in currentLiveCellsDictionary)
+            var newCells = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells);
+            foreach (var newCell in newCells)
             {
-                Grow(liveCell.Value);
+                //--its possible for two different cells to split to the same cell. For now, the first cell wins
+                if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
+                {
+                    var element = MainGrid.Children[newCell.CellIndex] as Button;
+                    element.Background = new SolidColorBrush(newCell.CellColor);
+                    element.Content = newCell.Player.CharacterSymbol;
+                    ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
+                }
             }
 
             ViewModel.GenerationNumber++;
-        }
-
-        private void Grow(BioCell cell)
-        {
-            var newCells = cell.RunCellGrowth(ViewModel.CurrentLiveCells);
-            foreach (var newCell in newCells)
-            {
-                var element = MainGrid.Children[newCell.CellIndex] as Button;
-                element.Background = new SolidColorBrush(newCell.CellColor);
-                element.Content = newCell.Player.CharacterSymbol;
-                ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
-            }
         }
     }
 }
