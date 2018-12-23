@@ -92,6 +92,8 @@ namespace CellTakeover
                     Grow(ViewModel.CurrentLiveCells[i]);
                 }
             }
+
+            ViewModel.GenerationNumber++;
         }
 
         private void Grow(BioCell cell)

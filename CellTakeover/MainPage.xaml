@@ -25,9 +25,22 @@
             <ColumnDefinition Width="4*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                   Style="{StaticResource TitleTextBlockStyle}" 
-                   Text="Cell Takeover" HorizontalAlignment="Center"></TextBlock>
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <TextBlock 
+                       Style="{StaticResource TitleTextBlockStyle}" 
+                       Text="Cell Takeover" HorizontalAlignment="Center"></TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock 
+                    Style="{StaticResource SubtitleTextBlockStyle}" 
+                    Text="Generation Number:" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock 
+                    Margin="5 0 0 0"
+                    Style="{StaticResource SubtitleTextBlockStyle}" 
+                    Text="{x:Bind ViewModel.GenerationNumber, Mode=OneWay}"></TextBlock>
+            </StackPanel>
+
+        </StackPanel>
+       
 
         <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
