@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -62,8 +63,11 @@ namespace CellTakeover
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Stretch,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
+                    FontStretch = FontStretch.UltraCondensed,
                     Margin = noPaddingOrMargin,
                     Padding = noPaddingOrMargin,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center
                 });
             }
 

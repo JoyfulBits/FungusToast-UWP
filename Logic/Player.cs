@@ -9,6 +9,22 @@ namespace Logic
 {
     public class Player : IPlayer, INotifyPropertyChanged
     {
+        private readonly ICellGrowthCalculator _cellGrowthCalculator;
+        private Color _color;
+        private int _playerNumber;
+        private string _characterSymbol;
+        private GrowthScorecard _growthScorecard = new GrowthScorecard();
+        private int _totalCells;
+
+        public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, ICellGrowthCalculator cellGrowthCalculator)
+        {
+            Name = name;
+            Color = playerCellColor;
+            PlayerNumber = playerNumber;
+            CharacterSymbol = characterSymbol;
+            _cellGrowthCalculator = cellGrowthCalculator;
+        }
+
         private string _name;
 
         public string Name
@@ -62,8 +78,26 @@ namespace Logic
                 if (Equals(value, _growthScorecard)) return;
                 _growthScorecard = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TopLeftGrowthChance));
+                OnPropertyChanged(nameof(TopGrowthChance));
+                OnPropertyChanged(nameof(TopRightGrowthChance));
+                OnPropertyChanged(nameof(RightGrowthChance));
+                OnPropertyChanged(nameof(BottomRightGrowthChance));
+                OnPropertyChanged(nameof(BottomGrowthChance));
+                OnPropertyChanged(nameof(BottomLeftGrowthChance));
+                OnPropertyChanged(nameof(LeftGrowthChance));
+
             }
         }
+
+        public int TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
+        public int TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
+        public int TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
+        public int RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right];
+        public int BottomRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight];
+        public int BottomGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Bottom];
+        public int BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft];
+        public int LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left];
 
         public int TotalCells
         {
@@ -74,23 +108,6 @@ namespace Logic
                 _totalCells = value;
                 OnPropertyChanged();
             }
-        }
-
-        private readonly Random _random = new Random();
-        private readonly ICellGrowthCalculator _cellGrowthCalculator;
-        private Color _color;
-        private int _playerNumber;
-        private string _characterSymbol;
-        private GrowthScorecard _growthScorecard = new GrowthScorecard();
-        private int _totalCells;
-
-        public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, ICellGrowthCalculator cellGrowthCalculator)
-        {
-            Name = name;
-            Color = playerCellColor;
-            PlayerNumber = playerNumber;
-            CharacterSymbol = characterSymbol;
-            _cellGrowthCalculator = cellGrowthCalculator;
         }
 
         public BioCell MakeCell(int cellIndex)

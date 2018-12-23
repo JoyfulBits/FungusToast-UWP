@@ -19,6 +19,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="13*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -50,6 +51,69 @@
                             <TextBlock Text="{x:Bind Name}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                             <Rectangle Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Margin="5" Width="10" Height="10"></Rectangle>
                         </StackPanel>
+
+                        <TextBlock Text="Growth Chance Percentages Each Generation"></TextBlock>
+                        <controls:UniformGrid Width="120" Height="120">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="0">
+                                <TextBlock Text="{x:Bind TopLeftGrowthChance, Mode=OneWay}"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalAlignment="Center"></TextBlock>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="1">
+                            <TextBlock
+                                       HorizontalTextAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="{x:Bind TopGrowthChance, Mode=OneWay}"></TextBlock>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="2">
+                            <TextBlock Text="{x:Bind TopRightGrowthChance, Mode=OneWay}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalAlignment="Center"></TextBlock>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1" Grid.Column="0">
+                                <TextBlock Text="{x:Bind LeftGrowthChance, Mode=OneWay}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalAlignment="Center"></TextBlock>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1" Grid.Column="1">
+                            <Rectangle
+                                       Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                       Stretch="Fill"></Rectangle>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1" Grid.Column="2">
+                            <TextBlock Text="{x:Bind RightGrowthChance, Mode=OneWay}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalAlignment="Center"></TextBlock>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="0">
+                                <TextBlock Text="{x:Bind BottomLeftGrowthChance, Mode=OneWay}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalAlignment="Center"></TextBlock>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="0">
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind BottomGrowthChance, Mode=OneWay}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalAlignment="Center"></TextBlock>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="0">
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{x:Bind BottomRightGrowthChance, Mode=OneWay}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalAlignment="Center"></TextBlock>
+                            </Border>
+
+                        </controls:UniformGrid>
+
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Total Cells:"></TextBlock>
                             <TextBlock Text="{x:Bind TotalCells, Mode=OneWay}" Margin="5 0 0 0" ></TextBlock>
@@ -58,7 +122,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Grid.Row="1" Grid.Column="0" Click="Grow_OnClick" Width="100" Content="Grow!"></Button>
-        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="MainGrid" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
+        <Button Grid.Row="2" Grid.Column="0" Click="Grow_OnClick" Width="100" Content="Grow!"></Button>
+        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Name="MainGrid" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
     </Grid>
 </Page>

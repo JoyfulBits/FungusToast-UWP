@@ -17,11 +17,9 @@ namespace Logic.Tests.CellGrowthCalculatorTests
         {
             //--arrange
             var cellGrowthCalculator = new CellGrowthCalculator();
-            var growthScorecard = new GrowthScorecard
-            {
-                //--set to 100% so we get live cells for all empty cells
-                BaseGrowthRatePercentage = 100
-            };
+            var growthScorecard = new GrowthScorecard();
+            growthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] = 100;
+            growthScorecard.GrowthChanceDictionary[RelativePosition.Top] = 100;
             var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator);
             player.GrowthScorecard = growthScorecard;
             var bioCell = new BioCell(player, 1, new Color());
