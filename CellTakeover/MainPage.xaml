@@ -1,13 +1,19 @@
 ﻿<Page
     x:Class="CellTakeover.MainPage"
+    xmlns:viewmodel="using:CellTakeover"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CellTakeover"
+    xmlns:logic="using:Logic"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <UserControl.Resources>
+        <local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+    </UserControl.Resources>
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
@@ -19,7 +25,26 @@
             <ColumnDefinition Width="4*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource TitleTextBlockStyle}" Text="Cell Takeover" HorizontalAlignment="Center"></TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                   Style="{StaticResource TitleTextBlockStyle}" 
+                   Text="Cell Takeover" HorizontalAlignment="Center"></TextBlock>
+
+        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
+                    <StackPanel Padding="5">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind Name}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                            <Rectangle Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Margin="5" Width="10" Height="10"></Rectangle>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Total Cells:"></TextBlock>
+                            <TextBlock Text="{x:Bind TotalCells, Mode=OneWay}" Margin="5 0 0 0" ></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <Button Grid.Row="1" Grid.Column="0" Click="Grow_OnClick" Width="100" Content="Grow!"></Button>
         <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="MainGrid" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
     </Grid>

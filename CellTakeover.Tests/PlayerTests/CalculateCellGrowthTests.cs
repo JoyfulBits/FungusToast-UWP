@@ -34,7 +34,7 @@ namespace Logic.Tests.PlayerTests
                     capturedPlayer = x;
                     capturedSurroundingCells = y;
                 });
-            _player = new Player("player 1", new Color(), 1, _cellGrowthCalculatorMock.Object);
+            _player = new Player("player 1", new Color(), 1, "A", _cellGrowthCalculatorMock.Object);
 
             var cell = new BioCell(_player, 0, _player.Color);
             var surroundingCells = new SurroundingCells

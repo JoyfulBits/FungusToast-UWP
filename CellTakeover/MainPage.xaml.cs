@@ -17,9 +17,7 @@ namespace CellTakeover
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private readonly Dictionary<int, BioCell> _currentLiveCells = new Dictionary<int, BioCell>();
-        private readonly Dictionary<int, Player> _nextLiveCells = new Dictionary<int, Player>();
-        //private readonly HashSet<int> _deadCells = new HashSet<int>();
+        public CellTakeoverViewModel ViewModel { get; set; }
 
         private readonly Random _random = new Random();
 
@@ -29,17 +27,19 @@ namespace CellTakeover
         };
         private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
 
-        private readonly List<Player> _players = new List<Player>();
 
         //--TODO introduce dependency injection framework
-        private CellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
+        private readonly CellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
 
         public MainPage()
         {
             InitializeComponent();
-
-            _players.Add(new Player("Player 1", Colors.Blue, 1, _cellGrowthCalculator));
-            _players.Add(new Player("Player 2", Colors.Red, 1, _cellGrowthCalculator));
+            ViewModel = new CellTakeoverViewModel();
+            var players = new List<Player>();
+            players.Add(new Player("Player 1", Colors.Blue, 1, "A", _cellGrowthCalculator));
+            players.Add(new Player("Player 2", Colors.Red, 2, "B",_cellGrowthCalculator));
+            players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "C", _cellGrowthCalculator));
+            ViewModel.Players = players;
         }
 
 
@@ -64,18 +64,19 @@ namespace CellTakeover
                 });
             }
 
-            var cellsPerPlayer = GameSettings.NumberOfCells / _players.Count;
+            var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
 
-            for(int i = 0; i < _players.Count; i++)
+            for(int i = 0; i < ViewModel.Players.Count; i++)
             {
-                var player = _players[i];
+                var player = ViewModel.Players[i];
                 var firstCandidateStartCell = cellsPerPlayer * i;
                 //--make sure there is at least 2 rows between starting cells
                 var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
                 var startCellIndex = _random.Next(firstCandidateStartCell, endCandidateStartCell);
                 var element = MainGrid.Children[startCellIndex] as Button;
-                element.Background = new SolidColorBrush(_players[i].Color);
-                _currentLiveCells.Add(startCellIndex, player.MakeCell(startCellIndex));
+                element.Background = new SolidColorBrush(ViewModel.Players[i].Color);
+                element.Content = player.CharacterSymbol;
+                ViewModel.CurrentLiveCells.Add(startCellIndex, player.MakeCell(startCellIndex));
             }
         }
 
@@ -83,21 +84,21 @@ namespace CellTakeover
         {
             for (var i = 0; i < GameSettings.NumberOfCells; i++)
             {
-                if (_currentLiveCells.ContainsKey(i))
+                if (ViewModel.CurrentLiveCells.ContainsKey(i))
                 {
-                    Grow(_currentLiveCells[i]);
+                    Grow(ViewModel.CurrentLiveCells[i]);
                 }
             }
         }
 
-        private async void Grow(BioCell cell)
+        private void Grow(BioCell cell)
         {
-            var newCells = cell.RunCellGrowth(_currentLiveCells);
+            var newCells = cell.RunCellGrowth(ViewModel.CurrentLiveCells);
             foreach (var newCell in newCells)
             {
                 var element = MainGrid.Children[newCell.CellIndex] as Button;
                 element.Background = new SolidColorBrush(newCell.CellColor);
-                _currentLiveCells.Add(newCell.CellIndex, newCell);
+                ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
             }
         }
     }
