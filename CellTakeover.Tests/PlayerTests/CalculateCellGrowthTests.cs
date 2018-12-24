@@ -24,13 +24,13 @@ namespace Logic.Tests.PlayerTests
             _cellGrowthCalculatorMock = new Mock<ICellGrowthCalculator>();
             _surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>();
 
-            var expectedCells = new List<BioCell>();
+            var expectedCellGrowthResult = new CellGrowthResult(new List<BioCell>(), new List<BioCell>());
             BioCell capturedBioCell = null;
             Player capturedPlayer = null;
             SurroundingCells capturedSurroundingCells = null;
             _cellGrowthCalculatorMock.Setup(mock =>
                     mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<Player>(), It.IsAny<SurroundingCells>()))
-                .Returns(expectedCells)
+                .Returns(expectedCellGrowthResult)
                 .Callback<BioCell, Player, SurroundingCells>((w, x, y) =>
                 {
                     capturedBioCell = w;
@@ -55,13 +55,13 @@ namespace Logic.Tests.PlayerTests
             };
 
             //--act
-            var newCells =_player.CalculateCellGrowth(cell, surroundingCells);
+            var actualCellGrowthResult =_player.CalculateCellGrowth(cell, surroundingCells);
 
             //--assert
             capturedBioCell.ShouldBeSameAs(cell);
             capturedPlayer.ShouldBeSameAs(_player);
             capturedSurroundingCells.ShouldBeSameAs(surroundingCells);
-            newCells.ShouldBeSameAs(expectedCells);
+            actualCellGrowthResult.ShouldBeSameAs(expectedCellGrowthResult);
         }
     }
 }

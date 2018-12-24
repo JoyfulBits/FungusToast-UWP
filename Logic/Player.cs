@@ -120,7 +120,7 @@ namespace Logic
             return new BioCell(this, cellIndex, Color, _surroundingCellCalculator);
         }
 
-        public List<BioCell> CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)
+        public CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)
         {
             return _cellGrowthCalculator.CalculateCellGrowth(cell, this, surroundingCells);
         }
@@ -132,5 +132,32 @@ namespace Logic
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    public class CellGrowthResult
+    {
+        public CellGrowthResult(List<BioCell> newLiveCells, List<BioCell> newDeadCells)
+        {
+            NewLiveCells = newLiveCells;
+            NewDeadCells = newDeadCells;
+        }
+
+        public List<BioCell> NewLiveCells { get; }
+        public List<BioCell> NewDeadCells { get; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

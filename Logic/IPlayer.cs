@@ -11,6 +11,6 @@ namespace Logic
         int PlayerNumber { get; set; }
         string CharacterSymbol { get; set; }
         BioCell MakeCell(int cellIndex);
-        List<BioCell> CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
+        CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
     }
 }

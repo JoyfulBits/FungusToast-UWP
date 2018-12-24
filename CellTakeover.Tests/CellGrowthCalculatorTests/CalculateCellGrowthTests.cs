@@ -14,7 +14,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
     public class CalculateCellGrowthTests
     {
         [TestMethod]
-        public void It_Gets_New_Cells_Calculated_From_Empty_Ones_Using_Base_Growth_Rate()
+        public void It_Gets_New_Live_Cells_Calculated_From_Empty_Ones_Using_The_Players_Growth_Scorecard()
         {
             //--arrange
             var cellGrowthCalculator = new CellGrowthCalculator();
@@ -32,7 +32,9 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var emptyIndex2 = 2;
             var surroundingCells = new SurroundingCells
             {
+                //--100% chance
                 TopLeftCell = GridCell.MakeEmptyCell(emptyIndex1, RelativePosition.TopLeft),
+                //--100% chance
                 TopCell = GridCell.MakeEmptyCell(emptyIndex2, RelativePosition.Top),
                 TopRightCell = GridCell.MakeOutOfGridCell(0, RelativePosition.TopRight),
                 RightCell = GridCell.MakeOutOfGridCell(0, RelativePosition.Right),
@@ -43,12 +45,12 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             };
 
             //--act
-            var actualNewCells = cellGrowthCalculator.CalculateCellGrowth(bioCell, player, surroundingCells);
+            var actualResult = cellGrowthCalculator.CalculateCellGrowth(bioCell, player, surroundingCells);
 
             //--assert
-            actualNewCells.Count.ShouldBe(2);
-            actualNewCells.ShouldContain(x => x.CellIndex == emptyIndex1);
-            actualNewCells.ShouldContain(x => x.CellIndex == emptyIndex2);
+            actualResult.NewLiveCells.Count.ShouldBe(2);
+            actualResult.NewLiveCells.ShouldContain(x => x.CellIndex == emptyIndex1);
+            actualResult.NewLiveCells.ShouldContain(x => x.CellIndex == emptyIndex2);
         }
     }
 }

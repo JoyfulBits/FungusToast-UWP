@@ -21,7 +21,7 @@ namespace Logic
             _surroundingCellCalculator = surroundingCellCalculator;
         }
 
-        public List<BioCell> RunCellGrowth(Dictionary<int, BioCell> currentLiveCells)
+        public CellGrowthResult RunCellGrowth(Dictionary<int, BioCell> currentLiveCells)
         {
             SurroundingCells surroundingCells = _surroundingCellCalculator.GetSurroundingCells(this, currentLiveCells);
 

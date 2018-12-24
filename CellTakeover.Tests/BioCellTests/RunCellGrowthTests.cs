@@ -33,11 +33,11 @@ namespace Logic.Tests.BioCellTests
                     actualLiveCellsInSurroundingCellCalculation = o;
                 });
 
-            var expectedNewCells = new List<BioCell>();
+            var expectedCellGrowthResult = new CellGrowthResult(new List<BioCell>(), new List<BioCell>());
             BioCell capturedBioCell = null;
             SurroundingCells capturedSurroundingCells = null;
             mockPlayer.Setup(mock => mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<SurroundingCells>()))
-                .Returns(expectedNewCells)
+                .Returns(expectedCellGrowthResult)
                 .Callback<BioCell, SurroundingCells>((i, o) =>
                 {
                     capturedBioCell = i;
@@ -45,14 +45,14 @@ namespace Logic.Tests.BioCellTests
                 });
 
             //--act
-            var actualNewBioCells = bioCell.RunCellGrowth(liveCells);
+            var actualCellGrowthResult = bioCell.RunCellGrowth(liveCells);
 
             //--assert
             actualBioCellInSurroundingCellCalculation.ShouldBeSameAs(bioCell);
             actualLiveCellsInSurroundingCellCalculation.ShouldBeSameAs(liveCells);
             capturedBioCell.ShouldBeSameAs(bioCell);
             capturedSurroundingCells.ShouldBeSameAs(expectedSurroundingCells);
-            actualNewBioCells.ShouldBeSameAs(expectedNewCells);
+            actualCellGrowthResult.ShouldBeSameAs(expectedCellGrowthResult);
         }
     }
 }

@@ -10,7 +10,9 @@ namespace CellTakeover
     {
         private int _generationNumber;
         public Dictionary<int, BioCell> CurrentLiveCells { get; set; } = new Dictionary<int, BioCell>();
-        public List<Player> Players { get; set; } = new List<Player>();
+        public Dictionary<int, BioCell> CurrentDeadCells { get; set; } = new Dictionary<int, BioCell>();
+
+        public List<IPlayer> Players { get; set; } = new List<IPlayer>();
 
         public int GenerationNumber
         {
@@ -22,6 +24,7 @@ namespace CellTakeover
                 OnPropertyChanged();
             }
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

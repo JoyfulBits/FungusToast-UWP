@@ -4,6 +4,6 @@ namespace Logic
 {
     public interface ICellGrowthCalculator
     {
-        List<BioCell> CalculateCellGrowth(BioCell cell, Player player, SurroundingCells surroundingCells);
+        CellGrowthResult CalculateCellGrowth(BioCell cell, Player player, SurroundingCells surroundingCells);
     }
 }

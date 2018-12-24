@@ -38,7 +38,7 @@ namespace CellTakeover
         {
             InitializeComponent();
             ViewModel = new CellTakeoverViewModel();
-            var players = new List<Player>();
+            var players = new List<IPlayer>();
             players.Add(new Player("Player 1", Colors.Blue, 1, "A", _cellGrowthCalculator, _surroundingCellCalculator));
             players.Add(new Player("Player 2", Colors.Red, 2, "B",_cellGrowthCalculator, _surroundingCellCalculator));
             players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "C", _cellGrowthCalculator, _surroundingCellCalculator));
@@ -73,8 +73,36 @@ namespace CellTakeover
                 });
             }
 
-            var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
 
+            //var numberOfPlayers = ViewModel.Players.Count;
+            //var playerNumberToArrayLocationDictionary = new Dictionary<int, int>();
+            //switch (numberOfPlayers)
+            //{
+            //    case 1:
+            //        //--any random cell
+            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
+            //        break;
+            //    case 2:
+            //        //--player 1 gets a random spot on the top half of the grid and player 2 gets the symmetrical location
+            //        int distanceIn = _random.Next(0, GameSettings.NumberOfColumnsAndRows / 2 - 1);
+            //        playerNumberToArrayLocationDictionary.Add(0, distanceIn);
+            //        playerNumberToArrayLocationDictionary.Add(0, GameSettings.NumberOfCells - distanceIn);
+            //        break;
+            //    case 3:
+            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
+            //        break;
+            //    case 1:
+            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
+            //        break;
+            //    case 1:
+            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
+            //        break;
+            //    case 1:
+            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
+            //        break;
+            //}
+            var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
+            int startingDistanceFromEdge = _random.Next(0, GameSettings.NumberOfColumnsAndRows - 1);
             for(int i = 0; i < ViewModel.Players.Count; i++)
             {
                 var player = ViewModel.Players[i];
@@ -91,7 +119,7 @@ namespace CellTakeover
 
         private void Grow_OnClick(object sender, RoutedEventArgs e)
         {
-            var newCells = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells);
+            var newCells = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
             foreach (var newCell in newCells)
             {
                 //--its possible for two different cells to split to the same cell. For now, the first cell wins
