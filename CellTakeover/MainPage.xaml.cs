@@ -44,7 +44,7 @@ namespace CellTakeover
             var players = new List<IPlayer>();
             players.Add(new Player("Player 1", Colors.Blue, 1, "☣", _cellGrowthCalculator, _surroundingCellCalculator));
             players.Add(new Player("Player 2", Colors.Red, 2, "☢", _cellGrowthCalculator, _surroundingCellCalculator));
-            players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
+            //players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
             ViewModel.Players = players;
 
             _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();

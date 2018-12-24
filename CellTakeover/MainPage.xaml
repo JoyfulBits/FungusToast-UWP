@@ -98,9 +98,15 @@
                             <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}"
                                         Content="{x:Bind LeftGrowthChance, Mode=OneWay}">
                             </Button>
-                            <Rectangle Grid.Row="1" Grid.Column="1"
-                                       Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
-                                       Stretch="Fill"></Rectangle>
+                            <Grid Grid.Row="1" Grid.Column="1">
+                                <Rectangle 
+                                           Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                           Stretch="Fill"></Rectangle>
+                                <TextBlock Text="{x:Bind CharacterSymbol}" 
+                                           TextAlignment="Center" VerticalAlignment="Center"
+                                           Style="{StaticResource TitleTextBlockStyle}"></TextBlock>
+                            </Grid>
+                            
 
                             <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
                                         Content="{x:Bind RightGrowthChance, Mode=OneWay}">
