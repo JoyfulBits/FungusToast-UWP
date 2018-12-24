@@ -28,6 +28,7 @@ namespace Logic
                 {
                     cell.Dead = true;
                     newDeadCells.Add(cell);
+                    cell.Player.DeadCells++;
                 }
             }
 

@@ -16,6 +16,7 @@ namespace Logic
         private string _characterSymbol;
         private GrowthScorecard _growthScorecard = new GrowthScorecard();
         private int _totalCells;
+        private int _deadCells;
 
         public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, 
             ICellGrowthCalculator cellGrowthCalculator, 
@@ -110,6 +111,17 @@ namespace Logic
             {
                 if (value == _totalCells) return;
                 _totalCells = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int DeadCells
+        {
+            get => _deadCells;
+            set
+            {
+                if (value == _deadCells) return;
+                _deadCells = value;
                 OnPropertyChanged();
             }
         }

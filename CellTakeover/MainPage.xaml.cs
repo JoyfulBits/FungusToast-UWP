@@ -35,6 +35,7 @@ namespace CellTakeover
         private readonly ICellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
         private readonly ISurroundingCellCalculator _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
         private readonly GenerationAdvancer _generationAdvancer = new GenerationAdvancer();
+        private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary;
 
         public MainPage()
         {
@@ -45,6 +46,12 @@ namespace CellTakeover
             players.Add(new Player("Player 2", Colors.Red, 2, "B",_cellGrowthCalculator, _surroundingCellCalculator));
             players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "C", _cellGrowthCalculator, _surroundingCellCalculator));
             ViewModel.Players = players;
+
+            _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
+            foreach (var player in players)
+            {
+                _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
+            }
         }
 
 
@@ -109,7 +116,7 @@ namespace CellTakeover
                 if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
                 {
                     var element = MainGrid.Children[newCell.CellIndex] as Button;
-                    element.Background = new SolidColorBrush(newCell.CellColor);
+                    element.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];//new SolidColorBrush(newCell.CellColor);
                     element.Content = newCell.Player.CharacterSymbol;
                     ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
                 }

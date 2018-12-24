@@ -118,6 +118,10 @@
                             <TextBlock Text="Total Cells:"></TextBlock>
                             <TextBlock Text="{x:Bind TotalCells, Mode=OneWay}" Margin="5 0 0 0" ></TextBlock>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="☠ Dead Cells:"></TextBlock>
+                            <TextBlock Text="{x:Bind DeadCells, Mode=OneWay}" Margin="5 0 0 0" ></TextBlock>
+                        </StackPanel>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
