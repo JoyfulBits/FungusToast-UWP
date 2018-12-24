@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="CellTakeoverViewModel.cs" />
     <Compile Include="ColorToBrushConverter.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

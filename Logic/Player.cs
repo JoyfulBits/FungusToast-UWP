@@ -10,19 +10,23 @@ namespace Logic
     public class Player : IPlayer, INotifyPropertyChanged
     {
         private readonly ICellGrowthCalculator _cellGrowthCalculator;
+        private readonly ISurroundingCellCalculator _surroundingCellCalculator;
         private Color _color;
         private int _playerNumber;
         private string _characterSymbol;
         private GrowthScorecard _growthScorecard = new GrowthScorecard();
         private int _totalCells;
 
-        public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, ICellGrowthCalculator cellGrowthCalculator)
+        public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, 
+            ICellGrowthCalculator cellGrowthCalculator, 
+            ISurroundingCellCalculator surroundingCellCalculator)
         {
             Name = name;
             Color = playerCellColor;
             PlayerNumber = playerNumber;
             CharacterSymbol = characterSymbol;
             _cellGrowthCalculator = cellGrowthCalculator;
+            _surroundingCellCalculator = surroundingCellCalculator;
         }
 
         private string _name;
@@ -113,7 +117,7 @@ namespace Logic
         public BioCell MakeCell(int cellIndex)
         {
             TotalCells++;
-            return new BioCell(this, cellIndex, Color);
+            return new BioCell(this, cellIndex, Color, _surroundingCellCalculator);
         }
 
         public List<BioCell> CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)

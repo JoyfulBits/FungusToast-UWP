@@ -30,7 +30,8 @@ namespace CellTakeover
 
 
         //--TODO introduce dependency injection framework
-        private readonly CellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
+        private readonly ICellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
+        private readonly ISurroundingCellCalculator _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
         private readonly GenerationAdvancer _generationAdvancer = new GenerationAdvancer();
 
         public MainPage()
@@ -38,9 +39,9 @@ namespace CellTakeover
             InitializeComponent();
             ViewModel = new CellTakeoverViewModel();
             var players = new List<Player>();
-            players.Add(new Player("Player 1", Colors.Blue, 1, "A", _cellGrowthCalculator));
-            players.Add(new Player("Player 2", Colors.Red, 2, "B",_cellGrowthCalculator));
-            players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "C", _cellGrowthCalculator));
+            players.Add(new Player("Player 1", Colors.Blue, 1, "A", _cellGrowthCalculator, _surroundingCellCalculator));
+            players.Add(new Player("Player 2", Colors.Red, 2, "B",_cellGrowthCalculator, _surroundingCellCalculator));
+            players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "C", _cellGrowthCalculator, _surroundingCellCalculator));
             ViewModel.Players = players;
         }
 

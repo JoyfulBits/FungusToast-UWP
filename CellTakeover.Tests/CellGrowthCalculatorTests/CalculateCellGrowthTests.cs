@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Shouldly;
 
 namespace Logic.Tests.CellGrowthCalculatorTests
@@ -17,12 +18,13 @@ namespace Logic.Tests.CellGrowthCalculatorTests
         {
             //--arrange
             var cellGrowthCalculator = new CellGrowthCalculator();
+            var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
             var growthScorecard = new GrowthScorecard();
             growthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] = 100;
             growthScorecard.GrowthChanceDictionary[RelativePosition.Top] = 100;
-            var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator);
+            var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
             player.GrowthScorecard = growthScorecard;
-            var bioCell = new BioCell(player, 1, new Color());
+            var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
 
             
 

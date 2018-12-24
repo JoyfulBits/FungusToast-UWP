@@ -15,12 +15,15 @@ namespace Logic.Tests.PlayerTests
     {
         private Player _player;
         private Mock<ICellGrowthCalculator> _cellGrowthCalculatorMock;
+        private Mock<ISurroundingCellCalculator> _surroundingCellCalculatorMock;
 
         [TestMethod]
         public void It_Checks_For_Cell_Growth_Into_Empty_Cells()
         {
             //--arrange
             _cellGrowthCalculatorMock = new Mock<ICellGrowthCalculator>();
+            _surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>();
+
             var expectedCells = new List<BioCell>();
             BioCell capturedBioCell = null;
             Player capturedPlayer = null;
@@ -34,9 +37,11 @@ namespace Logic.Tests.PlayerTests
                     capturedPlayer = x;
                     capturedSurroundingCells = y;
                 });
-            _player = new Player("player 1", new Color(), 1, "A", _cellGrowthCalculatorMock.Object);
+            _player = new Player("player 1", new Color(), 1, "A", 
+                _cellGrowthCalculatorMock.Object, 
+                _surroundingCellCalculatorMock.Object);
 
-            var cell = new BioCell(_player, 0, _player.Color);
+            var cell = new BioCell(_player, 0, _player.Color, _surroundingCellCalculatorMock.Object);
             var surroundingCells = new SurroundingCells
             {
                 TopLeftCell = GridCell.MakeEmptyCell(0, RelativePosition.TopLeft),

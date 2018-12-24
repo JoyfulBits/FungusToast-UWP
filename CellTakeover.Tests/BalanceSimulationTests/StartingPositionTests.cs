@@ -10,6 +10,8 @@ namespace Logic.Tests.BalanceSimulationTests
     [TestClass]
     public class StartingPositionTests
     {
+        private GenerationAdvancer _generationAdvancer = new GenerationAdvancer();
+
         [TestMethod]
         public void Measure_Number_Of_Turns_To_Fill_Grid_When_Starting_In_The_Corner()
         {

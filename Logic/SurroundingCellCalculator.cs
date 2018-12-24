@@ -4,6 +4,13 @@ namespace Logic
 {
     public class SurroundingCellCalculator : ISurroundingCellCalculator
     {
+        private readonly int _numberOfRowsAndColumns;
+
+        public SurroundingCellCalculator(int numberOfRowsAndColumns)
+        {
+            _numberOfRowsAndColumns = numberOfRowsAndColumns;
+        }
+
         public SurroundingCells GetSurroundingCells(BioCell bioCell, Dictionary<int, BioCell> currentLiveCells)
         {
             var surroundingCells = new SurroundingCells();
@@ -110,7 +117,7 @@ namespace Logic
 
         private GridCell GetBottomLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
         {
-            var bottomLeftCellIndex = cellIndex + GameSettings.NumberOfColumnsAndRows - 1;
+            var bottomLeftCellIndex = cellIndex + _numberOfRowsAndColumns - 1;
             if (currentLiveCells.ContainsKey(bottomLeftCellIndex))
             {
                 return currentLiveCells[bottomLeftCellIndex];
@@ -132,7 +139,7 @@ namespace Logic
 
         private GridCell GetTopLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
         {
-            var topLeftCellIndex = cellIndex - GameSettings.NumberOfColumnsAndRows - 1;
+            var topLeftCellIndex = cellIndex - _numberOfRowsAndColumns - 1;
             if (currentLiveCells.ContainsKey(topLeftCellIndex))
             {
                 return currentLiveCells[topLeftCellIndex];
@@ -143,7 +150,7 @@ namespace Logic
 
         private GridCell GetTopCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
         {
-            var topCellIndex = cellIndex - GameSettings.NumberOfColumnsAndRows;
+            var topCellIndex = cellIndex - _numberOfRowsAndColumns;
             if (currentLiveCells.ContainsKey(topCellIndex))
             {
                 return currentLiveCells[topCellIndex];
@@ -154,7 +161,7 @@ namespace Logic
 
         private GridCell GetTopRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
         {
-            var topRightCellIndex = cellIndex - GameSettings.NumberOfColumnsAndRows + 1;
+            var topRightCellIndex = cellIndex - _numberOfRowsAndColumns + 1;
             if (currentLiveCells.ContainsKey(topRightCellIndex))
             {
                 return currentLiveCells[topRightCellIndex];
@@ -176,7 +183,7 @@ namespace Logic
 
         private GridCell GetBottomRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
         {
-            var bottomRightCellIndex = cellIndex + GameSettings.NumberOfColumnsAndRows + 1;
+            var bottomRightCellIndex = cellIndex + _numberOfRowsAndColumns + 1;
             if (currentLiveCells.ContainsKey(bottomRightCellIndex))
             {
                 return currentLiveCells[bottomRightCellIndex];
@@ -187,7 +194,7 @@ namespace Logic
 
         private GridCell GetBottomCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
         {
-            var bottomCellIndex = cellIndex + GameSettings.NumberOfColumnsAndRows;
+            var bottomCellIndex = cellIndex + _numberOfRowsAndColumns;
             if (currentLiveCells.ContainsKey(bottomCellIndex))
             {
                 return currentLiveCells[bottomCellIndex];
@@ -198,23 +205,23 @@ namespace Logic
 
         private bool OnTopRow(int cellIndex)
         {
-            return cellIndex < GameSettings.NumberOfColumnsAndRows;
+            return cellIndex < _numberOfRowsAndColumns;
         }
 
         private bool OnBottomRow(int cellIndex)
         {
-            return cellIndex >= GameSettings.NumberOfCells - GameSettings.NumberOfColumnsAndRows;
+            return cellIndex >= (_numberOfRowsAndColumns * _numberOfRowsAndColumns) - _numberOfRowsAndColumns;
         }
 
         private bool OnRightColumn(int cellIndex)
         {
-            return cellIndex % GameSettings.NumberOfColumnsAndRows == (GameSettings.NumberOfColumnsAndRows - 1);
+            return cellIndex % _numberOfRowsAndColumns == (_numberOfRowsAndColumns - 1);
         }
 
 
         private bool OnLeftColumn(int cellIndex)
         {
-            return cellIndex % GameSettings.NumberOfColumnsAndRows == 0;
+            return cellIndex % _numberOfRowsAndColumns == 0;
         }
     }
 }

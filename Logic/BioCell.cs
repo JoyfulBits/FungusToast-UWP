@@ -10,20 +10,20 @@ namespace Logic
 
         public Color CellColor { get; }
         //--allowing for good old fashioned property injection
-        public ISurroundingCellCalculator SurroundingCellCalculator { get; set; }
+        private ISurroundingCellCalculator _surroundingCellCalculator;
 
-        public BioCell(IPlayer player, int cellIndex, Color cellColor) : base(cellIndex, false, false, true)
+        public BioCell(IPlayer player, int cellIndex, Color cellColor, ISurroundingCellCalculator surroundingCellCalculator) : base(cellIndex, false, false, true)
         {
             Player = player;
             CellColor = cellColor;
             OutOfGrid = false;
             LiveCell = true;
-            SurroundingCellCalculator = new SurroundingCellCalculator();
+            _surroundingCellCalculator = surroundingCellCalculator;
         }
 
         public List<BioCell> RunCellGrowth(Dictionary<int, BioCell> currentLiveCells)
         {
-            SurroundingCells surroundingCells = SurroundingCellCalculator.GetSurroundingCells(this, currentLiveCells);
+            SurroundingCells surroundingCells = _surroundingCellCalculator.GetSurroundingCells(this, currentLiveCells);
 
             return Player.CalculateCellGrowth(this, surroundingCells);
         }

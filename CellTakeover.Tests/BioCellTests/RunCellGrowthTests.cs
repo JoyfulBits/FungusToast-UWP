@@ -15,12 +15,13 @@ namespace Logic.Tests.BioCellTests
         public void It_Calculates_The_New_Cells_From_The_Surrounding_Cells_And_Player()
         {
             //--arrange
+            var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>();
+
             var mockPlayer = new Mock<IPlayer>();
-            var bioCell = new BioCell(mockPlayer.Object, 1, Colors.Brown);
+            var bioCell = new BioCell(mockPlayer.Object, 1, Colors.Brown, surroundingCellCalculatorMock.Object);
             var liveCells = new Dictionary<int, BioCell>();
 
             var expectedSurroundingCells = new SurroundingCells();
-            var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>();
             BioCell actualBioCellInSurroundingCellCalculation = null;
             Dictionary<int, BioCell> actualLiveCellsInSurroundingCellCalculation = null;
             surroundingCellCalculatorMock
@@ -31,7 +32,6 @@ namespace Logic.Tests.BioCellTests
                     actualBioCellInSurroundingCellCalculation = i;
                     actualLiveCellsInSurroundingCellCalculation = o;
                 });
-            bioCell.SurroundingCellCalculator = surroundingCellCalculatorMock.Object;
 
             var expectedNewCells = new List<BioCell>();
             BioCell capturedBioCell = null;
