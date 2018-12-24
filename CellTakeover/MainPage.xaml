@@ -50,6 +50,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{x:Bind Name}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                             <Rectangle Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Margin="5" Width="10" Height="10"></Rectangle>
+                            <TextBlock Text="{x:Bind CharacterSymbol}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                         </StackPanel>
 
                         <TextBlock Text="Growth Chance Percentages Each Generation"></TextBlock>
