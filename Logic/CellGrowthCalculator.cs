@@ -21,7 +21,17 @@ namespace Logic
                 }
             }
 
-            return new CellGrowthResult(newCells, null);
+            var newDeadCells = new List<BioCell>();
+            if (surroundingCells.SurroundedByLiveCells)
+            {
+                if (_random.Next(0, 99) < player.GrowthScorecard.DeathChanceForStarvedCells)
+                {
+                    cell.Dead = true;
+                    newDeadCells.Add(cell);
+                }
+            }
+
+            return new CellGrowthResult(newCells, newDeadCells);
         }
     }
 }

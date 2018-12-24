@@ -11,7 +11,10 @@ namespace Logic
             _numberOfRowsAndColumns = numberOfRowsAndColumns;
         }
 
-        public SurroundingCells GetSurroundingCells(BioCell bioCell, Dictionary<int, BioCell> currentLiveCells)
+        public SurroundingCells GetSurroundingCells(
+            BioCell bioCell, 
+            Dictionary<int, BioCell> currentLiveCells, 
+            Dictionary<int, BioCell> currentDeadCells)
         {
             var surroundingCells = new SurroundingCells();
             var checkLeft = true;
@@ -21,27 +24,27 @@ namespace Logic
             checkLeft = GetOutOfGridCells(bioCell.CellIndex, surroundingCells, 
                 ref checkLeft, ref checkRight, ref checkTop, ref checkBottom);
 
-            GetInGridCells(bioCell.CellIndex, surroundingCells, currentLiveCells, checkLeft, checkBottom, checkTop, checkRight);
+            GetInGridCells(bioCell.CellIndex, surroundingCells, currentLiveCells, currentDeadCells, checkLeft, checkBottom, checkTop, checkRight);
 
             return surroundingCells;
         }
 
         private void GetInGridCells(int cellIndex, SurroundingCells surroundingCells,
-            Dictionary<int, BioCell> currentLiveCells, bool checkLeft,
+            Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells, bool checkLeft,
             bool checkBottom, bool checkTop, bool checkRight)
         {
             if (checkLeft)
             {
                 if (checkBottom)
                 {
-                    surroundingCells.BottomLeftCell = GetBottomLeftCell(cellIndex, currentLiveCells);
+                    surroundingCells.BottomLeftCell = GetBottomLeftCell(cellIndex, currentLiveCells, currentDeadCells);
                 }
 
-                surroundingCells.LeftCell = GetLeftCell(cellIndex, currentLiveCells);
+                surroundingCells.LeftCell = GetLeftCell(cellIndex, currentLiveCells, currentDeadCells);
 
                 if (checkTop)
                 {
-                    surroundingCells.TopLeftCell = GetTopLeftCell(cellIndex, currentLiveCells);
+                    surroundingCells.TopLeftCell = GetTopLeftCell(cellIndex, currentLiveCells, currentDeadCells);
                 }
             }
 
@@ -49,11 +52,11 @@ namespace Logic
             {
                 //--skip top left cell as it's already been set or out of grid
 
-                surroundingCells.TopCell = GetTopCell(cellIndex, currentLiveCells);
+                surroundingCells.TopCell = GetTopCell(cellIndex, currentLiveCells, currentDeadCells);
 
                 if (checkRight)
                 {
-                    surroundingCells.TopRightCell = GetTopRightCell(cellIndex, currentLiveCells);
+                    surroundingCells.TopRightCell = GetTopRightCell(cellIndex, currentLiveCells, currentDeadCells);
                 }
             }
 
@@ -61,11 +64,11 @@ namespace Logic
             {
                 //--skip top right cell as it's already been set or out of grid
 
-                surroundingCells.RightCell = GetRightCell(cellIndex, currentLiveCells);
+                surroundingCells.RightCell = GetRightCell(cellIndex, currentLiveCells, currentDeadCells);
 
                 if (checkBottom)
                 {
-                    surroundingCells.BottomRightCell = GetBottomRightCell(cellIndex, currentLiveCells);
+                    surroundingCells.BottomRightCell = GetBottomRightCell(cellIndex, currentLiveCells, currentDeadCells);
                 }
             }
 
@@ -73,7 +76,7 @@ namespace Logic
             {
                 //--skip bottom right cell as it's already been set or out of grid
 
-                surroundingCells.BottomCell = GetBottomCell(cellIndex, currentLiveCells);
+                surroundingCells.BottomCell = GetBottomCell(cellIndex, currentLiveCells, currentDeadCells);
 
                 //--skip bottom left as it's already been set or out of grid
             }
@@ -115,7 +118,7 @@ namespace Logic
             return checkLeft;
         }
 
-        private GridCell GetBottomLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetBottomLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var bottomLeftCellIndex = cellIndex + _numberOfRowsAndColumns - 1;
             if (currentLiveCells.ContainsKey(bottomLeftCellIndex))
@@ -123,10 +126,15 @@ namespace Logic
                 return currentLiveCells[bottomLeftCellIndex];
             }
 
+            if (currentDeadCells.ContainsKey(bottomLeftCellIndex))
+            {
+                return currentDeadCells[bottomLeftCellIndex];
+            }
+
             return GridCell.MakeEmptyCell(bottomLeftCellIndex, RelativePosition.BottomLeft);
         }
 
-        private GridCell GetLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var leftCellIndex = cellIndex - 1;
             if (currentLiveCells.ContainsKey(leftCellIndex))
@@ -134,10 +142,15 @@ namespace Logic
                 return currentLiveCells[leftCellIndex];
             }
 
+            if (currentDeadCells.ContainsKey(leftCellIndex))
+            {
+                return currentDeadCells[leftCellIndex];
+            }
+
             return GridCell.MakeEmptyCell(leftCellIndex, RelativePosition.Left);
         }
 
-        private GridCell GetTopLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetTopLeftCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var topLeftCellIndex = cellIndex - _numberOfRowsAndColumns - 1;
             if (currentLiveCells.ContainsKey(topLeftCellIndex))
@@ -145,10 +158,15 @@ namespace Logic
                 return currentLiveCells[topLeftCellIndex];
             }
 
+            if (currentDeadCells.ContainsKey(topLeftCellIndex))
+            {
+                return currentDeadCells[topLeftCellIndex];
+            }
+
             return GridCell.MakeEmptyCell(topLeftCellIndex, RelativePosition.TopLeft);
         }
 
-        private GridCell GetTopCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetTopCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var topCellIndex = cellIndex - _numberOfRowsAndColumns;
             if (currentLiveCells.ContainsKey(topCellIndex))
@@ -156,10 +174,15 @@ namespace Logic
                 return currentLiveCells[topCellIndex];
             }
 
+            if (currentDeadCells.ContainsKey(topCellIndex))
+            {
+                return currentDeadCells[topCellIndex];
+            }
+
             return GridCell.MakeEmptyCell(topCellIndex, RelativePosition.Top);
         }
 
-        private GridCell GetTopRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetTopRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var topRightCellIndex = cellIndex - _numberOfRowsAndColumns + 1;
             if (currentLiveCells.ContainsKey(topRightCellIndex))
@@ -167,10 +190,15 @@ namespace Logic
                 return currentLiveCells[topRightCellIndex];
             }
 
+            if (currentDeadCells.ContainsKey(topRightCellIndex))
+            {
+                return currentDeadCells[topRightCellIndex];
+            }
+
             return GridCell.MakeEmptyCell(topRightCellIndex, RelativePosition.TopRight);
         }
 
-        private GridCell GetRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var rightCellIndex = cellIndex + 1;
             if (currentLiveCells.ContainsKey(rightCellIndex))
@@ -178,10 +206,15 @@ namespace Logic
                 return currentLiveCells[rightCellIndex];
             }
 
+            if (currentDeadCells.ContainsKey(rightCellIndex))
+            {
+                return currentDeadCells[rightCellIndex];
+            }
+
             return GridCell.MakeEmptyCell(rightCellIndex, RelativePosition.Right);
         }
 
-        private GridCell GetBottomRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetBottomRightCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var bottomRightCellIndex = cellIndex + _numberOfRowsAndColumns + 1;
             if (currentLiveCells.ContainsKey(bottomRightCellIndex))
@@ -189,15 +222,25 @@ namespace Logic
                 return currentLiveCells[bottomRightCellIndex];
             }
 
+            if (currentDeadCells.ContainsKey(bottomRightCellIndex))
+            {
+                return currentDeadCells[bottomRightCellIndex];
+            }
+
             return GridCell.MakeEmptyCell(bottomRightCellIndex, RelativePosition.BottomRight);
         }
 
-        private GridCell GetBottomCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells)
+        private GridCell GetBottomCell(int cellIndex, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var bottomCellIndex = cellIndex + _numberOfRowsAndColumns;
             if (currentLiveCells.ContainsKey(bottomCellIndex))
             {
                 return currentLiveCells[bottomCellIndex];
+            }
+
+            if (currentDeadCells.ContainsKey(bottomCellIndex))
+            {
+                return currentDeadCells[bottomCellIndex];
             }
 
             return GridCell.MakeEmptyCell(bottomCellIndex, RelativePosition.Bottom);

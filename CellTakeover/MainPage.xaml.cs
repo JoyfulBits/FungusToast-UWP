@@ -26,6 +26,8 @@ namespace CellTakeover
         {
             TintColor = Windows.UI.Colors.Brown
         };
+
+        private char _deadCellSymbol = '☠';
         private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
 
 
@@ -73,34 +75,6 @@ namespace CellTakeover
                 });
             }
 
-
-            //var numberOfPlayers = ViewModel.Players.Count;
-            //var playerNumberToArrayLocationDictionary = new Dictionary<int, int>();
-            //switch (numberOfPlayers)
-            //{
-            //    case 1:
-            //        //--any random cell
-            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
-            //        break;
-            //    case 2:
-            //        //--player 1 gets a random spot on the top half of the grid and player 2 gets the symmetrical location
-            //        int distanceIn = _random.Next(0, GameSettings.NumberOfColumnsAndRows / 2 - 1);
-            //        playerNumberToArrayLocationDictionary.Add(0, distanceIn);
-            //        playerNumberToArrayLocationDictionary.Add(0, GameSettings.NumberOfCells - distanceIn);
-            //        break;
-            //    case 3:
-            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
-            //        break;
-            //    case 1:
-            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
-            //        break;
-            //    case 1:
-            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
-            //        break;
-            //    case 1:
-            //        playerNumberToArrayLocationDictionary.Add(0, _random.Next(0, GameSettings.NumberOfCells - 1));
-            //        break;
-            //}
             var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
             int startingDistanceFromEdge = _random.Next(0, GameSettings.NumberOfColumnsAndRows - 1);
             for(int i = 0; i < ViewModel.Players.Count; i++)
@@ -119,8 +93,17 @@ namespace CellTakeover
 
         private void Grow_OnClick(object sender, RoutedEventArgs e)
         {
-            var newCells = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
-            foreach (var newCell in newCells)
+            var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
+            AddNewCells(nextGenerationResult);
+
+            KillCells(nextGenerationResult);
+
+            ViewModel.GenerationNumber++;
+        }
+
+        private void AddNewCells(NextGenerationResults nextGenerationResult)
+        {
+            foreach (var newCell in nextGenerationResult.NewLiveCells)
             {
                 //--its possible for two different cells to split to the same cell. For now, the first cell wins
                 if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
@@ -131,8 +114,25 @@ namespace CellTakeover
                     ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
                 }
             }
+        }
 
-            ViewModel.GenerationNumber++;
+        private void KillCells(NextGenerationResults nextGenerationResult)
+        {
+            foreach (var newDeadCell in nextGenerationResult.NewDeadCells)
+            {
+                if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
+                {
+                    var element = MainGrid.Children[newDeadCell.CellIndex] as Button;
+                    element.Background = _deadCellBrush;
+                    element.Content = _deadCellSymbol;
+                    ViewModel.CurrentDeadCells.Add(newDeadCell.CellIndex, newDeadCell);
+                }
+
+                if (ViewModel.CurrentLiveCells.ContainsKey(newDeadCell.CellIndex))
+                {
+                    ViewModel.CurrentLiveCells.Remove(newDeadCell.CellIndex);
+                }
+            }
         }
     }
 }

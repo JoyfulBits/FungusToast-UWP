@@ -13,20 +13,19 @@ namespace Logic.Tests.CellGrowthCalculatorTests
     [TestClass]
     public class CalculateCellGrowthTests
     {
+        private readonly CellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
+        private readonly ISurroundingCellCalculator _surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
+
         [TestMethod]
         public void It_Gets_New_Live_Cells_Calculated_From_Empty_Ones_Using_The_Players_Growth_Scorecard()
         {
             //--arrange
-            var cellGrowthCalculator = new CellGrowthCalculator();
-            var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
             var growthScorecard = new GrowthScorecard();
             growthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] = 100;
             growthScorecard.GrowthChanceDictionary[RelativePosition.Top] = 100;
-            var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
+            var player = new Player("name", new Color(), 1, "A", _cellGrowthCalculator, _surroundingCellCalculatorMock);
             player.GrowthScorecard = growthScorecard;
-            var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
-
-            
+            var bioCell = new BioCell(player, 1, new Color(), _surroundingCellCalculatorMock);
 
             var emptyIndex1 = 1;
             var emptyIndex2 = 2;
@@ -45,12 +44,55 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             };
 
             //--act
-            var actualResult = cellGrowthCalculator.CalculateCellGrowth(bioCell, player, surroundingCells);
+            var actualResult = _cellGrowthCalculator.CalculateCellGrowth(bioCell, player, surroundingCells);
 
             //--assert
             actualResult.NewLiveCells.Count.ShouldBe(2);
             actualResult.NewLiveCells.ShouldContain(x => x.CellIndex == emptyIndex1);
             actualResult.NewLiveCells.ShouldContain(x => x.CellIndex == emptyIndex2);
+            actualResult.NewDeadCells.ShouldBeEmpty();
+        }
+
+        [TestMethod]
+        public void The_Cell_May_Die_If_It_Is_Surrounded()
+        {
+            //--arrange
+            var cellGrowthCalculator = new CellGrowthCalculator();
+            var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
+
+            var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
+            var growthScorecard = new GrowthScorecard {DeathChanceForStarvedCells = 100};
+            player.GrowthScorecard = growthScorecard;
+            var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
+
+            var surroundingCells = CreateSurroundingCellsWithAllBioCells(player);
+
+            //--act
+            var actualResult = cellGrowthCalculator.CalculateCellGrowth(bioCell, player, surroundingCells);
+
+            //--assert
+            actualResult.NewDeadCells.ShouldContain(bioCell);
+        }
+
+        private SurroundingCells CreateSurroundingCellsWithAllBioCells(Player player)
+        {
+            var surroundingCells = new SurroundingCells
+            {
+                TopLeftCell = CreateBioCell(player, 2, _surroundingCellCalculatorMock),
+                TopCell = CreateBioCell(player, 3, _surroundingCellCalculatorMock),
+                TopRightCell = CreateBioCell(player, 4, _surroundingCellCalculatorMock),
+                RightCell = CreateBioCell(player, 5, _surroundingCellCalculatorMock),
+                BottomRightCell = CreateBioCell(player, 6, _surroundingCellCalculatorMock),
+                BottomCell = CreateBioCell(player, 7, _surroundingCellCalculatorMock),
+                BottomLeftCell = CreateBioCell(player, 8, _surroundingCellCalculatorMock),
+                LeftCell = CreateBioCell(player, 9, _surroundingCellCalculatorMock)
+            };
+            return surroundingCells;
+        }
+
+        private static BioCell CreateBioCell(Player player, int cellIndex, ISurroundingCellCalculator surroundingCellCalculatorMock)
+        {
+            return new BioCell(player, cellIndex, player.Color, surroundingCellCalculatorMock);
         }
     }
 }

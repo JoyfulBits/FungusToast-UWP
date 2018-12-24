@@ -18,6 +18,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         private int _numberOfRowsAndColumns = 50;
         private int _numberOfCells;
 
+        private Dictionary<int, BioCell> _dummyDictionary = new Dictionary<int, BioCell>();
+
         [TestInitialize]
         public void SetUp()
         {
@@ -31,10 +33,9 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         {
             //--arrange
             var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown, _surroundingCellCalculator);
-            var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, _dummyDictionary, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.BottomLeftCell.OutOfGrid.ShouldBe(true);
@@ -50,7 +51,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.TopLeftCell.OutOfGrid.ShouldBe(true);
@@ -66,7 +67,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.TopRightCell.OutOfGrid.ShouldBe(true);
@@ -82,7 +83,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.BottomRightCell.OutOfGrid.ShouldBe(true);
@@ -102,7 +103,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(currentBioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(currentBioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.LeftCell.ShouldBeSameAs(expectedCell);
@@ -123,7 +124,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.TopLeftCell.ShouldBeSameAs(expectedCell);
@@ -144,7 +145,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.TopCell.ShouldBeSameAs(expectedCell);
@@ -165,7 +166,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.TopRightCell.ShouldBeSameAs(expectedCell);
@@ -184,7 +185,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.RightCell.ShouldBeSameAs(expectedCell);
@@ -205,7 +206,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.BottomRightCell.ShouldBeSameAs(expectedCell);
@@ -226,7 +227,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, _dummyDictionary);
 
             //--assert
             actualSurroundingCells.BottomCell.ShouldBeSameAs(expectedCell);
@@ -247,7 +248,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             };
 
             //--act
-            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells);
+            var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, liveCells, new Dictionary<int, BioCell>());
 
             //--assert
             actualSurroundingCells.BottomLeftCell.ShouldBeSameAs(expectedCell);
@@ -266,42 +267,42 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         {
             if (leftCellShouldBeEmpty)
             {
-                surroundingCells.LeftCell.LiveCell.ShouldBeFalse();
+                surroundingCells.LeftCell.OrganicCell.ShouldBeFalse();
             }
 
             if (topLeftCellShouldBeEmpty)
             {
-                surroundingCells.TopLeftCell.LiveCell.ShouldBeFalse();
+                surroundingCells.TopLeftCell.OrganicCell.ShouldBeFalse();
             }
 
             if (topCellShouldBeEmpty)
             {
-                surroundingCells.TopCell.LiveCell.ShouldBeFalse();
+                surroundingCells.TopCell.OrganicCell.ShouldBeFalse();
             }
 
             if (topRightCellShouldBeEmpty)
             {
-                surroundingCells.TopRightCell.LiveCell.ShouldBeFalse();
+                surroundingCells.TopRightCell.OrganicCell.ShouldBeFalse();
             }
 
             if (rightCellShouldBeEmpty)
             {
-                surroundingCells.RightCell.LiveCell.ShouldBeFalse();
+                surroundingCells.RightCell.OrganicCell.ShouldBeFalse();
             }
 
             if (bottomRightCellShouldBeEmpty)
             {
-                surroundingCells.BottomRightCell.LiveCell.ShouldBeFalse();
+                surroundingCells.BottomRightCell.OrganicCell.ShouldBeFalse();
             }
 
             if (bottomCellShouldBeEmpty)
             {
-                surroundingCells.BottomCell.LiveCell.ShouldBeFalse();
+                surroundingCells.BottomCell.OrganicCell.ShouldBeFalse();
             }
 
             if (bottomLeftCellShouldBeEmpty)
             {
-                surroundingCells.BottomLeftCell.LiveCell.ShouldBeFalse();
+                surroundingCells.BottomLeftCell.OrganicCell.ShouldBeFalse();
             }
         }
     }

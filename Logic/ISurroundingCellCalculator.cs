@@ -4,6 +4,6 @@ namespace Logic
 {
     public interface ISurroundingCellCalculator
     {
-        SurroundingCells GetSurroundingCells(BioCell bioCell, Dictionary<int, BioCell> currentLiveCells);
+        SurroundingCells GetSurroundingCells(BioCell bioCell, Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells);
     }
 }

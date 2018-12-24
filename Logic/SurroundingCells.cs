@@ -56,5 +56,15 @@ namespace Logic
                 return emptyCells;
             }
         }
+
+        public bool SurroundedByLiveCells =>
+            TopLeftCell.OrganicCell && !TopLeftCell.Dead
+                                    && TopCell.OrganicCell && !TopCell.Dead
+                                    && TopRightCell.OrganicCell && !TopRightCell.Dead
+                                    && RightCell.OrganicCell && !RightCell.Dead
+                                    && BottomRightCell.OrganicCell && !BottomRightCell.Dead
+                                    && BottomCell.OrganicCell && !BottomCell.Dead
+                                    && BottomLeftCell.OrganicCell && !BottomLeftCell.Dead
+                                    && LeftCell.OrganicCell && !LeftCell.Dead;
     }
 }
