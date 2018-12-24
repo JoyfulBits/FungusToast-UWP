@@ -7,7 +7,7 @@ namespace Logic
     {
         private readonly Random _random = new Random();
 
-        public CellGrowthResult CalculateCellGrowth(BioCell cell, Player player, SurroundingCells surroundingCells)
+        public CellGrowthResult CalculateCellGrowth(BioCell cell, IPlayer player, SurroundingCells surroundingCells)
         {
             var emptyCells = surroundingCells.EmptyCells;
 

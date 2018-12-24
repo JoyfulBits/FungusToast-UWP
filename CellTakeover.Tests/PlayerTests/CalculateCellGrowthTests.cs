@@ -29,7 +29,7 @@ namespace Logic.Tests.PlayerTests
             Player capturedPlayer = null;
             SurroundingCells capturedSurroundingCells = null;
             _cellGrowthCalculatorMock.Setup(mock =>
-                    mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<Player>(), It.IsAny<SurroundingCells>()))
+                    mock.CalculateCellGrowth(It.IsAny<BioCell>(), It.IsAny<IPlayer>(), It.IsAny<SurroundingCells>()))
                 .Returns(expectedCellGrowthResult)
                 .Callback<BioCell, Player, SurroundingCells>((w, x, y) =>
                 {

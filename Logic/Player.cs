@@ -7,7 +7,7 @@ using Logic.Annotations;
 
 namespace Logic
 {
-    public class Player : IPlayer, INotifyPropertyChanged
+    public class Player : IPlayer
     {
         private readonly ICellGrowthCalculator _cellGrowthCalculator;
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;
