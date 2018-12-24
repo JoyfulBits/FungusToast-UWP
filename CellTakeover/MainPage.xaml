@@ -96,18 +96,18 @@
                                        HorizontalTextAlignment="Center"
                                        VerticalAlignment="Center"></TextBlock>
                             </Border>
-                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="0">
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="2" Grid.Column="0">
                                 <TextBlock Text="{x:Bind BottomLeftGrowthChance, Mode=OneWay}"
                                        HorizontalTextAlignment="Center"
                                        VerticalAlignment="Center"></TextBlock>
                             </Border>
-                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="0">
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind BottomGrowthChance, Mode=OneWay}"
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="2" Grid.Column="1">
+                            <TextBlock Text="{x:Bind BottomGrowthChance, Mode=OneWay}"
                                        HorizontalTextAlignment="Center"
                                        VerticalAlignment="Center"></TextBlock>
                             </Border>
-                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="0" Grid.Column="0">
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{x:Bind BottomRightGrowthChance, Mode=OneWay}"
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Row="2" Grid.Column="2">
+                            <TextBlock Text="{x:Bind BottomRightGrowthChance, Mode=OneWay}"
                                        HorizontalTextAlignment="Center"
                                        VerticalAlignment="Center"></TextBlock>
                             </Border>
