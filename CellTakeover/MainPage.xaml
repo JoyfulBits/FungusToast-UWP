@@ -15,9 +15,8 @@
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
     </UserControl.Resources>
 
-    <Grid Padding="20">
+    <Grid Padding="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="13*"></RowDefinition>
         </Grid.RowDefinitions>
@@ -26,26 +25,56 @@
             <ColumnDefinition Width="6*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <TextBlock 
-                       Style="{StaticResource TitleTextBlockStyle}" 
-                       Text="Cell Takeover" HorizontalAlignment="Center"></TextBlock>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock 
-                    Style="{StaticResource SubtitleTextBlockStyle}" 
-                    Text="Generation Number:" HorizontalAlignment="Center"></TextBlock>
-                <TextBlock 
-                    Margin="5 0 0 0"
-                    Style="{StaticResource SubtitleTextBlockStyle}" 
-                    Text="{x:Bind ViewModel.GenerationNumber, Mode=OneWay}"></TextBlock>
-            </StackPanel>
-
-        </StackPanel>
-
         <Button Name="GrowButton" Grid.Row="0" Grid.Column="0" Click="Grow_OnClick" 
                 ToolTipService.ToolTip="Trigger the next generation of cell growth" Content="Grow!" 
                 ToolTipService.Placement="Right"
                 FontSize="40" HorizontalAlignment="Center"></Button>
+
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource HeaderTextBlockStyle}" 
+                Text="Cell Takeover" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" 
+                        Style="{StaticResource SubtitleTextBlockStyle}" 
+                        Text="Generation Number:"></TextBlock>
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                        Style="{StaticResource SubtitleTextBlockStyle}" 
+                        Text="{x:Bind ViewModel.GenerationNumber, Mode=OneWay}"></TextBlock>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" 
+                           Style="{StaticResource SubtitleTextBlockStyle}" 
+                           Text="Total Live Cells:" ></TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="1"
+                           Style="{StaticResource SubtitleTextBlockStyle}" 
+                           Text="{x:Bind ViewModel.TotalLiveCells, Mode=OneWay}"></TextBlock>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" 
+                           Style="{StaticResource SubtitleTextBlockStyle}" 
+                           Text="Total Dead Cells:" ></TextBlock>
+                <TextBlock Grid.Row="2" Grid.Column="1"
+                           Style="{StaticResource SubtitleTextBlockStyle}" 
+                           Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}"></TextBlock>
+            </Grid>
+        </Grid>
+
+
+        
 
         <ListView Grid.Row="2" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>

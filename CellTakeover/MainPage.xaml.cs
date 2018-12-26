@@ -60,8 +60,6 @@ namespace CellTakeover
             players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
             ViewModel.Players = players;
 
-            
-
             _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
             foreach (var player in players)
             {
@@ -99,7 +97,6 @@ namespace CellTakeover
             }
 
             var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
-            int startingDistanceFromEdge = _random.Next(0, GameSettings.NumberOfColumnsAndRows - 1);
             for(int i = 0; i < ViewModel.Players.Count; i++)
             {
                 var player = ViewModel.Players[i];
@@ -110,7 +107,7 @@ namespace CellTakeover
                 var element = MainGrid.Children[startCellIndex] as Button;
                 element.Background = new SolidColorBrush(ViewModel.Players[i].Color);
                 element.Content = player.CharacterSymbol;
-                ViewModel.CurrentLiveCells.Add(startCellIndex, player.MakeCell(startCellIndex));
+                ViewModel.AddNewLiveCell(startCellIndex, player.MakeCell(startCellIndex));
             }
         }
 
@@ -124,7 +121,7 @@ namespace CellTakeover
                     var element = MainGrid.Children[newCell.CellIndex] as Button;
                     element.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
                     element.Content = newCell.Player.CharacterSymbol;
-                    ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
+                    ViewModel.AddNewLiveCell(newCell.CellIndex, newCell);
                 }
             }
         }
@@ -138,12 +135,12 @@ namespace CellTakeover
                     var element = MainGrid.Children[newDeadCell.CellIndex] as Button;
                     element.Background = _deadCellBrush;
                     element.Content = _deadCellSymbol;
-                    ViewModel.CurrentDeadCells.Add(newDeadCell.CellIndex, newDeadCell);
+                    ViewModel.AddNewDeadCell(newDeadCell.CellIndex, newDeadCell);
                 }
 
                 if (ViewModel.CurrentLiveCells.ContainsKey(newDeadCell.CellIndex))
                 {
-                    ViewModel.CurrentLiveCells.Remove(newDeadCell.CellIndex);
+                    ViewModel.RemoveLiveCell(newDeadCell.CellIndex);
                 }
             }
         }
