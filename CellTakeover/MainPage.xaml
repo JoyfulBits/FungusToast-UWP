@@ -137,7 +137,8 @@
                         <StackPanel Margin="10 0 0 0">
                             <StackPanel Orientation="Horizontal" Margin="0 40">
                                 <TextBlock Text="Mutation Chance:" VerticalAlignment="Center"></TextBlock>
-                                <TextBlock Text="{x:Bind MutationChancePercentage, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"  VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Text="{x:Bind MutationChancePercentage, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"  
+                                           VerticalAlignment="Center"></TextBlock>
                                 <TextBlock Text="%" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center"></TextBlock>
                                 <Button Name="MutationChanceButton"
                                         IsEnabled="False" 
@@ -148,10 +149,17 @@
                                         Click="IncreaseMutationChance_Click"/>
 
                             </StackPanel>
-                            <!--<StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Mutation Chance:"></TextBlock>
-                                <TextBlock Text="{x:Bind MutationChancePercentage}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                            </StackPanel>-->
+                            <StackPanel Orientation="Horizontal" Margin="0 40">
+                                <TextBlock Text="Corner Growth Chance:" VerticalAlignment="Center"></TextBlock>
+                                <Button Name="CornerGrowthButton"
+                                        IsEnabled="False" 
+                                        Content="+" ToolTipService.ToolTip="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}" 
+                                        VerticalAlignment="Center"
+                                        Margin="5 0 0 0"
+                                        Loaded="MutationOptionButton_Loaded"
+                                        Click="IncreaseCornerGrowthChance_Click"/>
+
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>

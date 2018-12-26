@@ -158,11 +158,29 @@ namespace Logic
         }
 
         public string AddMutationChanceMessage => MutationOptionGenerator.IncreaseMutationChanceMessage;
+        public string AddCornerGrowthChanceMessage => MutationOptionGenerator.IncreaseCornerGrowthChanceMessage;
 
         public void IncreaseMutationChance()
         {
-            MutationChancePercentage += BaseMutationChancePercentage;
+            MutationChancePercentage += MutationOptionGenerator.AdditionalMutationPercentageChancePerAttributePoint;
             OnPropertyChanged(nameof(MutationChancePercentage));
+        }
+
+        public void IncreaseCornerGrowth()
+        {
+            GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] +=
+                MutationOptionGenerator.AdditionalCornerGrowthChancePerAttributePoint;
+            GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight] +=
+                MutationOptionGenerator.AdditionalCornerGrowthChancePerAttributePoint;
+            GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight] +=
+                MutationOptionGenerator.AdditionalCornerGrowthChancePerAttributePoint;
+            GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft] +=
+                MutationOptionGenerator.AdditionalCornerGrowthChancePerAttributePoint;
+
+            OnPropertyChanged(nameof(TopLeftGrowthChance));
+            OnPropertyChanged(nameof(TopRightGrowthChance));
+            OnPropertyChanged(nameof(BottomRightGrowthChance));
+            OnPropertyChanged(nameof(BottomLeftGrowthChance));
         }
     }
 }

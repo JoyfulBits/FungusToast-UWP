@@ -204,6 +204,12 @@ namespace CellTakeover
                     var mutationChanceButton = playerMutationButtons.First(x => x.Name == "MutationChanceButton");
                     mutationChanceButton.IsEnabled = true;
                 }
+
+                if (mutationChoice.IncreaseCornerGrowthChance)
+                {
+                    var cornerGrowthButton = playerMutationButtons.First(x => x.Name == "CornerGrowthButton");
+                    cornerGrowthButton.IsEnabled = true;
+                }
             }
             else
             {
@@ -218,6 +224,17 @@ namespace CellTakeover
             var button = sender as Button;
             var player = button.DataContext as Player;
             player.IncreaseMutationChance();
+
+            DeActivatePlayerMutationButtons(player);
+
+            PromptForMutationChoice();
+        }
+
+        private void IncreaseCornerGrowthChance_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as Player;
+            player.IncreaseCornerGrowth();
 
             DeActivatePlayerMutationButtons(player);
 
