@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Windows.UI;
 using Windows.UI.Text;
@@ -22,20 +23,30 @@ namespace CellTakeover
 
         private readonly Random _random = new Random();
 
-        private AcrylicBrush _deadCellBrush = new AcrylicBrush
+        private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
             TintColor = Windows.UI.Colors.Brown
         };
 
         private char _deadCellSymbol = '☠';
         private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
+        private readonly Brush _activeBorderBrush = new SolidColorBrush(Colors.Green);
 
+        private readonly Dictionary<int, StackPanel> _playerNumberToPlayerStackPanel = new Dictionary<int, StackPanel>();
+        private readonly Dictionary<int, List<Button>> _playerNumberToMutationButtons = new Dictionary<int, List<Button>>();
+
+
+        private readonly Thickness _activeThickness = new Thickness(10);
+        private SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
+        private readonly Thickness _normalThickness = new Thickness(1);
 
         //--TODO introduce dependency injection framework
         private readonly ICellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
         private readonly ISurroundingCellCalculator _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
         private readonly GenerationAdvancer _generationAdvancer = new GenerationAdvancer();
         private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary;
+        private readonly IMutationOptionGenerator _mutationOptionGenerator = new MutationOptionGenerator();
+
 
         public MainPage()
         {
@@ -44,13 +55,16 @@ namespace CellTakeover
             var players = new List<IPlayer>();
             players.Add(new Player("Player 1", Colors.Blue, 1, "☣", _cellGrowthCalculator, _surroundingCellCalculator));
             players.Add(new Player("Player 2", Colors.Red, 2, "☢", _cellGrowthCalculator, _surroundingCellCalculator));
-            //players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
+            players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
             ViewModel.Players = players;
+
+            
 
             _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
             foreach (var player in players)
             {
                 _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
+                _playerNumberToMutationButtons.Add(player.PlayerNumber, new List<Button>());
             }
         }
 
@@ -98,16 +112,6 @@ namespace CellTakeover
             }
         }
 
-        private void Grow_OnClick(object sender, RoutedEventArgs e)
-        {
-            var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
-            AddNewCells(nextGenerationResult);
-
-            KillCells(nextGenerationResult);
-
-            ViewModel.GenerationNumber++;
-        }
-
         private void AddNewCells(NextGenerationResults nextGenerationResult)
         {
             foreach (var newCell in nextGenerationResult.NewLiveCells)
@@ -116,7 +120,7 @@ namespace CellTakeover
                 if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
                 {
                     var element = MainGrid.Children[newCell.CellIndex] as Button;
-                    element.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];//new SolidColorBrush(newCell.CellColor);
+                    element.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
                     element.Content = newCell.Player.CharacterSymbol;
                     ViewModel.CurrentLiveCells.Add(newCell.CellIndex, newCell);
                 }
@@ -140,6 +144,133 @@ namespace CellTakeover
                     ViewModel.CurrentLiveCells.Remove(newDeadCell.CellIndex);
                 }
             }
+        }
+
+        private void PlayerStackPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            var playerStackPanel = sender as StackPanel;
+            var playerNumber = int.Parse(playerStackPanel.Name);
+            _playerNumberToPlayerStackPanel.Add(playerNumber, playerStackPanel);
+        }
+
+        private void Grow_OnClick(object sender, RoutedEventArgs e)
+        {
+            var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
+            AddNewCells(nextGenerationResult);
+
+            KillCells(nextGenerationResult);
+
+            ViewModel.GenerationNumber++;
+
+            if (ViewModel.GenerationNumber % 5 == 0)
+            {
+                List<IPlayer> players;
+                if (ViewModel.GenerationNumber % 2 == 0)
+                {
+                    players = new List<IPlayer>(ViewModel.Players);
+                    players.Reverse();
+                }
+                else
+                {
+                    players = ViewModel.Players;
+                }
+
+                foreach (var player in players)
+                {
+                    var mutationOption = _mutationOptionGenerator.GetMutationChoices(player, ViewModel.Players);
+                    var playerMutationChoice = new Tuple<IPlayer, MutationChoice>(player, mutationOption);
+                    ViewModel.MutationChoices.Push(playerMutationChoice);
+                }
+
+                PromptForMutationChoice();
+            }
+        }
+
+        private bool PromptForMutationChoice()
+        {
+            if (ViewModel.MutationChoices.Count > 0)
+            {
+                var mutationChoiceTuple = ViewModel.MutationChoices.Pop();
+                GrowButton.IsEnabled = false;
+                var playerNumber = mutationChoiceTuple.Item1.PlayerNumber;
+                var playerStackPanel = _playerNumberToPlayerStackPanel[playerNumber];
+                playerStackPanel.BorderBrush = _activeBorderBrush;
+                playerStackPanel.BorderThickness = _activeThickness;
+                var mutationChoice = mutationChoiceTuple.Item2;
+                var playerMutationButtons = _playerNumberToMutationButtons[playerNumber];
+                if (mutationChoice.IncreaseMutationChance)
+                {
+
+                    var mutationChanceButton = playerMutationButtons.First(x => x.Name == "MutationChanceButton");
+                    mutationChanceButton.IsEnabled = true;
+                }
+            }
+            else
+            {
+                GrowButton.IsEnabled = true;
+            }
+
+            return ViewModel.MutationChoices.Count > 0;
+        }
+
+        private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as Player;
+            player.IncreaseMutationChance();
+
+            DeActivatePlayerMutationButtons(player);
+
+            PromptForMutationChoice();
+        }
+
+        private void DeActivatePlayerMutationButtons(Player player)
+        {
+            GrowButton.IsEnabled = false;
+            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
+
+            foreach (var button in playerMutationButtons)
+            {
+                button.IsEnabled = false;
+            }
+
+            var playerStackPanel = _playerNumberToPlayerStackPanel[player.PlayerNumber];
+            playerStackPanel.BorderBrush = _normalBorderBrush;
+            playerStackPanel.BorderThickness = _normalThickness;
+        }
+
+        public T FindElementByName<T>(FrameworkElement parentElement, string childName) where T : FrameworkElement
+        {
+            T childElement = null;
+            var numberOfChildren = VisualTreeHelper.GetChildrenCount(parentElement);
+            for (int i = 0; i < numberOfChildren; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parentElement, i) as FrameworkElement;
+
+                if (child == null)
+                    continue;
+
+                if (child is T && child.Name.Equals(childName))
+                {
+                    childElement = (T)child;
+                    break;
+                }
+
+                childElement = FindElementByName<T>(child, childName);
+
+                if (childElement != null)
+                    break;
+            }
+
+            return childElement;
+        }
+
+        private void MutationOptionButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            var playerButtons = _playerNumberToMutationButtons[player.PlayerNumber];
+            playerButtons.Add(button);
         }
     }
 }

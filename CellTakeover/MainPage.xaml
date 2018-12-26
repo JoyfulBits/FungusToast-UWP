@@ -43,101 +43,121 @@
         </StackPanel>
 
 
-        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
+        <ListView Name="PlayerPanelListView" Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
-                    <StackPanel Padding="5" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
+                    <StackPanel Name="{x:Bind PlayerNumber}"  Padding="5" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5" Orientation="Horizontal" Loaded="PlayerStackPanel_Loaded">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
 
-                        <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                           Margin="5" Width="20" Height="20" 
+                                           VerticalAlignment="Center"></Rectangle>
 
-                            <Rectangle Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
-                                       Margin="5" Width="20" Height="20" 
-                                       VerticalAlignment="Center"></Rectangle>
+                                <TextBlock Text="{x:Bind Name}" Style="{StaticResource TitleTextBlockStyle}" 
+                                           VerticalAlignment="Center"></TextBlock>
 
-                            <TextBlock Text="{x:Bind Name}" Style="{StaticResource TitleTextBlockStyle}" 
-                                       VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Text="{x:Bind CharacterSymbol}" Style="{StaticResource TitleTextBlockStyle}"></TextBlock>
+                            </StackPanel>
 
-                            <TextBlock Text="{x:Bind CharacterSymbol}" Style="{StaticResource TitleTextBlockStyle}"></TextBlock>
+                            <TextBlock Text="Growth Scorecard" HorizontalAlignment="Center"></TextBlock>
+
+                            <controls:UniformGrid Width="120" Height="120">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+
+                                <controls:UniformGrid.Resources>
+                                    <x:String x:Key="GrowthScorecardTooltip">% chance that a cell will grow into this position relative to another live cell. Each attribute point increases this value by +2%.</x:String>
+                                    <Style TargetType="Button" x:Key="GrowthScorecardButtonStyle">
+                                        <Setter Property="BorderBrush" Value="Black"></Setter>
+                                        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                                        <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
+                                        <Setter Property="ToolTipService.ToolTip" Value="{StaticResource GrowthScorecardTooltip}"></Setter>
+                                    </Style>
+                                </controls:UniformGrid.Resources>
+
+                                <!-- If BorderThickness is not set to 1 here then none of the text binds in the grid. If I set it to 2 or don't set it
+                                at all then it doesn't work. I can't set the value in the .Resources above for this reason. NO FREAKING IDEA WHAT'S GOING ON HERE!!-->
+                                <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}" BorderThickness="1"
+                                            Content="{x:Bind TopLeftGrowthChance, Mode=OneWay}">
+                                </Button>
+                                <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource GrowthScorecardButtonStyle}"
+                                            Content="{x:Bind TopGrowthChance, Mode=OneWay}">
+                                </Button>
+                                <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
+                                            Content="{x:Bind TopRightGrowthChance, Mode=OneWay}">
+                                </Button>
+                                <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}"
+                                            Content="{x:Bind LeftGrowthChance, Mode=OneWay}">
+                                </Button>
+                                <Grid Grid.Row="1" Grid.Column="1">
+                                    <Rectangle 
+                                               Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                               Stretch="Fill"></Rectangle>
+                                    <TextBlock Text="{x:Bind CharacterSymbol}" 
+                                               TextAlignment="Center" VerticalAlignment="Center"
+                                               Style="{StaticResource TitleTextBlockStyle}"></TextBlock>
+                                </Grid>
+
+
+                                <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
+                                            Content="{x:Bind RightGrowthChance, Mode=OneWay}">
+                                </Button>
+                                <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}"
+                                            Content="{x:Bind BottomLeftGrowthChance, Mode=OneWay}">
+                                </Button>
+                                <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource GrowthScorecardButtonStyle}"
+                                            Content="{x:Bind BottomGrowthChance, Mode=OneWay}">
+                                </Button>
+                                <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
+                                            Content="{x:Bind BottomRightGrowthChance, Mode=OneWay}">
+                                </Button>
+
+                            </controls:UniformGrid>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Σ" Width="22" TextAlignment="Center"></TextBlock>
+                                <TextBlock Text="Total Cells:"></TextBlock>
+                                <TextBlock Text="{x:Bind TotalCells, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="☠" Width="22" TextAlignment="Center"></TextBlock>
+                                <TextBlock Text="Dead Cells:"></TextBlock>
+                                <TextBlock Text="{x:Bind DeadCells, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+                            </StackPanel>
                         </StackPanel>
+                        <StackPanel Margin="10 0 0 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 40">
+                                <TextBlock Text="Mutation Chance:" VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Text="{x:Bind MutationChancePercentage, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"  VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Text="%" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center"></TextBlock>
+                                <Button Name="MutationChanceButton"
+                                        IsEnabled="False" 
+                                        Content="+" ToolTipService.ToolTip="{x:Bind AddMutationChanceMessage, Mode=OneTime}" 
+                                        VerticalAlignment="Center"
+                                        Margin="5 0 0 0"
+                                        Loaded="MutationOptionButton_Loaded"
+                                        Click="IncreaseMutationChance_Click"/>
 
-                        <TextBlock Text="Growth Scorecard" HorizontalAlignment="Center"></TextBlock>
-
-                        <controls:UniformGrid Width="120" Height="120">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"></RowDefinition>
-                                <RowDefinition Height="*"></RowDefinition>
-                                <RowDefinition Height="*"></RowDefinition>
-                            </Grid.RowDefinitions>
-
-                            <controls:UniformGrid.Resources>
-                                <x:String x:Key="GrowthScorecardTooltip">% chance that a cell will grow into this position relative to another live cell. Each attribute point increases this value by +2%.</x:String>
-                                <Style TargetType="Button" x:Key="GrowthScorecardButtonStyle">
-                                    <Setter Property="BorderBrush" Value="Black"></Setter>
-                                    <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-                                    <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
-                                    <Setter Property="ToolTipService.ToolTip" Value="{StaticResource GrowthScorecardTooltip}"></Setter>
-                                </Style>
-                            </controls:UniformGrid.Resources>
-
-                            <!-- If BorderThickness is not set to 1 here then none of the text binds in the grid. If I set it to 2 or don't set it
-                            at all then it doesn't work. I can't set the value in the .Resources above for this reason. NO FREAKING IDEA WHAT'S GOING ON HERE!!-->
-                            <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}" BorderThickness="1"
-                                        Content="{x:Bind TopLeftGrowthChance, Mode=OneWay}">
-                            </Button>
-                            <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind TopGrowthChance, Mode=OneWay}">
-                            </Button>
-                            <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind TopRightGrowthChance, Mode=OneWay}">
-                            </Button>
-                            <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind LeftGrowthChance, Mode=OneWay}">
-                            </Button>
-                            <Grid Grid.Row="1" Grid.Column="1">
-                                <Rectangle 
-                                           Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
-                                           Stretch="Fill"></Rectangle>
-                                <TextBlock Text="{x:Bind CharacterSymbol}" 
-                                           TextAlignment="Center" VerticalAlignment="Center"
-                                           Style="{StaticResource TitleTextBlockStyle}"></TextBlock>
-                            </Grid>
-                            
-
-                            <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind RightGrowthChance, Mode=OneWay}">
-                            </Button>
-                            <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind BottomLeftGrowthChance, Mode=OneWay}">
-                            </Button>
-                            <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind BottomGrowthChance, Mode=OneWay}">
-                            </Button>
-                            <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind BottomRightGrowthChance, Mode=OneWay}">
-                            </Button>
-
-                        </controls:UniformGrid>
-
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Σ" Width="22" TextAlignment="Center"></TextBlock>
-                            <TextBlock Text="Total Cells:"></TextBlock>
-                            <TextBlock Text="{x:Bind TotalCells, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="☠" Width="22" TextAlignment="Center"></TextBlock>
-                            <TextBlock Text="Dead Cells:"></TextBlock>
-                            <TextBlock Text="{x:Bind DeadCells, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+                            </StackPanel>
+                            <!--<StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Mutation Chance:"></TextBlock>
+                                <TextBlock Text="{x:Bind MutationChancePercentage}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                            </StackPanel>-->
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Grid.Row="2" Grid.Column="0" Click="Grow_OnClick" Width="100" Content="Grow!"></Button>
+        <Button Name="GrowButton" Grid.Row="2" Grid.Column="0" Click="Grow_OnClick" Width="100" Content="Grow!"></Button>
         <controls:UniformGrid Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Name="MainGrid" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
     </Grid>
 </Page>

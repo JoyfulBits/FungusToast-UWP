@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.UI;
@@ -31,6 +30,8 @@ namespace Logic
         }
 
         private string _name;
+        private int _mutationChancePercentage = BaseMutationChancePercentage;
+        public const int BaseMutationChancePercentage = 10;
 
         public string Name
         {
@@ -95,6 +96,17 @@ namespace Logic
             }
         }
 
+        public int MutationChancePercentage
+        {
+            get => _mutationChancePercentage;
+            set
+            {
+                if (value == _mutationChancePercentage) return;
+                _mutationChancePercentage = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
         public int TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
         public int TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
@@ -144,32 +156,13 @@ namespace Logic
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
 
-    public class CellGrowthResult
-    {
-        public CellGrowthResult(List<BioCell> newLiveCells, List<BioCell> newDeadCells)
+        public string AddMutationChanceMessage => MutationOptionGenerator.IncreaseMutationChanceMessage;
+
+        public void IncreaseMutationChance()
         {
-            NewLiveCells = newLiveCells;
-            NewDeadCells = newDeadCells;
+            MutationChancePercentage += BaseMutationChancePercentage;
+            OnPropertyChanged(nameof(MutationChancePercentage));
         }
-
-        public List<BioCell> NewLiveCells { get; }
-        public List<BioCell> NewDeadCells { get; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

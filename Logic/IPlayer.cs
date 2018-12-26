@@ -14,6 +14,7 @@ namespace Logic
         int TotalCells { get; set; }
         int DeadCells { get; set; }
         GrowthScorecard GrowthScorecard { get; set; }
+        int MutationChancePercentage { get; set; }
         BioCell MakeCell(int cellIndex);
         CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
     }
