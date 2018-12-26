@@ -32,6 +32,9 @@ namespace CellTakeover
 
         public int TotalDeadCells => CurrentDeadCells.Count;
 
+        public int TotalEmptyCells =>
+            GameSettings.NumberOfCells - CurrentLiveCells.Count - CurrentDeadCells.Count;
+
         /// <summary>
         /// Represents the current pending mutation choices that have to get resolved before the next generation can grow
         /// </summary>
@@ -50,18 +53,21 @@ namespace CellTakeover
         {
             CurrentLiveCells.Add(cellIndex, newCell);
             OnPropertyChanged(nameof(TotalLiveCells));
+            OnPropertyChanged(nameof(TotalEmptyCells));
         }
 
         public void AddNewDeadCell(int cellIndex, BioCell newCell)
         {
             CurrentDeadCells.Add(cellIndex, newCell);
             OnPropertyChanged(nameof(TotalDeadCells));
+            OnPropertyChanged(nameof(TotalEmptyCells));
         }
 
         public void RemoveLiveCell(int cellIndex)
         {
             CurrentLiveCells.Remove(cellIndex);
             OnPropertyChanged(nameof(TotalLiveCells));
+            OnPropertyChanged(nameof(TotalEmptyCells));
         }
     }
 }

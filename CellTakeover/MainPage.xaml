@@ -39,44 +39,54 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Style="{StaticResource HeaderTextBlockStyle}" 
-                Text="Cell Takeover" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-            <Grid Grid.Row="0" Grid.Column="1">
+                Text="Cell Takeover" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
+            <Grid Grid.Row="0" Grid.Column="1" ColumnSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" 
                         Style="{StaticResource SubtitleTextBlockStyle}" 
-                        Text="Generation Number:"></TextBlock>
+                        Text="Generation Number:"  TextWrapping="Wrap"></TextBlock>
                 <TextBlock Grid.Row="0" Grid.Column="1"
                         Style="{StaticResource SubtitleTextBlockStyle}" 
-                        Text="{x:Bind ViewModel.GenerationNumber, Mode=OneWay}"></TextBlock>
+                        Text="{x:Bind ViewModel.GenerationNumber, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" 
                            Style="{StaticResource SubtitleTextBlockStyle}" 
                            Text="Total Live Cells:" ></TextBlock>
                 <TextBlock Grid.Row="1" Grid.Column="1"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="{x:Bind ViewModel.TotalLiveCells, Mode=OneWay}"></TextBlock>
+                           Text="{x:Bind ViewModel.TotalLiveCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" 
                            Style="{StaticResource SubtitleTextBlockStyle}" 
                            Text="Total Dead Cells:" ></TextBlock>
                 <TextBlock Grid.Row="2" Grid.Column="1"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}"></TextBlock>
+                           Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
+
+                <TextBlock Grid.Row="0" Grid.Column="2" 
+                           Style="{StaticResource SubtitleTextBlockStyle}" 
+                           Text="Empty Cells Remaining:" ></TextBlock>
+                <TextBlock Grid.Row="0" Grid.Column="3"
+                           Style="{StaticResource SubtitleTextBlockStyle}" 
+                           Text="{x:Bind ViewModel.TotalEmptyCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
             </Grid>
         </Grid>
 
 
         
 
-        <ListView Grid.Row="2" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
+        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
                     <StackPanel Name="{x:Bind PlayerNumber}"  Padding="5" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5" Orientation="Horizontal" Loaded="PlayerStackPanel_Loaded">
