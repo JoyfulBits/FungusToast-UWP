@@ -8,6 +8,10 @@ namespace Logic
 {
     public class Player : IPlayer
     {
+        public const int BaseMutationChancePercentage = 10;
+        public const int BaseHealthyCellDeathChancePercentage = 5;
+
+        private readonly Random _random = new Random();
         private readonly ICellGrowthCalculator _cellGrowthCalculator;
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;
         private Color _color;
@@ -16,6 +20,10 @@ namespace Logic
         private GrowthScorecard _growthScorecard = new GrowthScorecard();
         private int _totalCells;
         private int _deadCells;
+
+        private string _name;
+        private int _mutationChancePercentage = BaseMutationChancePercentage;
+        private int _healthyCellDeathChancePercentage = BaseHealthyCellDeathChancePercentage;
 
         public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, 
             ICellGrowthCalculator cellGrowthCalculator, 
@@ -28,10 +36,6 @@ namespace Logic
             _cellGrowthCalculator = cellGrowthCalculator;
             _surroundingCellCalculator = surroundingCellCalculator;
         }
-
-        private string _name;
-        private int _mutationChancePercentage = BaseMutationChancePercentage;
-        public const int BaseMutationChancePercentage = 10;
 
         public string Name
         {
@@ -107,6 +111,17 @@ namespace Logic
             }
         }
 
+        public int HealthyCellDeathChancePercentage
+        {
+            get => _healthyCellDeathChancePercentage;
+            set
+            {
+                if (value == _healthyCellDeathChancePercentage) return;
+                _healthyCellDeathChancePercentage = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
         public int TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
         public int TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
@@ -149,6 +164,11 @@ namespace Logic
             return _cellGrowthCalculator.CalculateCellGrowth(cell, this, surroundingCells);
         }
 
+        public bool GetsFreeMutation()
+        {
+            return _random.Next(0, 99) < MutationChancePercentage;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -159,11 +179,18 @@ namespace Logic
 
         public string AddMutationChanceMessage => MutationOptionGenerator.IncreaseMutationChanceMessage;
         public string AddCornerGrowthChanceMessage => MutationOptionGenerator.IncreaseCornerGrowthChanceMessage;
+        public string ReduceCellDeathChanceMessage => MutationOptionGenerator.DecreaseCellDeathChanceMessage;
 
         public void IncreaseMutationChance()
         {
             MutationChancePercentage += MutationOptionGenerator.AdditionalMutationPercentageChancePerAttributePoint;
             OnPropertyChanged(nameof(MutationChancePercentage));
+        }
+
+        public void DecreaseHealthyCellDeathChance()
+        {
+            HealthyCellDeathChancePercentage -= MutationOptionGenerator.ReducedCellDeathPercentagePerAttributePoint;
+            OnPropertyChanged(nameof(HealthyCellDeathChancePercentage));
         }
 
         public void IncreaseCornerGrowth()

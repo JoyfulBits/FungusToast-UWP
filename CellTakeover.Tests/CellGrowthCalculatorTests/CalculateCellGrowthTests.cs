@@ -54,13 +54,14 @@ namespace Logic.Tests.CellGrowthCalculatorTests
         }
 
         [TestMethod]
-        public void The_Cell_May_Die_If_It_Is_Surrounded()
+        public void The_Cell_May_Die_If_It_Is_Surrounded_And_The_Player_Has_The_Minimum_Number_Of_Live_Cells()
         {
             //--arrange
             var cellGrowthCalculator = new CellGrowthCalculator();
             var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
 
             var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
+            player.TotalCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
             var growthScorecard = new GrowthScorecard {DeathChanceForStarvedCells = 100};
             player.GrowthScorecard = growthScorecard;
             var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
@@ -73,6 +74,53 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             //--assert
             actualResult.NewDeadCells.ShouldContain(bioCell);
             bioCell.Player.DeadCells.ShouldBe(1);
+        }
+
+        [TestMethod]
+        public void The_Cell_May_Die_At_Random_If_The_Player_Has_The_Minimum_Number_Of_Live_Cells()
+        {
+            //--arrange
+            var cellGrowthCalculator = new CellGrowthCalculator();
+            var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
+
+            var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
+            player.TotalCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
+            var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 0 };
+            player.GrowthScorecard = growthScorecard;
+            player.HealthyCellDeathChancePercentage = 100;
+            var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
+
+            var surroundingCells = CreateSurroundingCellsWithAllBioCells(player);
+
+            //--act
+            var actualResult = cellGrowthCalculator.CalculateCellGrowth(bioCell, player, surroundingCells);
+
+            //--assert
+            actualResult.NewDeadCells.ShouldContain(bioCell);
+            bioCell.Player.DeadCells.ShouldBe(1);
+        }
+
+        [TestMethod]
+        public void A_Cell_Cannot_Die_If_A_Player_Has_Less_Than_The_Minimum_Number_Of_Live_Cells()
+        {
+            //--arrange
+            var cellGrowthCalculator = new CellGrowthCalculator();
+            var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
+
+            var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
+            player.TotalCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath - 1;
+            var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 100 };
+            player.GrowthScorecard = growthScorecard;
+            player.HealthyCellDeathChancePercentage = 100;
+            var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
+
+            var surroundingCells = CreateSurroundingCellsWithAllBioCells(player);
+
+            //--act
+            var actualResult = cellGrowthCalculator.CalculateCellGrowth(bioCell, player, surroundingCells);
+
+            //--assert
+            actualResult.NewDeadCells.Count.ShouldBe(0);
         }
 
         private SurroundingCells CreateSurroundingCellsWithAllBioCells(Player player)

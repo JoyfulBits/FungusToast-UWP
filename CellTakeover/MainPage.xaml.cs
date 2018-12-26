@@ -40,6 +40,8 @@ namespace CellTakeover
         private SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
 
+        public const int NumberOfGenerationsBetweenFreeMutations = 5;
+
         //--TODO introduce dependency injection framework
         private readonly ICellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
         private readonly ISurroundingCellCalculator _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
@@ -162,19 +164,20 @@ namespace CellTakeover
 
             ViewModel.GenerationNumber++;
 
-            if (ViewModel.GenerationNumber % 5 == 0)
+            List<IPlayer> players;
+            //--every other round the players are checked in reverse order for fairness
+            if (ViewModel.GenerationNumber % 2 == 0)
             {
-                List<IPlayer> players;
-                if (ViewModel.GenerationNumber % 2 == 0)
-                {
-                    players = new List<IPlayer>(ViewModel.Players);
-                    players.Reverse();
-                }
-                else
-                {
-                    players = ViewModel.Players;
-                }
+                players = new List<IPlayer>(ViewModel.Players);
+                players.Reverse();
+            }
+            else
+            {
+                players = ViewModel.Players;
+            }
 
+            if (ViewModel.GenerationNumber % NumberOfGenerationsBetweenFreeMutations == 0)
+            {
                 foreach (var player in players)
                 {
                     var mutationOption = _mutationOptionGenerator.GetMutationChoices(player, ViewModel.Players);
@@ -183,6 +186,20 @@ namespace CellTakeover
                 }
 
                 PromptForMutationChoice();
+            }
+            else
+            {
+                //--players only get bonus mutations if not on a round with a free mutation
+                foreach (var player in players)
+                {
+                    if (player.GetsFreeMutation())
+                    {
+                        var mutationOption = _mutationOptionGenerator.GetMutationChoices(player, ViewModel.Players);
+                        var playerMutationChoice = new Tuple<IPlayer, MutationChoice>(player, mutationOption);
+                        ViewModel.MutationChoices.Push(playerMutationChoice);
+                        PromptForMutationChoice();
+                    }
+                }
             }
         }
 
@@ -198,9 +215,9 @@ namespace CellTakeover
                 playerStackPanel.BorderThickness = _activeThickness;
                 var mutationChoice = mutationChoiceTuple.Item2;
                 var playerMutationButtons = _playerNumberToMutationButtons[playerNumber];
+
                 if (mutationChoice.IncreaseMutationChance)
                 {
-
                     var mutationChanceButton = playerMutationButtons.First(x => x.Name == "MutationChanceButton");
                     mutationChanceButton.IsEnabled = true;
                 }
@@ -209,6 +226,12 @@ namespace CellTakeover
                 {
                     var cornerGrowthButton = playerMutationButtons.First(x => x.Name == "CornerGrowthButton");
                     cornerGrowthButton.IsEnabled = true;
+                }
+
+                if (mutationChoice.DecreaseHealthyCellDeathChance)
+                {
+                    var reduceHealthyCellDeathChanceButton = playerMutationButtons.First(x => x.Name == "HealthyCellDeathChanceButton");
+                    reduceHealthyCellDeathChanceButton.IsEnabled = true;
                 }
             }
             else
@@ -224,6 +247,17 @@ namespace CellTakeover
             var button = sender as Button;
             var player = button.DataContext as Player;
             player.IncreaseMutationChance();
+
+            DeActivatePlayerMutationButtons(player);
+
+            PromptForMutationChoice();
+        }
+
+        private void ReduceHealthyCellDeathChance_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as Player;
+            player.DecreaseHealthyCellDeathChance();
 
             DeActivatePlayerMutationButtons(player);
 

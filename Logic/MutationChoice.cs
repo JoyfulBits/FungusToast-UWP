@@ -4,5 +4,6 @@
     {
         public bool IncreaseMutationChance { get; set; }
         public bool IncreaseCornerGrowthChance { get; set; }
+        public bool DecreaseHealthyCellDeathChance { get; set; }
     }
 }

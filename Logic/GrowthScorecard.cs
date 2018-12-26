@@ -28,6 +28,7 @@ namespace Logic
         /// </summary>
         public int DeathChanceForStarvedCells { get; set; } = BaseCellDeathChanceForSurroundedCells;
 
+
         public int GetGrowthChance(RelativePosition position)
         {
             return GrowthChanceDictionary[position];

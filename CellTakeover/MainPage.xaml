@@ -18,8 +18,8 @@
     <Grid Padding="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="13*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="13*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"></ColumnDefinition>
@@ -42,8 +42,12 @@
 
         </StackPanel>
 
+        <Button Name="GrowButton" Grid.Row="0" Grid.Column="0" Click="Grow_OnClick" 
+                ToolTipService.ToolTip="Trigger the next generation of cell growth" Content="Grow!" 
+                ToolTipService.Placement="Right"
+                FontSize="40" HorizontalAlignment="Center"></Button>
 
-        <ListView Name="PlayerPanelListView" Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
+        <ListView Grid.Row="2" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
                     <StackPanel Name="{x:Bind PlayerNumber}"  Padding="5" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5" Orientation="Horizontal" Loaded="PlayerStackPanel_Loaded">
@@ -134,38 +138,66 @@
                                 <TextBlock Text="{x:Bind DeadCells, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Margin="10 0 0 0">
-                            <StackPanel Orientation="Horizontal" Margin="0 40">
-                                <TextBlock Text="Mutation Chance:" VerticalAlignment="Center"></TextBlock>
-                                <TextBlock Text="{x:Bind MutationChancePercentage, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"  
-                                           VerticalAlignment="Center"></TextBlock>
-                                <TextBlock Text="%" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center"></TextBlock>
-                                <Button Name="MutationChanceButton"
-                                        IsEnabled="False" 
-                                        Content="+" ToolTipService.ToolTip="{x:Bind AddMutationChanceMessage, Mode=OneTime}" 
-                                        VerticalAlignment="Center"
-                                        Margin="5 0 0 0"
-                                        Loaded="MutationOptionButton_Loaded"
-                                        Click="IncreaseMutationChance_Click"/>
+                        <Grid>
+                            <Grid.Resources>
+                                <Style TargetType="Button" x:Key="MutationOptionButtonStyle">
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                                    <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
+                                    <Setter Property="Margin" Value="5 0 0 0"></Setter>
+                                    <Setter Property="MaxHeight" Value="30"></Setter>
+                                    <Setter Property="MaxWidth" Value="30"></Setter>
+                                </Style>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
 
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0 40">
-                                <TextBlock Text="Corner Growth Chance:" VerticalAlignment="Center"></TextBlock>
-                                <Button Name="CornerGrowthButton"
-                                        IsEnabled="False" 
-                                        Content="+" ToolTipService.ToolTip="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}" 
-                                        VerticalAlignment="Center"
-                                        Margin="5 0 0 0"
-                                        Loaded="MutationOptionButton_Loaded"
-                                        Click="IncreaseCornerGrowthChance_Click"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutation Chance:" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind MutationChancePercentage, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"  
+                                       VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="%" Style="{StaticResource BaseTextBlockStyle}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                            <Button Grid.Row="0" Grid.Column="2" Name="MutationChanceButton"
+                                    Style="{StaticResource MutationOptionButtonStyle}"
+                                    IsEnabled="False" 
+                                    Content="+" ToolTipService.ToolTip="{x:Bind AddMutationChanceMessage, Mode=OneTime}" 
+                                    Loaded="MutationOptionButton_Loaded"
+                                    Click="IncreaseMutationChance_Click"/>
 
-                            </StackPanel>
-                        </StackPanel>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Healthy Cell Death Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind HealthyCellDeathChancePercentage, Mode=OneWay}" Margin="5 0 0 0" 
+                                       Style="{StaticResource BaseTextBlockStyle}"  
+                                       VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="%" Style="{StaticResource BaseTextBlockStyle}"  HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"></TextBlock>
+                            <Button Grid.Row="1" Grid.Column="2" Name="HealthyCellDeathChanceButton"
+                                    Style="{StaticResource MutationOptionButtonStyle}"
+                                    IsEnabled="False" 
+                                    Content="-" 
+                                    ToolTipService.ToolTip="{x:Bind ReduceCellDeathChanceMessage, Mode=OneTime}"
+                                    Loaded="MutationOptionButton_Loaded"
+                                    Click="ReduceHealthyCellDeathChance_Click"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="Corner Growth Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
+                            <Button Grid.Row="2" Grid.Column="2" Name="CornerGrowthButton"
+                                    Style="{StaticResource MutationOptionButtonStyle}"
+                                    IsEnabled="False" 
+                                    Content="+" ToolTipService.ToolTip="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}" 
+                                    Loaded="MutationOptionButton_Loaded"
+                                    Click="IncreaseCornerGrowthChance_Click"/>
+                        </Grid>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Name="GrowButton" Grid.Row="2" Grid.Column="0" Click="Grow_OnClick" Width="100" Content="Grow!"></Button>
+        
         <controls:UniformGrid Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Name="MainGrid" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
     </Grid>
 </Page>
