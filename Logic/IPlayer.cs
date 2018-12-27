@@ -10,14 +10,19 @@ namespace Logic
         string Name { get; set; }
         Color Color { get; set; }
         int PlayerNumber { get; set; }
-        string CharacterSymbol { get; set; }
-        int TotalCells { get; set; }
+        string PlayerSymbol { get; set; }
+        int LiveCells { get; set; }
         int DeadCells { get; set; }
+        int RegrownCells { get; set; }
         GrowthScorecard GrowthScorecard { get; set; }
-        int MutationChancePercentage { get; set; }
-        int HealthyCellDeathChancePercentage { get; set; }
         BioCell MakeCell(int cellIndex);
         CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
         bool GetsFreeMutation();
+        void IncreaseMutationChance();
+        void DecreaseHealthyCellDeathChance();
+        void IncreaseCornerGrowth();
+        void IncreaseRegrowthChance();
+        BioCell RegrowCell(BioCell deadCell);
+        void KillCell();
     }
 }

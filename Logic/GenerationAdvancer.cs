@@ -4,6 +4,13 @@ namespace Logic
 {
     public class GenerationAdvancer
     {
+        private readonly ICellRegrowthCalculator _cellRegrowthCalculator;
+
+        public GenerationAdvancer(ICellRegrowthCalculator cellRegrowthCalculator)
+        {
+            _cellRegrowthCalculator = cellRegrowthCalculator;
+        }
+
         public NextGenerationResults NextGeneration(Dictionary<int, BioCell> currentLiveCells, Dictionary<int, BioCell> currentDeadCells)
         {
             var allNewCellsForGeneration = new List<BioCell>();
@@ -19,7 +26,9 @@ namespace Logic
                 newDeadCells.AddRange(cellGrowthResult.NewDeadCells);
             }
 
-            return new NextGenerationResults(allNewCellsForGeneration, newDeadCells);
+            var regrownCells = _cellRegrowthCalculator.CalculateCellRegrowth(currentDeadCells, currentLiveCells);
+
+            return new NextGenerationResults(allNewCellsForGeneration, newDeadCells, regrownCells);
         }
     }
 }

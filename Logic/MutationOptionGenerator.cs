@@ -6,7 +6,9 @@ namespace Logic
     {
         public static int AdditionalMutationPercentageChancePerAttributePoint = 3;
         public static int AdditionalCornerGrowthChancePerAttributePoint = 2;
-        public static int ReducedCellDeathPercentagePerAttributePoint = 1;
+        public static double ReducedCellDeathPercentagePerAttributePoint = .5;
+        public static int AdditionalRegrowthChancePerAttributePoint = 1;
+
 
         public MutationChoice GetMutationChoices(IPlayer activePlayer, List<IPlayer> allPlayers)
         {
@@ -14,7 +16,8 @@ namespace Logic
             {
                 IncreaseMutationChance = true,
                 IncreaseCornerGrowthChance = true,
-                DecreaseHealthyCellDeathChance = true
+                DecreaseHealthyCellDeathChance = true,
+                IncreaseRegrowthChance = true
             };
         }
 
@@ -25,5 +28,9 @@ namespace Logic
 
         public static string DecreaseCellDeathChanceMessage =>
             $"Decrease the chance of a healthy cell dying randomly by {ReducedCellDeathPercentagePerAttributePoint}%.";
+
+        public static string IncreaseRegrowthChanceMessage => 
+            $"Increase the chance of converting any adjacent dead cell into a live one by {AdditionalRegrowthChancePerAttributePoint}%.";
+
     }
 }

@@ -61,7 +61,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
 
             var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
-            player.TotalCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
+            player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
             var growthScorecard = new GrowthScorecard {DeathChanceForStarvedCells = 100};
             player.GrowthScorecard = growthScorecard;
             var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
@@ -84,10 +84,10 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
 
             var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
-            player.TotalCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
+            player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
             var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 0 };
             player.GrowthScorecard = growthScorecard;
-            player.HealthyCellDeathChancePercentage = 100;
+            player.GrowthScorecard.HealthyCellDeathChancePercentage = 100;
             var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
 
             var surroundingCells = CreateSurroundingCellsWithAllBioCells(player);
@@ -108,10 +108,10 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
 
             var player = new Player("name", new Color(), 1, "A", cellGrowthCalculator, surroundingCellCalculatorMock);
-            player.TotalCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath - 1;
+            player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath - 1;
             var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 100 };
             player.GrowthScorecard = growthScorecard;
-            player.HealthyCellDeathChancePercentage = 100;
+            player.GrowthScorecard.HealthyCellDeathChancePercentage = 100;
             var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
 
             var surroundingCells = CreateSurroundingCellsWithAllBioCells(player);

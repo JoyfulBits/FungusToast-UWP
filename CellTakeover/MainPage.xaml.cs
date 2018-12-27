@@ -39,19 +39,22 @@ namespace CellTakeover
         private readonly Thickness _activeThickness = new Thickness(10);
         private SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
+        private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
+
 
         public const int NumberOfGenerationsBetweenFreeMutations = 5;
 
         //--TODO introduce dependency injection framework
-        private readonly ICellGrowthCalculator _cellGrowthCalculator = new CellGrowthCalculator();
-        private readonly ISurroundingCellCalculator _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
-        private readonly GenerationAdvancer _generationAdvancer = new GenerationAdvancer();
-        private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary;
-        private readonly IMutationOptionGenerator _mutationOptionGenerator = new MutationOptionGenerator();
+        private ICellGrowthCalculator _cellGrowthCalculator;
+        private ICellRegrowthCalculator _cellRegrowthCalculator;
+        private ISurroundingCellCalculator _surroundingCellCalculator;
+        private GenerationAdvancer _generationAdvancer;
+        private IMutationOptionGenerator _mutationOptionGenerator;
 
 
         public MainPage()
         {
+            InitializeDependencies();
             InitializeComponent();
             ViewModel = new CellTakeoverViewModel();
             var players = new List<IPlayer>();
@@ -66,6 +69,15 @@ namespace CellTakeover
                 _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
                 _playerNumberToMutationButtons.Add(player.PlayerNumber, new List<Button>());
             }
+        }
+
+        private void InitializeDependencies()
+        {
+            _cellGrowthCalculator = new CellGrowthCalculator();
+            _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
+            _cellRegrowthCalculator = new CellRegrowthCalculator(_surroundingCellCalculator);
+            _generationAdvancer = new GenerationAdvancer(_cellRegrowthCalculator);
+            _mutationOptionGenerator = new MutationOptionGenerator();
         }
 
 
@@ -106,42 +118,51 @@ namespace CellTakeover
                 var startCellIndex = _random.Next(firstCandidateStartCell, endCandidateStartCell);
                 var element = MainGrid.Children[startCellIndex] as Button;
                 element.Background = new SolidColorBrush(ViewModel.Players[i].Color);
-                element.Content = player.CharacterSymbol;
-                ViewModel.AddNewLiveCell(startCellIndex, player.MakeCell(startCellIndex));
+                element.Content = player.PlayerSymbol;
+                ViewModel.AddNewLiveCell(player.MakeCell(startCellIndex));
             }
         }
 
-        private void AddNewCells(NextGenerationResults nextGenerationResult)
+        private void AddNewCells(List<BioCell> newLiveCells)
         {
-            foreach (var newCell in nextGenerationResult.NewLiveCells)
+            foreach (var newCell in newLiveCells)
             {
                 //--its possible for two different cells to split to the same cell. For now, the first cell wins
                 if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
                 {
                     var element = MainGrid.Children[newCell.CellIndex] as Button;
                     element.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
-                    element.Content = newCell.Player.CharacterSymbol;
-                    ViewModel.AddNewLiveCell(newCell.CellIndex, newCell);
+                    element.Content = newCell.Player.PlayerSymbol;
+                    ViewModel.AddNewLiveCell(newCell);
                 }
             }
         }
 
-        private void KillCells(NextGenerationResults nextGenerationResult)
+        private void KillCells(List<BioCell> newDeadCells)
         {
-            foreach (var newDeadCell in nextGenerationResult.NewDeadCells)
+            foreach (var newDeadCell in newDeadCells)
             {
                 if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
                 {
                     var element = MainGrid.Children[newDeadCell.CellIndex] as Button;
                     element.Background = _deadCellBrush;
                     element.Content = _deadCellSymbol;
-                    ViewModel.AddNewDeadCell(newDeadCell.CellIndex, newDeadCell);
+                    ViewModel.AddNewDeadCell(newDeadCell);
                 }
 
-                if (ViewModel.CurrentLiveCells.ContainsKey(newDeadCell.CellIndex))
-                {
-                    ViewModel.RemoveLiveCell(newDeadCell.CellIndex);
-                }
+                ViewModel.RemoveLiveCell(newDeadCell.CellIndex);
+            }
+        }
+
+        private void RegrowCells(List<BioCell> regrownCells)
+        {
+            foreach (var regrownCell in regrownCells)
+            {
+                ViewModel.RegrowCell(regrownCell);
+
+                var element = MainGrid.Children[regrownCell.CellIndex] as Button;
+                element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
+                element.Content = regrownCell.Player.PlayerSymbol;
             }
         }
 
@@ -155,9 +176,11 @@ namespace CellTakeover
         private void Grow_OnClick(object sender, RoutedEventArgs e)
         {
             var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
-            AddNewCells(nextGenerationResult);
+            AddNewCells(nextGenerationResult.NewLiveCells);
 
-            KillCells(nextGenerationResult);
+            KillCells(nextGenerationResult.NewDeadCells);
+
+            RegrowCells(nextGenerationResult.RegrownCells);
 
             ViewModel.GenerationNumber++;
 
@@ -230,6 +253,12 @@ namespace CellTakeover
                     var reduceHealthyCellDeathChanceButton = playerMutationButtons.First(x => x.Name == "HealthyCellDeathChanceButton");
                     reduceHealthyCellDeathChanceButton.IsEnabled = true;
                 }
+
+                if (mutationChoice.IncreaseRegrowthChance)
+                {
+                    var regrowthButton = playerMutationButtons.First(x => x.Name == "RegrowthButton");
+                    regrowthButton.IsEnabled = true;
+                }
             }
             else
             {
@@ -242,7 +271,7 @@ namespace CellTakeover
         private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var player = button.DataContext as Player;
+            var player = button.DataContext as IPlayer;
             player.IncreaseMutationChance();
 
             DeActivatePlayerMutationButtons(player);
@@ -253,7 +282,7 @@ namespace CellTakeover
         private void ReduceHealthyCellDeathChance_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var player = button.DataContext as Player;
+            var player = button.DataContext as IPlayer;
             player.DecreaseHealthyCellDeathChance();
 
             DeActivatePlayerMutationButtons(player);
@@ -264,7 +293,7 @@ namespace CellTakeover
         private void IncreaseCornerGrowthChance_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var player = button.DataContext as Player;
+            var player = button.DataContext as IPlayer;
             player.IncreaseCornerGrowth();
 
             DeActivatePlayerMutationButtons(player);
@@ -272,7 +301,18 @@ namespace CellTakeover
             PromptForMutationChoice();
         }
 
-        private void DeActivatePlayerMutationButtons(Player player)
+        private void IncreaseRegrowthChance_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.IncreaseRegrowthChance();
+
+            DeActivatePlayerMutationButtons(player);
+
+            PromptForMutationChoice();
+        }
+
+        private void DeActivatePlayerMutationButtons(IPlayer player)
         {
             GrowButton.IsEnabled = false;
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];

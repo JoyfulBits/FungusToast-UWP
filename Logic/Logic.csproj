@@ -123,10 +123,12 @@
     <Compile Include="BioCell.cs" />
     <Compile Include="CellGrowthCalculator.cs" />
     <Compile Include="CellGrowthResult.cs" />
+    <Compile Include="CellRegrowthCalculator.cs" />
     <Compile Include="GenerationAdvancer.cs" />
     <Compile Include="GridCell.cs" />
     <Compile Include="GrowthScorecard.cs" />
     <Compile Include="ICellGrowthCalculator.cs" />
+    <Compile Include="ICellRegrowthCalculator.cs" />
     <Compile Include="IMutationOptionGenerator.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="ISurroundingCellCalculator.cs" />

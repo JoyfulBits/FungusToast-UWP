@@ -11,7 +11,7 @@ namespace Logic
         public Color CellColor { get; }
 
         //--allowing for good old fashioned property injection
-        private ISurroundingCellCalculator _surroundingCellCalculator;
+        private readonly ISurroundingCellCalculator _surroundingCellCalculator;
 
         public BioCell(IPlayer player, int cellIndex, Color cellColor, ISurroundingCellCalculator surroundingCellCalculator) : base(cellIndex, false, false, true, false)
         {

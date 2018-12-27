@@ -23,12 +23,12 @@ namespace Logic
         private List<BioCell> CheckForCellDeath(BioCell cell, IPlayer player, SurroundingCells surroundingCells)
         {
             var newDeadCells = new List<BioCell>();
-            if (player.TotalCells >= MinimumLiveCellsForCellDeath 
+            if (player.LiveCells >= MinimumLiveCellsForCellDeath 
              && (CellDiesOfStarvation(surroundingCells.SurroundedByLiveCells, player) || CellDiesRandomly(player)))
             {
                 cell.Dead = true;
                 newDeadCells.Add(cell);
-                cell.Player.DeadCells++;
+                cell.Player.KillCell();
             }
 
             return newDeadCells;
@@ -36,7 +36,8 @@ namespace Logic
 
         private bool CellDiesRandomly(IPlayer player)
         {
-            return _random.Next(0, 99) < player.HealthyCellDeathChancePercentage;
+            //--since HealthyCellDeathChancePercentage is a double, need to add an order of magnitude for precision
+            return _random.Next(0, 999) < player.GrowthScorecard.HealthyCellDeathChancePercentage * 10;
         }
 
         private bool CellDiesOfStarvation(bool surroundingCellsSurroundedByLiveCells, IPlayer player)

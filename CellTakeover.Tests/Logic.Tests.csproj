@@ -119,7 +119,6 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BalanceSimulationTests\StartingPositionTests.cs" />
     <Compile Include="BioCellTests\RunCellGrowthTests.cs" />
     <Compile Include="CellGrowthCalculatorTests\CalculateCellGrowthTests.cs" />
     <Compile Include="MutationOptionGeneratorTests\GetMutationChoicesTests.cs" />
@@ -175,7 +174,9 @@
       <Name>Logic</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="BalanceSimulationTests\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

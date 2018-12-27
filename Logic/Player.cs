@@ -8,22 +8,18 @@ namespace Logic
 {
     public class Player : IPlayer
     {
-        public const int BaseMutationChancePercentage = 10;
-        public const int BaseHealthyCellDeathChancePercentage = 5;
-
         private readonly Random _random = new Random();
         private readonly ICellGrowthCalculator _cellGrowthCalculator;
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;
         private Color _color;
         private int _playerNumber;
-        private string _characterSymbol;
+        private string _playerSymbol;
         private GrowthScorecard _growthScorecard = new GrowthScorecard();
-        private int _totalCells;
+        private int _liveCells;
         private int _deadCells;
 
         private string _name;
-        private int _mutationChancePercentage = BaseMutationChancePercentage;
-        private int _healthyCellDeathChancePercentage = BaseHealthyCellDeathChancePercentage;
+        private int _regrownCells;
 
         public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, 
             ICellGrowthCalculator cellGrowthCalculator, 
@@ -32,7 +28,7 @@ namespace Logic
             Name = name;
             Color = playerCellColor;
             PlayerNumber = playerNumber;
-            CharacterSymbol = characterSymbol;
+            PlayerSymbol = characterSymbol;
             _cellGrowthCalculator = cellGrowthCalculator;
             _surroundingCellCalculator = surroundingCellCalculator;
         }
@@ -69,13 +65,13 @@ namespace Logic
             }
         }
 
-        public string CharacterSymbol
+        public string PlayerSymbol
         {
-            get => _characterSymbol;
+            get => _playerSymbol;
             set
             {
-                if (value == _characterSymbol) return;
-                _characterSymbol = value;
+                if (value == _playerSymbol) return;
+                _playerSymbol = value;
                 OnPropertyChanged();
             }
         }
@@ -100,28 +96,6 @@ namespace Logic
             }
         }
 
-        public int MutationChancePercentage
-        {
-            get => _mutationChancePercentage;
-            set
-            {
-                if (value == _mutationChancePercentage) return;
-                _mutationChancePercentage = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public int HealthyCellDeathChancePercentage
-        {
-            get => _healthyCellDeathChancePercentage;
-            set
-            {
-                if (value == _healthyCellDeathChancePercentage) return;
-                _healthyCellDeathChancePercentage = value;
-                OnPropertyChanged();
-            }
-        }
-
         public int TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
         public int TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
         public int TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
@@ -131,13 +105,13 @@ namespace Logic
         public int BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft];
         public int LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left];
 
-        public int TotalCells
+        public int LiveCells
         {
-            get => _totalCells;
+            get => _liveCells;
             set
             {
-                if (value == _totalCells) return;
-                _totalCells = value;
+                if (value == _liveCells) return;
+                _liveCells = value;
                 OnPropertyChanged();
             }
         }
@@ -153,10 +127,35 @@ namespace Logic
             }
         }
 
+        public int RegrownCells
+        {
+            get => _regrownCells;
+            set
+            {
+                if (value == _regrownCells) return;
+                _regrownCells = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public BioCell MakeCell(int cellIndex)
         {
-            TotalCells++;
+            LiveCells++;
             return new BioCell(this, cellIndex, Color, _surroundingCellCalculator);
+        }
+
+        public BioCell RegrowCell(BioCell deadCell)
+        {
+            deadCell.Player.DeadCells--;
+            RegrownCells++;
+            return MakeCell(deadCell.CellIndex);
+        }
+
+        public void KillCell()
+        {
+            DeadCells++;
+            LiveCells--;
         }
 
         public CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)
@@ -166,7 +165,7 @@ namespace Logic
 
         public bool GetsFreeMutation()
         {
-            return _random.Next(0, 99) < MutationChancePercentage;
+            return _random.Next(0, 99) < GrowthScorecard.MutationChancePercentage;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -181,16 +180,16 @@ namespace Logic
         public string AddCornerGrowthChanceMessage => MutationOptionGenerator.IncreaseCornerGrowthChanceMessage;
         public string ReduceCellDeathChanceMessage => MutationOptionGenerator.DecreaseCellDeathChanceMessage;
 
+        public string AddRegrowthChanceMessage => MutationOptionGenerator.IncreaseRegrowthChanceMessage;
+
         public void IncreaseMutationChance()
         {
-            MutationChancePercentage += MutationOptionGenerator.AdditionalMutationPercentageChancePerAttributePoint;
-            OnPropertyChanged(nameof(MutationChancePercentage));
+            GrowthScorecard.MutationChancePercentage += MutationOptionGenerator.AdditionalMutationPercentageChancePerAttributePoint;
         }
 
         public void DecreaseHealthyCellDeathChance()
         {
-            HealthyCellDeathChancePercentage -= MutationOptionGenerator.ReducedCellDeathPercentagePerAttributePoint;
-            OnPropertyChanged(nameof(HealthyCellDeathChancePercentage));
+            GrowthScorecard.HealthyCellDeathChancePercentage -= MutationOptionGenerator.ReducedCellDeathPercentagePerAttributePoint;
         }
 
         public void IncreaseCornerGrowth()
@@ -208,6 +207,12 @@ namespace Logic
             OnPropertyChanged(nameof(TopRightGrowthChance));
             OnPropertyChanged(nameof(BottomRightGrowthChance));
             OnPropertyChanged(nameof(BottomLeftGrowthChance));
+        }
+
+        public void IncreaseRegrowthChance()
+        {
+            GrowthScorecard.RegrowthChancePercentage +=
+                MutationOptionGenerator.AdditionalRegrowthChancePerAttributePoint;
         }
     }
 }
