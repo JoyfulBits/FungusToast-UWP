@@ -25,7 +25,7 @@ namespace CellTakeover
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
-            TintColor = Windows.UI.Colors.Brown
+            TintColor = Windows.UI.Colors.White
         };
 
         private char _deadCellSymbol = '☠';
@@ -58,9 +58,9 @@ namespace CellTakeover
             InitializeComponent();
             ViewModel = new CellTakeoverViewModel();
             var players = new List<IPlayer>();
-            players.Add(new Player("Player 1", Colors.Blue, 1, "☣", _cellGrowthCalculator, _surroundingCellCalculator));
-            players.Add(new Player("Player 2", Colors.Red, 2, "☢", _cellGrowthCalculator, _surroundingCellCalculator));
-            players.Add(new Player("Player 3", Colors.DarkMagenta, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
+            players.Add(new Player("Player 1", Colors.SkyBlue, 1, "☣", _cellGrowthCalculator, _surroundingCellCalculator));
+            players.Add(new Player("Player 2", Colors.Blue, 2, "☢", _cellGrowthCalculator, _surroundingCellCalculator));
+            players.Add(new Player("Player 3", Colors.PaleVioletRed, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
             ViewModel.Players = players;
 
             _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
@@ -116,9 +116,10 @@ namespace CellTakeover
                 //--make sure there is at least 2 rows between starting cells
                 var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
                 var startCellIndex = _random.Next(firstCandidateStartCell, endCandidateStartCell);
-                var element = MainGrid.Children[startCellIndex] as Button;
-                element.Background = new SolidColorBrush(ViewModel.Players[i].Color);
-                element.Content = player.PlayerSymbol;
+                var button = MainGrid.Children[startCellIndex] as Button;
+                button.Background = new SolidColorBrush(ViewModel.Players[i].Color);
+                button.Content = "  ";
+                //button.Content = player.PlayerSymbol;
                 ViewModel.AddNewLiveCell(player.MakeCell(startCellIndex));
             }
         }
@@ -130,9 +131,9 @@ namespace CellTakeover
                 //--its possible for two different cells to split to the same cell. For now, the first cell wins
                 if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
                 {
-                    var element = MainGrid.Children[newCell.CellIndex] as Button;
-                    element.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
-                    element.Content = newCell.Player.PlayerSymbol;
+                    var button = MainGrid.Children[newCell.CellIndex] as Button;
+                    button.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
+                    //button.Content = newCell.Player.PlayerSymbol;
                     ViewModel.AddNewLiveCell(newCell);
                 }
             }
@@ -144,9 +145,9 @@ namespace CellTakeover
             {
                 if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
                 {
-                    var element = MainGrid.Children[newDeadCell.CellIndex] as Button;
-                    element.Background = _deadCellBrush;
-                    element.Content = _deadCellSymbol;
+                    var button = MainGrid.Children[newDeadCell.CellIndex] as Button;
+                    button.Background = _deadCellBrush;
+                    button.Content = _deadCellSymbol;
                     ViewModel.AddNewDeadCell(newDeadCell);
                 }
 
@@ -162,7 +163,7 @@ namespace CellTakeover
 
                 var element = MainGrid.Children[regrownCell.CellIndex] as Button;
                 element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
-                element.Content = regrownCell.Player.PlayerSymbol;
+                //element.Content = regrownCell.Player.PlayerSymbol;
             }
         }
 
