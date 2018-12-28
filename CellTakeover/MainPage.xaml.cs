@@ -166,7 +166,7 @@ namespace CellTakeover
 
                 var element = MainGrid.Children[regrownCell.CellIndex] as Button;
                 element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
-                //element.Content = regrownCell.Player.PlayerSymbol;
+                element.Content = string.Empty;
             }
         }
 
