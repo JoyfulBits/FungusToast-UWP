@@ -86,6 +86,8 @@ namespace CellTakeover
             var uniformGrid = sender as UniformGrid;
             uniformGrid.Columns = GameSettings.NumberOfColumnsAndRows;
             uniformGrid.Rows = GameSettings.NumberOfColumnsAndRows;
+            //--make the grid a square since it wasn't doing that for some reason
+            uniformGrid.Width = uniformGrid.ActualHeight;
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
             Thickness noPaddingOrMargin = new Thickness(0);
@@ -104,7 +106,8 @@ namespace CellTakeover
                     Margin = noPaddingOrMargin,
                     Padding = noPaddingOrMargin,
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    FontSize = 10
                 });
             }
 
