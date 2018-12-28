@@ -214,7 +214,7 @@
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutation Chance:" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutation Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MutationChancePercentage, Mode=OneWay}" Margin="5 0 0 0" Style="{StaticResource BaseTextBlockStyle}"  
                                        VerticalAlignment="Center"></TextBlock>
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="%" Style="{StaticResource BaseTextBlockStyle}" 
@@ -266,6 +266,6 @@
             </ListView.ItemTemplate>
         </ListView>
         
-        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Name="MainGrid" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
+        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="MainGrid" Padding="0 0 0 20" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
     </Grid>
 </Page>
