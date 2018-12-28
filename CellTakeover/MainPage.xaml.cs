@@ -25,7 +25,7 @@ namespace CellTakeover
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
-            TintColor = Windows.UI.Colors.White
+            TintColor = Colors.White
         };
 
         private char _deadCellSymbol = '☠';
@@ -37,7 +37,7 @@ namespace CellTakeover
 
 
         private readonly Thickness _activeThickness = new Thickness(10);
-        private SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
+        private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
         private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
 
@@ -202,13 +202,12 @@ namespace CellTakeover
 
             if (ViewModel.GenerationNumber % NumberOfGenerationsBetweenFreeMutations == 0)
             {
-                foreach (var player in players)
+                foreach (var player in ViewModel.Players)
                 {
-                    var mutationOption = _mutationOptionGenerator.GetMutationChoices(player, ViewModel.Players);
-                    var playerMutationChoice = new Tuple<IPlayer, MutationChoice>(player, mutationOption);
-                    ViewModel.MutationChoices.Push(playerMutationChoice);
+                    player.AvailableMutationPoints++;
                 }
 
+                //--only allow points to be spent every X rounds
                 PromptForMutationChoice();
             }
             else
@@ -218,58 +217,57 @@ namespace CellTakeover
                 {
                     if (player.GetsFreeMutation())
                     {
-                        var mutationOption = _mutationOptionGenerator.GetMutationChoices(player, ViewModel.Players);
-                        var playerMutationChoice = new Tuple<IPlayer, MutationChoice>(player, mutationOption);
-                        ViewModel.MutationChoices.Push(playerMutationChoice);
-                        PromptForMutationChoice();
+                        player.AvailableMutationPoints++;
                     }
                 }
             }
         }
 
-        private bool PromptForMutationChoice()
+        private void PromptForMutationChoice()
         {
-            if (ViewModel.MutationChoices.Count > 0)
+            GrowButton.IsEnabled = false;
+
+            foreach (var player in ViewModel.Players)
             {
-                var mutationChoiceTuple = ViewModel.MutationChoices.Pop();
-                GrowButton.IsEnabled = false;
-                var playerNumber = mutationChoiceTuple.Item1.PlayerNumber;
-                var playerStackPanel = _playerNumberToPlayerStackPanel[playerNumber];
+                var playerStackPanel = _playerNumberToPlayerStackPanel[player.PlayerNumber];
                 playerStackPanel.BorderBrush = _activeBorderBrush;
                 playerStackPanel.BorderThickness = _activeThickness;
-                var mutationChoice = mutationChoiceTuple.Item2;
-                var playerMutationButtons = _playerNumberToMutationButtons[playerNumber];
+                var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
 
-                if (mutationChoice.IncreaseMutationChance)
-                {
-                    var mutationChanceButton = playerMutationButtons.First(x => x.Name == "MutationChanceButton");
-                    mutationChanceButton.IsEnabled = true;
-                }
+                var mutationChanceButton = playerMutationButtons.First(x => x.Name == "MutationChanceButton");
+                mutationChanceButton.IsEnabled = true;
 
-                if (mutationChoice.IncreaseCornerGrowthChance)
-                {
-                    var cornerGrowthButton = playerMutationButtons.First(x => x.Name == "CornerGrowthButton");
-                    cornerGrowthButton.IsEnabled = true;
-                }
+                var cornerGrowthButton = playerMutationButtons.First(x => x.Name == "CornerGrowthButton");
+                cornerGrowthButton.IsEnabled = true;
 
-                if (mutationChoice.DecreaseHealthyCellDeathChance)
-                {
-                    var reduceHealthyCellDeathChanceButton = playerMutationButtons.First(x => x.Name == "HealthyCellDeathChanceButton");
-                    reduceHealthyCellDeathChanceButton.IsEnabled = true;
-                }
+                var reduceHealthyCellDeathChanceButton = playerMutationButtons.First(x => x.Name == "HealthyCellDeathChanceButton");
+                reduceHealthyCellDeathChanceButton.IsEnabled = true;
 
-                if (mutationChoice.IncreaseRegrowthChance)
-                {
-                    var regrowthButton = playerMutationButtons.First(x => x.Name == "RegrowthButton");
-                    regrowthButton.IsEnabled = true;
-                }
+                var regrowthButton = playerMutationButtons.First(x => x.Name == "RegrowthButton");
+                regrowthButton.IsEnabled = true;
             }
-            else
+        }
+
+        private void CheckForRemainingMutationPoints(IPlayer player)
+        {
+            if (player.AvailableMutationPoints > 0)
             {
-                GrowButton.IsEnabled = true;
+                return;
             }
 
-            return ViewModel.MutationChoices.Count > 0;
+            DeActivatePlayerMutationButtons(player);
+
+            foreach (var p in ViewModel.Players)
+            {
+                if (p.AvailableMutationPoints > 0)
+                {
+                    
+                    return;
+                }
+            }
+
+            //--if no players have remaining mutation points then we can go back to growing
+            GrowButton.IsEnabled = true;
         }
 
         private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
@@ -278,9 +276,7 @@ namespace CellTakeover
             var player = button.DataContext as IPlayer;
             player.IncreaseMutationChance();
 
-            DeActivatePlayerMutationButtons(player);
-
-            PromptForMutationChoice();
+            CheckForRemainingMutationPoints(player);
         }
 
         private void ReduceHealthyCellDeathChance_Click(object sender, RoutedEventArgs e)
@@ -289,9 +285,7 @@ namespace CellTakeover
             var player = button.DataContext as IPlayer;
             player.DecreaseHealthyCellDeathChance();
 
-            DeActivatePlayerMutationButtons(player);
-
-            PromptForMutationChoice();
+            CheckForRemainingMutationPoints(player);
         }
 
         private void IncreaseCornerGrowthChance_Click(object sender, RoutedEventArgs e)
@@ -300,9 +294,7 @@ namespace CellTakeover
             var player = button.DataContext as IPlayer;
             player.IncreaseCornerGrowth();
 
-            DeActivatePlayerMutationButtons(player);
-
-            PromptForMutationChoice();
+            CheckForRemainingMutationPoints(player);
         }
 
         private void IncreaseRegrowthChance_Click(object sender, RoutedEventArgs e)
@@ -311,14 +303,11 @@ namespace CellTakeover
             var player = button.DataContext as IPlayer;
             player.IncreaseRegrowthChance();
 
-            DeActivatePlayerMutationButtons(player);
-
-            PromptForMutationChoice();
+            CheckForRemainingMutationPoints(player);
         }
 
         private void DeActivatePlayerMutationButtons(IPlayer player)
         {
-            GrowButton.IsEnabled = false;
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
 
             foreach (var button in playerMutationButtons)

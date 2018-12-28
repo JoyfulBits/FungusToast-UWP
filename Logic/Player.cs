@@ -20,6 +20,7 @@ namespace Logic
 
         private string _name;
         private int _regrownCells;
+        private int _availableMutationPoints;
 
         public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, 
             ICellGrowthCalculator cellGrowthCalculator, 
@@ -39,6 +40,17 @@ namespace Logic
             set
             {
                 _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int AvailableMutationPoints
+        {
+            get => _availableMutationPoints;
+            set
+            {
+                if (value == _availableMutationPoints) return;
+                _availableMutationPoints = value;
                 OnPropertyChanged();
             }
         }
@@ -185,11 +197,13 @@ namespace Logic
         public void IncreaseMutationChance()
         {
             GrowthScorecard.MutationChancePercentage += MutationOptionGenerator.AdditionalMutationPercentageChancePerAttributePoint;
+            AvailableMutationPoints--;
         }
 
         public void DecreaseHealthyCellDeathChance()
         {
             GrowthScorecard.HealthyCellDeathChancePercentage -= MutationOptionGenerator.ReducedCellDeathPercentagePerAttributePoint;
+            AvailableMutationPoints--;
         }
 
         public void IncreaseCornerGrowth()
@@ -203,6 +217,8 @@ namespace Logic
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft] +=
                 MutationOptionGenerator.AdditionalCornerGrowthChancePerAttributePoint;
 
+            AvailableMutationPoints--;
+
             OnPropertyChanged(nameof(TopLeftGrowthChance));
             OnPropertyChanged(nameof(TopRightGrowthChance));
             OnPropertyChanged(nameof(BottomRightGrowthChance));
@@ -213,6 +229,8 @@ namespace Logic
         {
             GrowthScorecard.RegrowthChancePercentage +=
                 MutationOptionGenerator.AdditionalRegrowthChancePerAttributePoint;
+
+            AvailableMutationPoints--;
         }
     }
 }
