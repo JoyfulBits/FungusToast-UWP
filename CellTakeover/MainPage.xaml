@@ -8,11 +8,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <UserControl.Resources>
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+        <converters:StringFormatConverter x:Key="StringFormatConverter"/>
     </UserControl.Resources>
 
     <Grid Padding="15">
@@ -130,7 +132,7 @@
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Growth Direction" HorizontalAlignment="Center"></TextBlock>
 
-                        <controls:UniformGrid Grid.Row="2" Grid.Column="0" Width="130" Height="130">
+                        <controls:UniformGrid Grid.Row="2" Grid.Column="0" Width="135" Height="130">
                             <controls:UniformGrid.Resources>
                                 <x:String x:Key="GrowthScorecardTooltip">% chance that a cell will grow into this position relative to another live cell. Each attribute point increases this value by +2%.</x:String>
                                 <Style TargetType="Button" x:Key="GrowthScorecardButtonStyle">
@@ -138,6 +140,7 @@
                                     <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
                                     <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
                                     <Setter Property="ToolTipService.ToolTip" Value="{StaticResource GrowthScorecardTooltip}"></Setter>
+                                    <Setter Property="FontSize" Value="12"></Setter>
                                 </Style>
                             </controls:UniformGrid.Resources>
 
@@ -152,19 +155,17 @@
                                 <RowDefinition Height="*"></RowDefinition>
                             </Grid.RowDefinitions>
 
-                            <!-- If BorderThickness is not set to 1 here then none of the text binds in the grid. If I set it to 2 or don't set it
-                            at all then it doesn't work. I can't set the value in the .Resources above for this reason. NO FREAKING IDEA WHAT'S GOING ON HERE!!-->
-                            <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}" BorderThickness="1"
-                                        Content="{x:Bind TopLeftGrowthChance, Mode=OneWay}">
+                            <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}" BorderThickness="2"
+                                        Content="{x:Bind TopLeftGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
                             <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind TopGrowthChance, Mode=OneWay}">
+                                        Content="{x:Bind TopGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
                             <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind TopRightGrowthChance, Mode=OneWay}">
+                                        Content="{x:Bind TopRightGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
                             <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind LeftGrowthChance, Mode=OneWay}">
+                                        Content="{x:Bind LeftGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
                             <Grid Grid.Row="1" Grid.Column="1">
                                 <Rectangle 
@@ -177,16 +178,16 @@
 
 
                             <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind RightGrowthChance, Mode=OneWay}">
+                                        Content="{x:Bind RightGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
                             <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind BottomLeftGrowthChance, Mode=OneWay}">
+                                        Content="{x:Bind BottomLeftGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
                             <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind BottomGrowthChance, Mode=OneWay}">
+                                        Content="{x:Bind BottomGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
                             <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource GrowthScorecardButtonStyle}"
-                                        Content="{x:Bind BottomRightGrowthChance, Mode=OneWay}">
+                                        Content="{x:Bind BottomRightGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}">
                             </Button>
 
                         </controls:UniformGrid>
@@ -230,7 +231,6 @@
                                 <ColumnDefinition Width="5*"></ColumnDefinition>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition></RowDefinition>
@@ -240,11 +240,11 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutation Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MutationChancePercentage, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"  
+                            <TextBlock Grid.Row="0" Grid.Column="1" 
+                                       Text="{x:Bind Path=GrowthScorecard.MutationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
+                                       Style="{StaticResource BaseTextBlockStyle}"  
                                    VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="%" Style="{StaticResource BaseTextBlockStyle}" 
-                                   VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
-                            <Button Grid.Row="0" Grid.Column="3" 
+                            <Button Grid.Row="0" Grid.Column="2" 
                                 Name="MutationChanceButton"
                                 Style="{StaticResource MutationOptionButtonStyle}"
                                 IsEnabled="False" 
@@ -254,12 +254,10 @@
                                 Click="IncreaseMutationChance_Click"/>
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="Healthy Cell Death Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.HealthyCellDeathChancePercentage, Mode=OneWay}" 
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.HealthyCellDeathChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
                                    Style="{StaticResource BaseTextBlockStyle}"  
                                    VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="%" Style="{StaticResource BaseTextBlockStyle}"  HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"></TextBlock>
-                            <Button Grid.Row="1" Grid.Column="3" Name="HealthyCellDeathChanceButton"
+                            <Button Grid.Row="1" Grid.Column="2" Name="HealthyCellDeathChanceButton"
                                 Style="{StaticResource MutationOptionButtonStyle}"
                                 IsEnabled="False"
                                 Visibility="Collapsed" 
@@ -269,12 +267,10 @@
                                 Click="ReduceHealthyCellDeathChance_Click"/>
 
                             <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="Regrowth Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegrowthChancePercentage, Mode=OneWay}" 
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegrowthChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
                                    Style="{StaticResource BaseTextBlockStyle}"  
                                    VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="%" Style="{StaticResource BaseTextBlockStyle}"  HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"></TextBlock>
-                            <Button Grid.Row="2" Grid.Column="3" Name="RegrowthButton"
+                            <Button Grid.Row="2" Grid.Column="2" Name="RegrowthButton"
                                 Style="{StaticResource MutationOptionButtonStyle}"
                                 IsEnabled="False"
                                 Visibility="Collapsed" 
@@ -283,7 +279,7 @@
                                 Click="IncreaseRegrowthChance_Click"/>
 
                             <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"  Text="Corner Growth Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
-                            <Button Grid.Row="3" Grid.Column="3" Name="CornerGrowthButton"
+                            <Button Grid.Row="3" Grid.Column="2" Name="CornerGrowthButton"
                                 Style="{StaticResource MutationOptionButtonStyle}"
                                 IsEnabled="False"
                                 Visibility="Collapsed" 
