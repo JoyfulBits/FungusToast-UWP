@@ -32,7 +32,7 @@ namespace CellTakeover
         private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
         private readonly Brush _activeBorderBrush = new SolidColorBrush(Colors.Green);
 
-        private readonly Dictionary<int, StackPanel> _playerNumberToPlayerStackPanel = new Dictionary<int, StackPanel>();
+        private readonly Dictionary<int, Grid> _playerNumberToPlayerGrid = new Dictionary<int, Grid>();
         private readonly Dictionary<int, List<Button>> _playerNumberToMutationButtons = new Dictionary<int, List<Button>>();
 
 
@@ -40,9 +40,6 @@ namespace CellTakeover
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
         private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
-
-
-        public const int NumberOfGenerationsBetweenFreeMutations = 5;
 
         //--TODO introduce dependency injection framework
         private ICellGrowthCalculator _cellGrowthCalculator;
@@ -63,7 +60,6 @@ namespace CellTakeover
             players.Add(new Player("Player 3", Colors.PaleVioletRed, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
             ViewModel.Players = players;
 
-            _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
             foreach (var player in players)
             {
                 _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
@@ -170,11 +166,11 @@ namespace CellTakeover
             }
         }
 
-        private void PlayerStackPanel_Loaded(object sender, RoutedEventArgs e)
+        private void PlayerGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            var playerStackPanel = sender as StackPanel;
+            var playerStackPanel = sender as Grid;
             var playerNumber = int.Parse(playerStackPanel.Name);
-            _playerNumberToPlayerStackPanel.Add(playerNumber, playerStackPanel);
+            _playerNumberToPlayerGrid.Add(playerNumber, playerStackPanel);
         }
 
         private void Grow_OnClick(object sender, RoutedEventArgs e)
@@ -200,7 +196,7 @@ namespace CellTakeover
                 players = ViewModel.Players;
             }
 
-            if (ViewModel.GenerationNumber % NumberOfGenerationsBetweenFreeMutations == 0)
+            if (ViewModel.GenerationNumber % CellTakeoverViewModel.NumberOfGenerationsBetweenFreeMutations == 0)
             {
                 foreach (var player in ViewModel.Players)
                 {
@@ -229,22 +225,15 @@ namespace CellTakeover
 
             foreach (var player in ViewModel.Players)
             {
-                var playerStackPanel = _playerNumberToPlayerStackPanel[player.PlayerNumber];
-                playerStackPanel.BorderBrush = _activeBorderBrush;
-                playerStackPanel.BorderThickness = _activeThickness;
+                var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
+                playerGrid.BorderBrush = _activeBorderBrush;
+                playerGrid.BorderThickness = _activeThickness;
                 var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
-
-                var mutationChanceButton = playerMutationButtons.First(x => x.Name == "MutationChanceButton");
-                mutationChanceButton.IsEnabled = true;
-
-                var cornerGrowthButton = playerMutationButtons.First(x => x.Name == "CornerGrowthButton");
-                cornerGrowthButton.IsEnabled = true;
-
-                var reduceHealthyCellDeathChanceButton = playerMutationButtons.First(x => x.Name == "HealthyCellDeathChanceButton");
-                reduceHealthyCellDeathChanceButton.IsEnabled = true;
-
-                var regrowthButton = playerMutationButtons.First(x => x.Name == "RegrowthButton");
-                regrowthButton.IsEnabled = true;
+                foreach (var mutationButton in playerMutationButtons)
+                {
+                    mutationButton.IsEnabled = true;
+                    mutationButton.Visibility = Visibility.Visible;
+                }
             }
         }
 
@@ -313,11 +302,12 @@ namespace CellTakeover
             foreach (var button in playerMutationButtons)
             {
                 button.IsEnabled = false;
+                button.Visibility = Visibility.Collapsed;
             }
 
-            var playerStackPanel = _playerNumberToPlayerStackPanel[player.PlayerNumber];
-            playerStackPanel.BorderBrush = _normalBorderBrush;
-            playerStackPanel.BorderThickness = _normalThickness;
+            var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
+            playerGrid.BorderBrush = _normalBorderBrush;
+            playerGrid.BorderThickness = _normalThickness;
         }
 
         public T FindElementByName<T>(FrameworkElement parentElement, string childName) where T : FrameworkElement

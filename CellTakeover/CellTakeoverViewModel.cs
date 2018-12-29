@@ -9,6 +9,7 @@ namespace CellTakeover
 {
     public class CellTakeoverViewModel : INotifyPropertyChanged
     {
+        public const int NumberOfGenerationsBetweenFreeMutations = 5;
         private int _generationNumber;
         public Dictionary<int, BioCell> CurrentLiveCells { get; } = new Dictionary<int, BioCell>();
         public Dictionary<int, BioCell> CurrentDeadCells { get; } = new Dictionary<int, BioCell>();
@@ -23,12 +24,16 @@ namespace CellTakeover
                 if (value == _generationNumber) return;
                 _generationNumber = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(RoundsUntilNextMutation));
             }
         }
 
         public int TotalLiveCells => CurrentLiveCells.Count;
 
         public int TotalDeadCells => CurrentDeadCells.Count;
+
+        public int RoundsUntilNextMutation => NumberOfGenerationsBetweenFreeMutations -
+                                              GenerationNumber % NumberOfGenerationsBetweenFreeMutations;
 
         public int TotalEmptyCells =>
             GameSettings.NumberOfCells - CurrentLiveCells.Count - CurrentDeadCells.Count;
