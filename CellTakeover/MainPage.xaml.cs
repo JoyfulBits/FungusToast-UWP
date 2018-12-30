@@ -29,20 +29,24 @@ namespace CellTakeover
             TintColor = Colors.White
         };
 
-        private char _deadCellSymbol = '☠';
-        private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
-        private readonly Brush _activeBorderBrush = new SolidColorBrush(Colors.Green);
+
 
         private readonly Dictionary<int, Grid> _playerNumberToPlayerGrid = new Dictionary<int, Grid>();
         private readonly Dictionary<int, List<Button>> _playerNumberToMutationButtons = new Dictionary<int, List<Button>>();
         private readonly Dictionary<int, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<int, TextBlock>();
         private readonly Dictionary<int, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<int, ContentDialog>();
+        private readonly Dictionary<int, Button> _playerNumberToSkillTreeButton = new Dictionary<int, Button>();
+        private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
 
+        private char _deadCellSymbol = '☠';
 
-        private readonly Thickness _activeThickness = new Thickness(10);
+        private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
+
+        private readonly Brush _activeBorderBrush = new SolidColorBrush(Colors.Green);
+        private readonly Thickness _activeThickness = new Thickness(8);
+
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
-        private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
 
         //--TODO introduce dependency injection framework
         private ICellGrowthCalculator _cellGrowthCalculator;
@@ -247,6 +251,9 @@ namespace CellTakeover
                 var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
                 playerGrid.BorderBrush = _activeBorderBrush;
                 playerGrid.BorderThickness = _activeThickness;
+                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
+                skillTreeButton.BorderBrush = _activeBorderBrush;
+                skillTreeButton.BorderThickness = _activeThickness;
                 EnablePlayerMutationButtons(player);
             }
         }
@@ -330,6 +337,10 @@ namespace CellTakeover
             var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
             playerGrid.BorderBrush = _normalBorderBrush;
             playerGrid.BorderThickness = _normalThickness;
+
+            var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
+            skillTreeButton.BorderBrush = _normalBorderBrush;
+            skillTreeButton.BorderThickness = _normalThickness;
         }
 
         public T FindElementByName<T>(FrameworkElement parentElement, string childName) where T : FrameworkElement
@@ -400,6 +411,13 @@ namespace CellTakeover
             var player = button.DataContext as IPlayer;
             var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
+        }
+
+        private void SkillTreeButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            _playerNumberToSkillTreeButton[player.PlayerNumber] = button;
         }
     }
 }
