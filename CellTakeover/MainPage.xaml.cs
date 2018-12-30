@@ -324,6 +324,9 @@ namespace CellTakeover
             var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
             skillTreeButton.BorderBrush = _normalBorderBrush;
             skillTreeButton.BorderThickness = _normalThickness;
+
+            var dialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
+            dialog.Hide();
         }
 
         public T FindElementByName<T>(FrameworkElement parentElement, string childName) where T : FrameworkElement
@@ -388,10 +391,14 @@ namespace CellTakeover
             _playerNumberToSkillTreeDialog[player.PlayerNumber] = skillTreeDialog;
         }
 
-        private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private async void SkillTreeButton_OnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
+            if (player.AvailableMutationPoints > 0 && MutationConsumptionRound())
+            {
+                EnablePlayerMutationButtons(player);
+            };
             var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
