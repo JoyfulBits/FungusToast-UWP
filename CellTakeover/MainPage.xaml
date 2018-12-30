@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>
+        <local:CellTakeoverViewModel x:Key="ViewModel"></local:CellTakeoverViewModel>
     </UserControl.Resources>
 
     <Grid Padding="15">
@@ -237,6 +238,7 @@
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutation Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
@@ -286,7 +288,21 @@
                                 Content="+" ToolTipService.ToolTip="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}" 
                                 Loaded="MutationOptionButton_Loaded"
                                 Click="IncreaseCornerGrowthChance_Click"/>
-                        </Grid>
+
+                            <TextBlock Name="MutationPointAddedMessage" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" 
+                                       Opacity="0"
+                                       Foreground="DarkGreen"
+                                       Text="+1 Mutation Point!" 
+                                       HorizontalAlignment="Center"
+                                       Style="{StaticResource SubheaderTextBlockStyle}"
+                                       Loaded="MutationPointMessage_Loaded"></TextBlock>
+
+                            <TextBlock Grid.Row="4" Grid.Column="2" 
+                                       Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
+                                       Foreground="DarkGreen"
+                                       VerticalAlignment="Center"
+                                       Loaded="AvailabledMutationTextBlock_Loaded"></TextBlock>
+                        </Grid> 
                     </Grid>
                         
                 </DataTemplate>

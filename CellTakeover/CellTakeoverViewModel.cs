@@ -9,12 +9,13 @@ namespace CellTakeover
 {
     public class CellTakeoverViewModel : INotifyPropertyChanged
     {
-        public const int NumberOfGenerationsBetweenFreeMutations = 5;
         private int _generationNumber;
         public Dictionary<int, BioCell> CurrentLiveCells { get; } = new Dictionary<int, BioCell>();
         public Dictionary<int, BioCell> CurrentDeadCells { get; } = new Dictionary<int, BioCell>();
 
         public List<IPlayer> Players { get; set; } = new List<IPlayer>();
+
+        public int NumberOfGenerationsBetweenFreeMutations { get; } = 5;
 
         public int GenerationNumber
         {

@@ -121,7 +121,6 @@
   <ItemGroup>
     <Compile Include="BioCellTests\RunCellGrowthTests.cs" />
     <Compile Include="CellGrowthCalculatorTests\CalculateCellGrowthTests.cs" />
-    <Compile Include="MutationOptionGeneratorTests\GetMutationChoicesTests.cs" />
     <Compile Include="PlayerTests\CalculateCellGrowthTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SurroundingCellCalculatorTests\GetSurroundingCellsTests.cs" />

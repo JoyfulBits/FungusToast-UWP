@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Logic;
+using Microsoft.Toolkit.Uwp.UI.Animations;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -34,7 +37,7 @@ namespace CellTakeover
 
         private readonly Dictionary<int, Grid> _playerNumberToPlayerGrid = new Dictionary<int, Grid>();
         private readonly Dictionary<int, List<Button>> _playerNumberToMutationButtons = new Dictionary<int, List<Button>>();
-
+        private readonly Dictionary<int, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<int, TextBlock>();
 
         private readonly Thickness _activeThickness = new Thickness(10);
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
@@ -46,7 +49,6 @@ namespace CellTakeover
         private ICellRegrowthCalculator _cellRegrowthCalculator;
         private ISurroundingCellCalculator _surroundingCellCalculator;
         private GenerationAdvancer _generationAdvancer;
-        private IMutationOptionGenerator _mutationOptionGenerator;
 
 
         public MainPage()
@@ -73,7 +75,6 @@ namespace CellTakeover
             _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
             _cellRegrowthCalculator = new CellRegrowthCalculator(_surroundingCellCalculator);
             _generationAdvancer = new GenerationAdvancer(_cellRegrowthCalculator);
-            _mutationOptionGenerator = new MutationOptionGenerator();
         }
 
 
@@ -173,8 +174,9 @@ namespace CellTakeover
             _playerNumberToPlayerGrid.Add(playerNumber, playerStackPanel);
         }
 
-        private void Grow_OnClick(object sender, RoutedEventArgs e)
+        private async void Grow_OnClick(object sender, RoutedEventArgs e)
         {
+            GrowButton.IsEnabled = false;
             var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
             AddNewCells(nextGenerationResult.NewLiveCells);
 
@@ -196,11 +198,11 @@ namespace CellTakeover
                 players = ViewModel.Players;
             }
 
-            if (ViewModel.GenerationNumber % CellTakeoverViewModel.NumberOfGenerationsBetweenFreeMutations == 0)
+            if (ViewModel.GenerationNumber % ViewModel.NumberOfGenerationsBetweenFreeMutations == 0)
             {
                 foreach (var player in ViewModel.Players)
                 {
-                    player.AvailableMutationPoints++;
+                    await IncreasePlayerMutationPoints(player);
                 }
 
                 //--only allow points to be spent every X rounds
@@ -208,32 +210,39 @@ namespace CellTakeover
             }
             else
             {
+
                 //--players only get bonus mutations if not on a round with a free mutation
                 foreach (var player in players)
                 {
                     if (player.GetsFreeMutation())
                     {
-                        player.AvailableMutationPoints++;
+                        IncreasePlayerMutationPoints(player);
                     }
                 }
+
+                //--since it's not a spending round we can keep the grow button enabled
+                GrowButton.IsEnabled = true;
             }
+        }
+
+        private async Task IncreasePlayerMutationPoints(IPlayer player)
+        {
+            player.AvailableMutationPoints++;
+            var mutationPointAnnouncementMessage =
+                _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber];
+
+            await mutationPointAnnouncementMessage.Fade(1, 300, 0, easingMode: EasingMode.EaseInOut).StartAsync();
+            mutationPointAnnouncementMessage.Fade(0, 2000, 305).StartAsync();
         }
 
         private void PromptForMutationChoice()
         {
-            GrowButton.IsEnabled = false;
-
             foreach (var player in ViewModel.Players)
             {
                 var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
                 playerGrid.BorderBrush = _activeBorderBrush;
                 playerGrid.BorderThickness = _activeThickness;
-                var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
-                foreach (var mutationButton in playerMutationButtons)
-                {
-                    mutationButton.IsEnabled = true;
-                    mutationButton.Visibility = Visibility.Visible;
-                }
+                EnablePlayerMutationButtons(player);
             }
         }
 
@@ -244,13 +253,12 @@ namespace CellTakeover
                 return;
             }
 
-            DeActivatePlayerMutationButtons(player);
+            DisablePlayerMutationButtons(player);
 
             foreach (var p in ViewModel.Players)
             {
                 if (p.AvailableMutationPoints > 0)
                 {
-                    
                     return;
                 }
             }
@@ -263,6 +271,7 @@ namespace CellTakeover
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
+
             player.IncreaseMutationChance();
 
             CheckForRemainingMutationPoints(player);
@@ -295,7 +304,17 @@ namespace CellTakeover
             CheckForRemainingMutationPoints(player);
         }
 
-        private void DeActivatePlayerMutationButtons(IPlayer player)
+        private void EnablePlayerMutationButtons(IPlayer player)
+        {
+            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
+            foreach (var mutationButton in playerMutationButtons)
+            {
+                mutationButton.IsEnabled = true;
+                mutationButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void DisablePlayerMutationButtons(IPlayer player)
         {
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
 
@@ -342,6 +361,23 @@ namespace CellTakeover
             var player = button.DataContext as IPlayer;
             var playerButtons = _playerNumberToMutationButtons[player.PlayerNumber];
             playerButtons.Add(button);
+        }
+
+        private void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
+        {
+            var mutationPointMessageTextBlock = sender as TextBlock;
+            var player = mutationPointMessageTextBlock.DataContext as IPlayer;
+            _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber] = mutationPointMessageTextBlock;
+        }
+
+        private void AvailabledMutationTextBlock_Loaded(object sender, RoutedEventArgs e)
+        {
+            var textBlock = sender as TextBlock;
+            ToolTip toolTip = new ToolTip
+            {
+                Content = $"Accumulated Mutation Points can be spent every {ViewModel.NumberOfGenerationsBetweenFreeMutations} generations to enhance your organism."
+            };
+            ToolTipService.SetToolTip(textBlock, toolTip);
         }
     }
 }
