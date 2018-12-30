@@ -36,6 +36,8 @@ namespace CellTakeover
         private readonly Dictionary<int, Grid> _playerNumberToPlayerGrid = new Dictionary<int, Grid>();
         private readonly Dictionary<int, List<Button>> _playerNumberToMutationButtons = new Dictionary<int, List<Button>>();
         private readonly Dictionary<int, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<int, TextBlock>();
+        private readonly Dictionary<int, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<int, ContentDialog>();
+
 
         private readonly Thickness _activeThickness = new Thickness(10);
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
@@ -196,7 +198,7 @@ namespace CellTakeover
                 players = ViewModel.Players;
             }
 
-            if (ViewModel.GenerationNumber % ViewModel.NumberOfGenerationsBetweenFreeMutations == 0)
+            if (MutationConsumptionRound())
             {
                 foreach (var player in ViewModel.Players)
                 {
@@ -221,6 +223,11 @@ namespace CellTakeover
                 //--since it's not a spending round we can keep the grow button enabled
                 GrowButton.IsEnabled = true;
             }
+        }
+
+        private bool MutationConsumptionRound()
+        {
+            return ViewModel.GenerationNumber % ViewModel.NumberOfGenerationsBetweenFreeMutations == 0;
         }
 
         private async Task IncreasePlayerMutationPoints(IPlayer player)
@@ -308,7 +315,6 @@ namespace CellTakeover
             foreach (var mutationButton in playerMutationButtons)
             {
                 mutationButton.IsEnabled = true;
-                mutationButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -319,7 +325,6 @@ namespace CellTakeover
             foreach (var button in playerMutationButtons)
             {
                 button.IsEnabled = false;
-                button.Visibility = Visibility.Collapsed;
             }
 
             var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
@@ -358,6 +363,10 @@ namespace CellTakeover
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             var playerButtons = _playerNumberToMutationButtons[player.PlayerNumber];
+            if (player.AvailableMutationPoints > 0 && MutationConsumptionRound())
+            {
+                button.IsEnabled = true;
+            }
             playerButtons.Add(button);
         }
 
@@ -376,6 +385,21 @@ namespace CellTakeover
                 Content = $"Accumulated Mutation Points can be spent every {ViewModel.NumberOfGenerationsBetweenFreeMutations} generations to enhance your organism."
             };
             ToolTipService.SetToolTip(textBlock, toolTip);
+        }
+
+        private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            var skillTreeDialog = sender as ContentDialog;
+            var player = skillTreeDialog.DataContext as IPlayer;
+            _playerNumberToSkillTreeDialog[player.PlayerNumber] = skillTreeDialog;
+        }
+
+        private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
+            await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
     }
 }

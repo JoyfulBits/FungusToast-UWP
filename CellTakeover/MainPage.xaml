@@ -122,6 +122,90 @@
                             <ColumnDefinition Width="10*" MinWidth="275"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
+                        <ContentDialog Title="{x:Bind Path=Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0} Skill Tree'}" 
+                                       CloseButtonText="Close"
+                                       Loaded="SkillTreeDialog_Loaded">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
+                                           Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" ></TextBlock>
+
+                                <StackPanel Grid.Row="1" Grid.Column="0">
+                                    <Button Margin="5"
+                                            IsEnabled="False" 
+                                            VerticalAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Click="IncreaseMutationChance_Click"
+                                            Loaded="MutationOptionButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/mutation_chance.png" Width="50" Height="50"></Image>
+                                    </Button>
+                                    <TextBlock
+                                               Text="{x:Bind Path=GrowthScorecard.MutationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               HorizontalAlignment="Center"></TextBlock>
+                                </StackPanel>
+
+
+                                <StackPanel Grid.Row="2" Grid.Column="0">
+                                    <Button Margin="5"
+                                        IsEnabled="False" 
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Click="IncreaseCornerGrowthChance_Click"
+                                        Loaded="MutationOptionButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/corner_growth.png" Width="50" Height="50"></Image>
+                                    </Button>
+
+                                    <!-- Just using the TopLeftGrowthChance to indicate overall corner growth until things get more complicated-->
+                                    <TextBlock Text="{x:Bind Path=TopLeftGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
+                                               Style="{StaticResource BaseTextBlockStyle}"  
+                                               HorizontalAlignment="Center"></TextBlock>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="3" Grid.Column="0">
+                                    <Button Margin="5"
+                                        IsEnabled="False" 
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Click="IncreaseRegrowthChance_Click"
+                                        Loaded="MutationOptionButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/regrowth.png" Width="50" Height="50"></Image>
+                                    </Button>
+
+                                    <TextBlock Text="{x:Bind Path=GrowthScorecard.RegrowthChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
+                                               Style="{StaticResource BaseTextBlockStyle}"  
+                                               HorizontalAlignment="Center"></TextBlock>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="4" Grid.Column="0">
+                                    <Button Margin="5"
+                                        IsEnabled="False" 
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Click="ReduceHealthyCellDeathChance_Click"
+                                        Loaded="MutationOptionButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/reduced_death.png" Width="50" Height="50"></Image>
+                                    </Button>
+
+                                    <TextBlock Text="{x:Bind Path=GrowthScorecard.HealthyCellDeathChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
+                                               Style="{StaticResource BaseTextBlockStyle}"  
+                                               HorizontalAlignment="Center"></TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </ContentDialog>
+
                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                             <Rectangle Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
                                            Margin="0 0 5 0" Width="20" Height="20" 
@@ -241,7 +325,7 @@
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutation Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
+                            <!--<TextBlock Grid.Row="0" Grid.Column="0" Text="Mutation Chance:" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
                             <TextBlock Grid.Row="0" Grid.Column="1" 
                                        Text="{x:Bind Path=GrowthScorecard.MutationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" 
                                        Style="{StaticResource BaseTextBlockStyle}"  
@@ -287,7 +371,7 @@
                                 Visibility="Collapsed" 
                                 Content="+" ToolTipService.ToolTip="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}" 
                                 Loaded="MutationOptionButton_Loaded"
-                                Click="IncreaseCornerGrowthChance_Click"/>
+                                Click="IncreaseCornerGrowthChance_Click"/>-->
 
 
                             <StackPanel Grid.Row="4" Grid.Column="0">
@@ -296,13 +380,14 @@
                                            Foreground="DarkGreen"
                                            VerticalAlignment="Center"
                                            Loaded="AvailabledMutationTextBlock_Loaded"></TextBlock>
-                                <TextBlock Name="MutationPointAddedMessage" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" 
+                                <TextBlock
                                            Opacity="0"
                                            Foreground="DarkGreen"
                                            Text="+1 Mutation Point!" 
                                            Loaded="MutationPointMessage_Loaded"></TextBlock>
                             </StackPanel>
 
+                            <Button Grid.Row="4" Grid.Column="2" Content="SHOW SKILL TREE" Click="ButtonBase_OnClick"></Button>
                         </Grid> 
                     </Grid>
                         
