@@ -29,9 +29,6 @@ namespace CellTakeover
             TintColor = Colors.White
         };
 
-
-
-        private readonly Dictionary<int, Grid> _playerNumberToPlayerGrid = new Dictionary<int, Grid>();
         private readonly Dictionary<int, List<Button>> _playerNumberToMutationButtons = new Dictionary<int, List<Button>>();
         private readonly Dictionary<int, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<int, TextBlock>();
         private readonly Dictionary<int, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<int, ContentDialog>();
@@ -171,13 +168,6 @@ namespace CellTakeover
             }
         }
 
-        private void PlayerGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            var playerStackPanel = sender as Grid;
-            var playerNumber = int.Parse(playerStackPanel.Name);
-            _playerNumberToPlayerGrid.Add(playerNumber, playerStackPanel);
-        }
-
         private async void Grow_OnClick(object sender, RoutedEventArgs e)
         {
             GrowButton.IsEnabled = false;
@@ -248,9 +238,6 @@ namespace CellTakeover
         {
             foreach (var player in ViewModel.Players)
             {
-                var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
-                playerGrid.BorderBrush = _activeBorderBrush;
-                playerGrid.BorderThickness = _activeThickness;
                 var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
                 skillTreeButton.BorderBrush = _activeBorderBrush;
                 skillTreeButton.BorderThickness = _activeThickness;
@@ -333,10 +320,6 @@ namespace CellTakeover
             {
                 button.IsEnabled = false;
             }
-
-            var playerGrid = _playerNumberToPlayerGrid[player.PlayerNumber];
-            playerGrid.BorderBrush = _normalBorderBrush;
-            playerGrid.BorderThickness = _normalThickness;
 
             var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
             skillTreeButton.BorderBrush = _normalBorderBrush;

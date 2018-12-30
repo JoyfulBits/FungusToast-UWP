@@ -108,7 +108,7 @@
         <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
-                    <Grid Name="{x:Bind PlayerNumber}" Padding="10" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5" Loaded="PlayerGrid_Loaded">
+                    <Grid Name="{x:Bind PlayerNumber}" Padding="10" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
                         <Grid.RowDefinitions>
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
@@ -221,6 +221,7 @@
 
                         <Button Grid.Row="2" Grid.Column="2"
                                 RenderTransformOrigin="0.5, 0.5"
+                                ToolTipService.ToolTip="View this player's skill tree and use mutation points to improve your organism"
                                 Click="ButtonBase_OnClick"
                                 Loaded="SkillTreeButton_Loaded">
                             <Button.RenderTransform>
