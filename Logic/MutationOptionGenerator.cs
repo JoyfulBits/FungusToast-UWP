@@ -2,24 +2,12 @@
 
 namespace Logic
 {
-    public class MutationOptionGenerator : IMutationOptionGenerator
+    public class MutationOptionGenerator
     {
         public static int AdditionalMutationPercentageChancePerAttributePoint = 3;
         public static int AdditionalCornerGrowthChancePerAttributePoint = 2;
         public static double ReducedCellDeathPercentagePerAttributePoint = .5;
         public static int AdditionalRegrowthChancePerAttributePoint = 1;
-
-
-        public MutationChoice GetMutationChoices(IPlayer activePlayer, List<IPlayer> allPlayers)
-        {
-            return new MutationChoice
-            {
-                IncreaseMutationChance = true,
-                IncreaseCornerGrowthChance = true,
-                DecreaseHealthyCellDeathChance = true,
-                IncreaseRegrowthChance = true
-            };
-        }
 
         public static string IncreaseMutationChanceMessage =>
             $"Increase mutation chance for each generation by an additional {AdditionalMutationPercentageChancePerAttributePoint}%.";

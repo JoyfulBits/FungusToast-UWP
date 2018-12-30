@@ -129,7 +129,6 @@
     <Compile Include="GrowthScorecard.cs" />
     <Compile Include="ICellGrowthCalculator.cs" />
     <Compile Include="ICellRegrowthCalculator.cs" />
-    <Compile Include="IMutationOptionGenerator.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="ISurroundingCellCalculator.cs" />
     <Compile Include="MutationChoice.cs" />
