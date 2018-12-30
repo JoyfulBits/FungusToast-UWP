@@ -221,11 +221,11 @@
                         <Grid Grid.Row="0" Grid.RowSpan="5" Grid.Column="2">
                             <Grid.Resources>
                                 <Style TargetType="Button" x:Key="MutationOptionButtonStyle">
-                                    <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                                    <Setter Property="HorizontalAlignment" Value="Left"></Setter>
                                     <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
                                     <Setter Property="Margin" Value="5 0 0 0"></Setter>
-                                    <Setter Property="MaxHeight" Value="30"></Setter>
-                                    <Setter Property="MaxWidth" Value="30"></Setter>
+                                    <Setter Property="Height" Value="30"></Setter>
+                                    <Setter Property="Width" Value="30"></Setter>
                                 </Style>
                             </Grid.Resources>
                             <Grid.ColumnDefinitions>
@@ -289,19 +289,20 @@
                                 Loaded="MutationOptionButton_Loaded"
                                 Click="IncreaseCornerGrowthChance_Click"/>
 
-                            <TextBlock Name="MutationPointAddedMessage" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" 
-                                       Opacity="0"
-                                       Foreground="DarkGreen"
-                                       Text="+1 Mutation Point!" 
-                                       HorizontalAlignment="Center"
-                                       Style="{StaticResource SubheaderTextBlockStyle}"
-                                       Loaded="MutationPointMessage_Loaded"></TextBlock>
 
-                            <TextBlock Grid.Row="4" Grid.Column="2" 
-                                       Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
-                                       Foreground="DarkGreen"
-                                       VerticalAlignment="Center"
-                                       Loaded="AvailabledMutationTextBlock_Loaded"></TextBlock>
+                            <StackPanel Grid.Row="4" Grid.Column="0">
+                                <TextBlock
+                                           Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
+                                           Foreground="DarkGreen"
+                                           VerticalAlignment="Center"
+                                           Loaded="AvailabledMutationTextBlock_Loaded"></TextBlock>
+                                <TextBlock Name="MutationPointAddedMessage" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" 
+                                           Opacity="0"
+                                           Foreground="DarkGreen"
+                                           Text="+1 Mutation Point!" 
+                                           Loaded="MutationPointMessage_Loaded"></TextBlock>
+                            </StackPanel>
+
                         </Grid> 
                     </Grid>
                         
