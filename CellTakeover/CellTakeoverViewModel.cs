@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Logic;
 using Logic.Annotations;
@@ -8,8 +9,12 @@ namespace CellTakeover
 {
     public class CellTakeoverViewModel : INotifyPropertyChanged
     {
+        public const int NumberOfTurnsAfterGridIsFullBeforeGameEnds = 5;
+
         private int _generationNumber;
         private List<IPlayer> _players = new List<IPlayer>();
+
+        private int _gameEndCountDown = NumberOfTurnsAfterGridIsFullBeforeGameEnds;
         public Dictionary<int, BioCell> CurrentLiveCells { get; } = new Dictionary<int, BioCell>();
         public Dictionary<int, BioCell> CurrentDeadCells { get; } = new Dictionary<int, BioCell>();
 
@@ -91,6 +96,29 @@ namespace CellTakeover
             AddNewLiveCell(regrownCell);
             OnPropertyChanged(nameof(TotalLiveCells));
             OnPropertyChanged(nameof(TotalDeadCells));
+        }
+
+        public List<IPlayer> GameOverResult
+        {
+            get
+            {
+                return Players.OrderByDescending(x => x.LiveCells).ToList();
+            }
+        }
+
+        public int GameEndCountDown
+        {
+            get => _gameEndCountDown;
+            set
+            {
+                if (value == 0)
+                {
+                    OnPropertyChanged(nameof(GameOverResult));
+                }
+                if (value == _gameEndCountDown) return;
+                _gameEndCountDown = value;
+                OnPropertyChanged();
+            }
         }
     }
 }

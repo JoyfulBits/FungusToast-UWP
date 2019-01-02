@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -203,17 +205,7 @@ namespace CellTakeover
 
             ViewModel.GenerationNumber++;
 
-            List<IPlayer> players;
-            //--every other round the players are checked in reverse order for fairness
-            if (ViewModel.GenerationNumber % 2 == 0)
-            {
-                players = new List<IPlayer>(ViewModel.Players);
-                players.Reverse();
-            }
-            else
-            {
-                players = ViewModel.Players;
-            }
+            List<IPlayer> players = ViewModel.Players;
 
             if (MutationConsumptionRound())
             {
@@ -239,6 +231,23 @@ namespace CellTakeover
 
                 //--since it's not a spending round we can keep the grow button enabled
                 GrowButton.IsEnabled = true;
+            }
+
+            CheckForGameEnd();
+        }
+
+        private async void CheckForGameEnd()
+        {
+            if (ViewModel.TotalEmptyCells == 0)
+            {
+                if (ViewModel.GameEndCountDown == 0)
+                {
+                    await GameEndContentDialog.ShowAsync();
+                }
+                else
+                {
+                    ViewModel.GameEndCountDown--;
+                }
             }
         }
 
@@ -395,6 +404,23 @@ namespace CellTakeover
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             _playerNumberToSkillTreeButton[player.PlayerNumber] = button;
+        }
+
+        private void Exit_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            Application.Current.Exit();
+        }
+
+        private async void PlayAgain_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var result =
+                await CoreApplication.RequestRestartAsync(string.Empty);
+            if (result == AppRestartFailureReason.NotInForeground ||
+                result == AppRestartFailureReason.RestartPending ||
+                result == AppRestartFailureReason.Other)
+            {
+                Debug.WriteLine("RequestRestartAsync failed: {0}", result);
+            }
         }
     }
 }
