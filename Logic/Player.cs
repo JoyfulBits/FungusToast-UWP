@@ -13,8 +13,7 @@ namespace Logic
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;
         private Color _color;
         private int _playerNumber;
-        private string _playerSymbol;
-        private GrowthScorecard _growthScorecard = new GrowthScorecard();
+        private GrowthScorecard _growthScorecard;
         private int _liveCells;
         private int _deadCells;
 
@@ -22,16 +21,16 @@ namespace Logic
         private int _regrownCells;
         private int _availableMutationPoints;
 
-        public Player(string name, Color playerCellColor, int playerNumber, string characterSymbol, 
+        public Player(string name, Color playerCellColor, int playerNumber, 
             ICellGrowthCalculator cellGrowthCalculator, 
             ISurroundingCellCalculator surroundingCellCalculator)
         {
             Name = name;
             Color = playerCellColor;
             PlayerNumber = playerNumber;
-            PlayerSymbol = characterSymbol;
             _cellGrowthCalculator = cellGrowthCalculator;
             _surroundingCellCalculator = surroundingCellCalculator;
+            _growthScorecard = new GrowthScorecard();
         }
 
         public string Name
@@ -77,17 +76,6 @@ namespace Logic
             }
         }
 
-        public string PlayerSymbol
-        {
-            get => _playerSymbol;
-            set
-            {
-                if (value == _playerSymbol) return;
-                _playerSymbol = value;
-                OnPropertyChanged();
-            }
-        }
-
         public GrowthScorecard GrowthScorecard
         {
             get => _growthScorecard;
@@ -104,7 +92,6 @@ namespace Logic
                 OnPropertyChanged(nameof(BottomGrowthChance));
                 OnPropertyChanged(nameof(BottomLeftGrowthChance));
                 OnPropertyChanged(nameof(LeftGrowthChance));
-
             }
         }
 

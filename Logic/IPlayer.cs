@@ -11,7 +11,6 @@ namespace Logic
         int AvailableMutationPoints { get; set; }
         Color Color { get; set; }
         int PlayerNumber { get; set; }
-        string PlayerSymbol { get; set; }
         int LiveCells { get; set; }
         int DeadCells { get; set; }
         int RegrownCells { get; set; }

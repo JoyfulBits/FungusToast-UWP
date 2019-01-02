@@ -18,7 +18,7 @@
         <local:CellTakeoverViewModel x:Key="ViewModel"></local:CellTakeoverViewModel>
     </UserControl.Resources>
 
-    <Grid Padding="15">
+    <Grid Padding="15" Loaded="MainGrid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="13*"></RowDefinition>
@@ -27,6 +27,35 @@
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition Width="6*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+
+        <ContentDialog Name="GameSettingsDialog" Title="Game Settings" PrimaryButtonText="Let's Play!" PrimaryButtonClick="GameStart_Click">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Number of Human Players:"></TextBlock>
+                <ComboBox Name="NumberOfHumanPlayersComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="2">
+                    <x:Int32>1</x:Int32>
+                    <x:Int32>2</x:Int32>
+                    <x:Int32>3</x:Int32>
+                    <x:Int32>4</x:Int32>
+                </ComboBox>
+                
+                <!--<TextBlock Grid.Row="1" Grid.Column="0" Text="Number of AI Players:"></TextBlock>
+                <ComboBox Name="NumberOfAiPlayersComboBox" Grid.Row="1" Grid.Column="1" SelectedIndex="0">
+                    <x:Int32>0</x:Int32>
+                    <x:Int32>1</x:Int32>
+                    <x:Int32>2</x:Int32>
+                    <x:Int32>3</x:Int32>
+                    <x:Int32>4</x:Int32>
+                </ComboBox>-->
+            </Grid>
+        </ContentDialog>
 
         <StackPanel Grid.Row="0" Grid.Column="0">
             <Button Name="GrowButton" Click="Grow_OnClick" 
@@ -246,20 +275,6 @@
                             Foreground="DarkGreen"
                             Text="+1 Mutation Point!" 
                             Loaded="MutationPointMessage_Loaded"></TextBlock>
-                        <!--<StackPanel Grid.Row="1" Grid.Column="2">
-                            <TextBlock
-                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
-                                Foreground="DarkGreen"
-                                VerticalAlignment="Top"
-                                HorizontalAlignment="Center"
-                                Style="{StaticResource SubtitleTextBlockStyle}"
-                                Loaded="AvailabledMutationTextBlock_Loaded"></TextBlock>
-                            <TextBlock
-                                Opacity="0"
-                                Foreground="DarkGreen"
-                                Text="+1 Mutation Point!" 
-                                Loaded="MutationPointMessage_Loaded"></TextBlock>
-                        </StackPanel>-->
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Growth Direction" HorizontalAlignment="Center"></TextBlock>
 
@@ -302,8 +317,7 @@
                                 <Rectangle 
                                            Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
                                            Stretch="Fill"></Rectangle>
-                                <TextBlock Text="{x:Bind PlayerSymbol}" 
-                                           TextAlignment="Center" VerticalAlignment="Center"
+                                <TextBlock Text=" " TextAlignment="Center" VerticalAlignment="Center"
                                            Style="{StaticResource TitleTextBlockStyle}"></TextBlock>
                             </Grid>
 
@@ -353,6 +367,6 @@
             </ListView.ItemTemplate>
         </ListView>
         
-        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="MainGrid" Padding="0 0 0 20" Loaded="MainGrid_Loaded" BorderThickness="1"></controls:UniformGrid>
+        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="PetriDish" Padding="0 0 0 20" BorderThickness="1"></controls:UniformGrid>
     </Grid>
 </Page>

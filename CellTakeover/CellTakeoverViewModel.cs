@@ -9,10 +9,21 @@ namespace CellTakeover
     public class CellTakeoverViewModel : INotifyPropertyChanged
     {
         private int _generationNumber;
+        private List<IPlayer> _players = new List<IPlayer>();
         public Dictionary<int, BioCell> CurrentLiveCells { get; } = new Dictionary<int, BioCell>();
         public Dictionary<int, BioCell> CurrentDeadCells { get; } = new Dictionary<int, BioCell>();
 
-        public List<IPlayer> Players { get; set; } = new List<IPlayer>();
+        public List<IPlayer> Players
+        {
+            get => _players;
+            set
+            {
+                if (Equals(value, _players)) return;
+                _players = value;
+                OnPropertyChanged();
+
+            }
+        }
 
         public int NumberOfGenerationsBetweenFreeMutations { get; } = 5;
 

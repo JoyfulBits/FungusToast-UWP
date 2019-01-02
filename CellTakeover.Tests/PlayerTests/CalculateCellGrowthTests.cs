@@ -37,7 +37,7 @@ namespace Logic.Tests.PlayerTests
                     capturedPlayer = x;
                     capturedSurroundingCells = y;
                 });
-            _player = new Player("player 1", new Color(), 1, "A", 
+            _player = new Player("player 1", new Color(), 1, 
                 _cellGrowthCalculatorMock.Object, 
                 _surroundingCellCalculatorMock.Object);
 

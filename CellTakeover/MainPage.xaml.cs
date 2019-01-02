@@ -57,17 +57,6 @@ namespace CellTakeover
             InitializeDependencies();
             InitializeComponent();
             ViewModel = new CellTakeoverViewModel();
-            var players = new List<IPlayer>();
-            players.Add(new Player("Player 1", Colors.SkyBlue, 1, "☣", _cellGrowthCalculator, _surroundingCellCalculator));
-            players.Add(new Player("Player 2", Colors.Blue, 2, "☢", _cellGrowthCalculator, _surroundingCellCalculator));
-            players.Add(new Player("Player 3", Colors.PaleVioletRed, 3, "⚠", _cellGrowthCalculator, _surroundingCellCalculator));
-            ViewModel.Players = players;
-
-            foreach (var player in players)
-            {
-                _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
-                _playerNumberToMutationButtons.Add(player.PlayerNumber, new List<Button>());
-            }
         }
 
         private void InitializeDependencies()
@@ -79,20 +68,54 @@ namespace CellTakeover
         }
 
 
-        private void MainGrid_Loaded(object sender, RoutedEventArgs e)
+        private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            var uniformGrid = sender as UniformGrid;
-            uniformGrid.Columns = GameSettings.NumberOfColumnsAndRows;
-            uniformGrid.Rows = GameSettings.NumberOfColumnsAndRows;
+            await GameSettingsDialog.ShowAsync();
+        }
+
+        private readonly List<Color> _availableColors = new List<Color>
+        {
+            Colors.SkyBlue,
+            Colors.PaleVioletRed,
+            Colors.Blue,
+            Colors.Orange,
+            Colors.Gray
+        };
+
+        private void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var players = new List<IPlayer>();
+            var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
+            for (int i = 0; i < numberOfHumanPlayers; i++)
+            {
+                players.Add(new Player($"Player {i}", _availableColors[i], i, _cellGrowthCalculator, _surroundingCellCalculator));
+            }
+
+            //TODO add AI players
+            ViewModel.Players = players;
+
+            foreach (var player in players)
+            {
+                _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
+                _playerNumberToMutationButtons.Add(player.PlayerNumber, new List<Button>());
+            }
+
+            InitializePetriDishWithPlayerCells();
+        }
+
+        private void InitializePetriDishWithPlayerCells()
+        {
+            PetriDish.Columns = GameSettings.NumberOfColumnsAndRows;
+            PetriDish.Rows = GameSettings.NumberOfColumnsAndRows;
             //--make the grid a square since it wasn't doing that for some reason
-            uniformGrid.Width = uniformGrid.ActualHeight;
+            PetriDish.Width = PetriDish.ActualHeight;
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
             Thickness noPaddingOrMargin = new Thickness(0);
 
             for (var i = 0; i < GameSettings.NumberOfCells; i++)
             {
-                uniformGrid.Children.Add(new Button
+                PetriDish.Children.Add(new Button
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
                     Background = _emptyCellBrush,
@@ -110,14 +133,14 @@ namespace CellTakeover
             }
 
             var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
-            for(int i = 0; i < ViewModel.Players.Count; i++)
+            for (int i = 0; i < ViewModel.Players.Count; i++)
             {
                 var player = ViewModel.Players[i];
                 var firstCandidateStartCell = cellsPerPlayer * i;
                 //--make sure there is at least 2 rows between starting cells
                 var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
                 var startCellIndex = _random.Next(firstCandidateStartCell, endCandidateStartCell);
-                var button = MainGrid.Children[startCellIndex] as Button;
+                var button = PetriDish.Children[startCellIndex] as Button;
                 button.Background = new SolidColorBrush(ViewModel.Players[i].Color);
                 button.Content = "  ";
                 //button.Content = player.PlayerSymbol;
@@ -132,7 +155,7 @@ namespace CellTakeover
                 //--its possible for two different cells to split to the same cell. For now, the first cell wins
                 if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
                 {
-                    var button = MainGrid.Children[newCell.CellIndex] as Button;
+                    var button = PetriDish.Children[newCell.CellIndex] as Button;
                     button.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
                     //button.Content = newCell.Player.PlayerSymbol;
                     ViewModel.AddNewLiveCell(newCell);
@@ -146,7 +169,7 @@ namespace CellTakeover
             {
                 if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
                 {
-                    var button = MainGrid.Children[newDeadCell.CellIndex] as Button;
+                    var button = PetriDish.Children[newDeadCell.CellIndex] as Button;
                     button.Background = _deadCellBrush;
                     button.Content = _deadCellSymbol;
                     ViewModel.AddNewDeadCell(newDeadCell);
@@ -162,7 +185,7 @@ namespace CellTakeover
             {
                 ViewModel.RegrowCell(regrownCell);
 
-                var element = MainGrid.Children[regrownCell.CellIndex] as Button;
+                var element = PetriDish.Children[regrownCell.CellIndex] as Button;
                 element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
                 element.Content = string.Empty;
             }
