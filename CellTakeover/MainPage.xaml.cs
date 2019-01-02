@@ -352,32 +352,6 @@ namespace CellTakeover
             dialog.Hide();
         }
 
-        public T FindElementByName<T>(FrameworkElement parentElement, string childName) where T : FrameworkElement
-        {
-            T childElement = null;
-            var numberOfChildren = VisualTreeHelper.GetChildrenCount(parentElement);
-            for (int i = 0; i < numberOfChildren; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parentElement, i) as FrameworkElement;
-
-                if (child == null)
-                    continue;
-
-                if (child is T && child.Name.Equals(childName))
-                {
-                    childElement = (T)child;
-                    break;
-                }
-
-                childElement = FindElementByName<T>(child, childName);
-
-                if (childElement != null)
-                    break;
-            }
-
-            return childElement;
-        }
-
         private void MutationOptionButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -395,16 +369,6 @@ namespace CellTakeover
             var mutationPointMessageTextBlock = sender as TextBlock;
             var player = mutationPointMessageTextBlock.DataContext as IPlayer;
             _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber] = mutationPointMessageTextBlock;
-        }
-
-        private void AvailabledMutationTextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            var textBlock = sender as TextBlock;
-            ToolTip toolTip = new ToolTip
-            {
-                Content = $"Accumulated Mutation Points can be spent every {ViewModel.NumberOfGenerationsBetweenFreeMutations} generations to enhance your organism."
-            };
-            ToolTipService.SetToolTip(textBlock, toolTip);
         }
 
         private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
