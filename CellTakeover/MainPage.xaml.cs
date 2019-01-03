@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
@@ -150,6 +151,53 @@ namespace CellTakeover
             }
         }
 
+        private async void NextGenerationCycle()
+        {
+            for (int i = 0; i < ViewModel.NumberOfGenerationsBetweenFreeMutations; i++)
+            {
+                NextGeneration();
+            }
+
+            foreach (var player in ViewModel.Players)
+            {
+                await IncreasePlayerMutationPoints(player);
+            }
+
+            //--only allow points to be spent every X rounds
+            PromptForMutationChoice();
+        }
+
+        private async void NextGeneration()
+        {
+            GrowButton.IsEnabled = false;
+            var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
+
+            AddNewCells(nextGenerationResult.NewLiveCells);
+
+            KillCells(nextGenerationResult.NewDeadCells);
+
+            RegrowCells(nextGenerationResult.RegrownCells);
+
+            ViewModel.GenerationNumber++;
+
+            List<IPlayer> players = ViewModel.Players;
+
+
+            //--players only get bonus mutations if not on a round with a free mutation
+            foreach (var player in players)
+            {
+                if (player.GetsFreeMutation())
+                {
+                    await IncreasePlayerMutationPoints(player);
+                }
+            }
+
+            //--since it's not a spending round we can keep the grow button enabled
+            GrowButton.IsEnabled = true;
+
+            CheckForGameEnd();
+        }
+
         private void AddNewCells(List<BioCell> newLiveCells)
         {
             foreach (var newCell in newLiveCells)
@@ -195,45 +243,46 @@ namespace CellTakeover
 
         private async void Grow_OnClick(object sender, RoutedEventArgs e)
         {
-            GrowButton.IsEnabled = false;
-            var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
-            AddNewCells(nextGenerationResult.NewLiveCells);
+            NextGenerationCycle();
+            //GrowButton.IsEnabled = false;
+            //var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
+            //AddNewCells(nextGenerationResult.NewLiveCells);
 
-            KillCells(nextGenerationResult.NewDeadCells);
+            //KillCells(nextGenerationResult.NewDeadCells);
 
-            RegrowCells(nextGenerationResult.RegrownCells);
+            //RegrowCells(nextGenerationResult.RegrownCells);
 
-            ViewModel.GenerationNumber++;
+            //ViewModel.GenerationNumber++;
 
-            List<IPlayer> players = ViewModel.Players;
+            //List<IPlayer> players = ViewModel.Players;
 
-            if (MutationConsumptionRound())
-            {
-                foreach (var player in ViewModel.Players)
-                {
-                    await IncreasePlayerMutationPoints(player);
-                }
+            //if (MutationConsumptionRound())
+            //{
+            //    foreach (var player in ViewModel.Players)
+            //    {
+            //        await IncreasePlayerMutationPoints(player);
+            //    }
 
-                //--only allow points to be spent every X rounds
-                PromptForMutationChoice();
-            }
-            else
-            {
+            //    //--only allow points to be spent every X rounds
+            //    PromptForMutationChoice();
+            //}
+            //else
+            //{
 
-                //--players only get bonus mutations if not on a round with a free mutation
-                foreach (var player in players)
-                {
-                    if (player.GetsFreeMutation())
-                    {
-                        IncreasePlayerMutationPoints(player);
-                    }
-                }
+            //    //--players only get bonus mutations if not on a round with a free mutation
+            //    foreach (var player in players)
+            //    {
+            //        if (player.GetsFreeMutation())
+            //        {
+            //            IncreasePlayerMutationPoints(player);
+            //        }
+            //    }
 
-                //--since it's not a spending round we can keep the grow button enabled
-                GrowButton.IsEnabled = true;
-            }
+            //    //--since it's not a spending round we can keep the grow button enabled
+            //    GrowButton.IsEnabled = true;
+            //}
 
-            CheckForGameEnd();
+            //CheckForGameEnd();
         }
 
         private async void CheckForGameEnd()
