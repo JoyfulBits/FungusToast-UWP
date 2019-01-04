@@ -25,8 +25,6 @@ namespace CellTakeover
     {
         public CellTakeoverViewModel ViewModel { get; set; }
 
-        private readonly Random _random = new Random();
-
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
             TintColor = Colors.White
@@ -143,7 +141,7 @@ namespace CellTakeover
                 var firstCandidateStartCell = cellsPerPlayer * i;
                 //--make sure there is at least 2 rows between starting cells
                 var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
-                var startCellIndex = _random.Next(firstCandidateStartCell, endCandidateStartCell);
+                var startCellIndex = RandomNumberGenerator.Random.Next(firstCandidateStartCell, endCandidateStartCell);
                 var button = PetriDish.Children[startCellIndex] as Button;
                 button.Background = new SolidColorBrush(ViewModel.Players[i].Color);
                 button.Content = "  ";
@@ -156,7 +154,7 @@ namespace CellTakeover
         {
             for (int i = 0; i < ViewModel.NumberOfGenerationsBetweenFreeMutations; i++)
             {
-                NextGeneration();
+                await NextGeneration();
             }
 
             foreach (var player in ViewModel.Players)
@@ -168,7 +166,7 @@ namespace CellTakeover
             PromptForMutationChoice();
         }
 
-        private async void NextGeneration()
+        private async Task NextGeneration()
         {
             GrowButton.IsEnabled = false;
 
@@ -191,6 +189,7 @@ namespace CellTakeover
 
                 //TODO live cell count keeps getting off by a little bit. Perhaps moving to a single List for the whole grid will solve this problem...
                 player.LiveCells += playerGrowthSummary.NewLiveCellCount;
+                player.LiveCells += playerGrowthSummary.RegrownCellCount;
                 player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
 
                 player.DeadCells += playerGrowthSummary.NewDeadCellCount;
@@ -211,7 +210,7 @@ namespace CellTakeover
             //--since it's not a spending round we can keep the grow button enabled
             GrowButton.IsEnabled = true;
 
-            CheckForGameEnd();
+            await CheckForGameEnd();
         }
 
         private void AddNewCells(List<BioCell> newLiveCells)
@@ -301,7 +300,7 @@ namespace CellTakeover
             //CheckForGameEnd();
         }
 
-        private async void CheckForGameEnd()
+        private async Task CheckForGameEnd()
         {
             if (ViewModel.TotalEmptyCells == 0)
             {

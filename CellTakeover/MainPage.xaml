@@ -28,6 +28,13 @@
             <ColumnDefinition Width="6*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <Grid.Resources>
+            <Style TargetType="ContentDialog" x:Key="largeDialog">
+                <Setter Property="MaxHeight" Value="720" />
+                <Setter Property="MaxWidth" Value="768" />
+            </Style>
+        </Grid.Resources>
+
         <ContentDialog Name="GameSettingsDialog" Title="Game Settings" PrimaryButtonText="Let's Play!" PrimaryButtonClick="GameStart_Click">
             <Grid>
                 <Grid.RowDefinitions>
@@ -38,6 +45,7 @@
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
+
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Number of Human Players:" VerticalAlignment="Center"></TextBlock>
                 <ComboBox Name="NumberOfHumanPlayersComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="2" Margin="5 0 0 0">
                     <x:Int32>1</x:Int32>
@@ -57,7 +65,13 @@
             </Grid>
         </ContentDialog>
 
-        <ContentDialog Grid.Row="0" Grid.Column="0"  Name="GameEndContentDialog" Title="Game Over!" PrimaryButtonText="Exit" PrimaryButtonClick="Exit_Click" SecondaryButtonText="Play Again" SecondaryButtonClick="PlayAgain_Click">
+        <ContentDialog Grid.Row="0" Grid.Column="0"  Name="GameEndContentDialog" Title="Game Over!" 
+                       Style="{StaticResource largeDialog}"
+                       PrimaryButtonText="Exit" 
+                       PrimaryButtonClick="Exit_Click" 
+                       SecondaryButtonText="Play Again" 
+                       SecondaryButtonClick="PlayAgain_Click">
+
             <GridView ItemsSource="{x:Bind ViewModel.GameOverResult, Mode=OneWay}"
                       IsItemClickEnabled="False"
                       SelectionMode="None">
