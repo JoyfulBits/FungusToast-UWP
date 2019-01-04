@@ -8,7 +8,6 @@ namespace Logic
 {
     public class Player : IPlayer
     {
-        private readonly Random _random = new Random();
         private readonly ICellGrowthCalculator _cellGrowthCalculator;
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;
         private Color _color;
@@ -155,7 +154,7 @@ namespace Logic
 
         public bool GetsFreeMutation()
         {
-            return _random.Next(0, 99) < GrowthScorecard.MutationChancePercentage;
+            return RandomNumberGenerator.Random.Next(0, 99) < GrowthScorecard.MutationChancePercentage;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

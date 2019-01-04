@@ -7,8 +7,6 @@ namespace Logic
     {
         public const int MinimumLiveCellsForCellDeath = 5;
 
-        private readonly Random _random = new Random();
-
         public CellGrowthResult CalculateCellGrowth(BioCell cell, IPlayer player, SurroundingCells surroundingCells)
         {
             var emptyCells = surroundingCells.EmptyCells;
@@ -37,13 +35,13 @@ namespace Logic
         private bool CellDiesRandomly(IPlayer player)
         {
             //--since HealthyCellDeathChancePercentage is a double, need to add an order of magnitude for precision
-            return _random.Next(0, 999) < player.GrowthScorecard.HealthyCellDeathChancePercentage * 10;
+            return RandomNumberGenerator.Random.Next(0, 999) < player.GrowthScorecard.HealthyCellDeathChancePercentage * 10;
         }
 
         private bool CellDiesOfStarvation(bool surroundingCellsSurroundedByLiveCells, IPlayer player)
         {
             return surroundingCellsSurroundedByLiveCells &&
-                   _random.Next(0, 99) < player.GrowthScorecard.DeathChanceForStarvedCells;
+                   RandomNumberGenerator.Random.Next(0, 99) < player.GrowthScorecard.DeathChanceForStarvedCells;
         }
 
         private List<BioCell> GrowNewCells(IPlayer player, List<GridCell> emptyCells)
@@ -52,7 +50,7 @@ namespace Logic
             foreach (var emptyCell in emptyCells)
             {
                 var growthChancePercentage = player.GrowthScorecard.GetGrowthChance(emptyCell.RelativePosition);
-                if (_random.Next(0, 99) < growthChancePercentage)
+                if (RandomNumberGenerator.Random.Next(0, 99) < growthChancePercentage)
                 {
                     newCells.Add(player.MakeCell(emptyCell.CellIndex));
                 }

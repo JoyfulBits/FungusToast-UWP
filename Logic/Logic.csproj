@@ -125,6 +125,7 @@
     <Compile Include="CellGrowthResult.cs" />
     <Compile Include="CellRegrowthCalculator.cs" />
     <Compile Include="CellRegrowthResult.cs" />
+    <Compile Include="RandomNumberGenerator.cs" />
     <Compile Include="GenerationAdvancer.cs" />
     <Compile Include="GridCell.cs" />
     <Compile Include="GrowthScorecard.cs" />

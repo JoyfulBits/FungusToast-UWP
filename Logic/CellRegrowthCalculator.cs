@@ -7,7 +7,6 @@ namespace Logic
     public class CellRegrowthCalculator : ICellRegrowthCalculator
     {
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;
-        private readonly Random _random = new Random();
 
         public CellRegrowthCalculator(ISurroundingCellCalculator surroundingCellCalculator)
         {
@@ -32,7 +31,7 @@ namespace Logic
                 foreach (var player in surroundingPlayersWithRegrowth.Values)
                 {
                     if (player.GrowthScorecard.RegrowthChancePercentage > 0 &&
-                        _random.Next(0, 99) < player.GrowthScorecard.RegrowthChancePercentage)
+                        RandomNumberGenerator.Random.Next(0, 99) < player.GrowthScorecard.RegrowthChancePercentage)
                     {
                         regrowthContenders.Add(player);
                     }
