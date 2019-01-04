@@ -65,6 +65,13 @@ namespace CellTakeover
         public void AddNewLiveCell(BioCell newCell)
         {
             CurrentLiveCells.Add(newCell.CellIndex, newCell);
+
+            //newCell.Player.LiveCells++;
+            ////--at the moment, the only way there is a previous player is if the cell died. May introduce cell takeovers in the future
+            //if (newCell.PreviousPlayer != null)
+            //{
+            //    newCell.PreviousPlayer.DeadCells--;
+            //}
             OnPropertyChanged(nameof(TotalLiveCells));
             OnPropertyChanged(nameof(TotalEmptyCells));
         }
@@ -72,6 +79,8 @@ namespace CellTakeover
         public void AddNewDeadCell(BioCell newCell)
         {
             CurrentDeadCells.Add(newCell.CellIndex, newCell);
+            //newCell.Player.DeadCells++;
+            //newCell.Player.LiveCells--;
             OnPropertyChanged(nameof(TotalDeadCells));
             OnPropertyChanged(nameof(TotalEmptyCells));
         }
@@ -92,6 +101,7 @@ namespace CellTakeover
 
         public void RegrowCell(BioCell regrownCell)
         {
+            //regrownCell.Player.RegrownCells++;
             RemoveDeadCell(regrownCell.CellIndex);
             AddNewLiveCell(regrownCell);
             OnPropertyChanged(nameof(TotalLiveCells));

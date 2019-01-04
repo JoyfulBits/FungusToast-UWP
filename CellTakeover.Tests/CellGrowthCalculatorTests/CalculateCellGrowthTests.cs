@@ -68,7 +68,6 @@ namespace Logic.Tests.CellGrowthCalculatorTests
 
             //--assert
             actualResult.NewDeadCells.ShouldContain(bioCell);
-            bioCell.Player.DeadCells.ShouldBe(1);
         }
 
         [TestMethod]
@@ -92,7 +91,6 @@ namespace Logic.Tests.CellGrowthCalculatorTests
 
             //--assert
             actualResult.NewDeadCells.ShouldContain(bioCell);
-            bioCell.Player.DeadCells.ShouldBe(1);
         }
 
         [TestMethod]

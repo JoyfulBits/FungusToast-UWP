@@ -139,6 +139,7 @@ namespace CellTakeover
             for (int i = 0; i < ViewModel.Players.Count; i++)
             {
                 var player = ViewModel.Players[i];
+                player.LiveCells++;
                 var firstCandidateStartCell = cellsPerPlayer * i;
                 //--make sure there is at least 2 rows between starting cells
                 var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
@@ -170,7 +171,11 @@ namespace CellTakeover
         private async void NextGeneration()
         {
             GrowButton.IsEnabled = false;
-            var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
+
+            List<IPlayer> players = ViewModel.Players;
+
+            var nextGenerationResult = await Task.Run(() => _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells,
+                players));
 
             AddNewCells(nextGenerationResult.NewLiveCells);
 
@@ -180,12 +185,23 @@ namespace CellTakeover
 
             ViewModel.GenerationNumber++;
 
-            List<IPlayer> players = ViewModel.Players;
-
-
-            //--players only get bonus mutations if not on a round with a free mutation
             foreach (var player in players)
             {
+                var playerGrowthSummary = nextGenerationResult.PlayerGrowthSummaries[player.PlayerNumber];
+
+                //TODO live cell count keeps getting off by a little bit. Perhaps moving to a single List for the whole grid will solve this problem...
+                player.LiveCells += playerGrowthSummary.NewLiveCellCount;
+                player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
+
+                player.DeadCells += playerGrowthSummary.NewDeadCellCount;
+
+                var numberOfDeadCellsEliminated =
+                    nextGenerationResult.PlayerNumberToNumberOfDeadCellsEliminated[player.PlayerNumber];
+                player.DeadCells -= numberOfDeadCellsEliminated;
+
+                var numberOfRegrownCells = nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
+                player.RegrownCells += numberOfRegrownCells;
+
                 if (player.GetsFreeMutation())
                 {
                     await IncreasePlayerMutationPoints(player);

@@ -124,6 +124,7 @@
     <Compile Include="CellGrowthCalculator.cs" />
     <Compile Include="CellGrowthResult.cs" />
     <Compile Include="CellRegrowthCalculator.cs" />
+    <Compile Include="CellRegrowthResult.cs" />
     <Compile Include="GenerationAdvancer.cs" />
     <Compile Include="GridCell.cs" />
     <Compile Include="GrowthScorecard.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="MutationOptionGenerator.cs" />
     <Compile Include="NextGenerationResults.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerGrowthSummary.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelativePosition.cs" />

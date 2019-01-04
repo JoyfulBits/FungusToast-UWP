@@ -27,8 +27,8 @@ namespace Logic
              && (CellDiesOfStarvation(surroundingCells.SurroundedByLiveCells, player) || CellDiesRandomly(player)))
             {
                 cell.Dead = true;
+                cell.PreviousPlayer = cell.Player;
                 newDeadCells.Add(cell);
-                cell.Player.KillCell();
             }
 
             return newDeadCells;

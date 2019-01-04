@@ -7,16 +7,18 @@ namespace Logic
     public class CellRegrowthCalculator : ICellRegrowthCalculator
     {
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;
-        private Random _random = new Random();
+        private readonly Random _random = new Random();
 
         public CellRegrowthCalculator(ISurroundingCellCalculator surroundingCellCalculator)
         {
             _surroundingCellCalculator = surroundingCellCalculator;
         }
 
-        public List<BioCell> CalculateCellRegrowth(Dictionary<int, BioCell> currentDeadCells, Dictionary<int, BioCell> currentLiveCells)
+        public CellRegrowthResult CalculateCellRegrowth(Dictionary<int, BioCell> currentDeadCells, Dictionary<int, BioCell> currentLiveCells, List<IPlayer> players)
         {
             var regrownCells = new List<BioCell>();
+            var playerNumberToNumberOfDeadCellsEliminated = players.ToDictionary(x => x.PlayerNumber, y => 0);
+            var playerNumberToNumberOfRegrownCells = players.ToDictionary(x => x.PlayerNumber, y => 0);
 
             foreach (var deadCell in currentDeadCells.Values)
             {
@@ -42,11 +44,17 @@ namespace Logic
 
                 if (playerWhoRegeneratesCell != null)
                 {
-                    regrownCells.Add(playerWhoRegeneratesCell.RegrowCell(deadCell));
+                    playerNumberToNumberOfDeadCellsEliminated[deadCell.Player.PlayerNumber]++;
+
+                    var regrownCell = playerWhoRegeneratesCell.RegrowCell(deadCell);
+
+                    playerNumberToNumberOfRegrownCells[playerWhoRegeneratesCell.PlayerNumber]++;
+
+                    regrownCells.Add(regrownCell);
                 }
             }
 
-            return regrownCells;
+            return new CellRegrowthResult(regrownCells, playerNumberToNumberOfDeadCellsEliminated, playerNumberToNumberOfRegrownCells);
         }
     }
 }

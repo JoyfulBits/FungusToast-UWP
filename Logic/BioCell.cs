@@ -9,6 +9,10 @@ namespace Logic
         public IPlayer Player { get; }
 
         public Color CellColor { get; }
+        /// <summary>
+        /// Represents the previous player who had this cell alive. This only gets changed upon cell death or takeover.
+        /// </summary>
+        public IPlayer PreviousPlayer { get; set; } = null;
 
         //--allowing for good old fashioned property injection
         private readonly ISurroundingCellCalculator _surroundingCellCalculator;

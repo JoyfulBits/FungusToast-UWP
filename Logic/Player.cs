@@ -140,21 +140,12 @@ namespace Logic
 
         public BioCell MakeCell(int cellIndex)
         {
-            LiveCells++;
             return new BioCell(this, cellIndex, Color, _surroundingCellCalculator);
         }
 
         public BioCell RegrowCell(BioCell deadCell)
         {
-            deadCell.Player.DeadCells--;
-            RegrownCells++;
             return MakeCell(deadCell.CellIndex);
-        }
-
-        public void KillCell()
-        {
-            DeadCells++;
-            LiveCells--;
         }
 
         public CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)

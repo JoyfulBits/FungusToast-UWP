@@ -23,6 +23,5 @@ namespace Logic
         void IncreaseCornerGrowth();
         void IncreaseRegrowthChance();
         BioCell RegrowCell(BioCell deadCell);
-        void KillCell();
     }
 }
