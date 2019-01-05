@@ -259,45 +259,6 @@ namespace CellTakeover
         private async void Grow_OnClick(object sender, RoutedEventArgs e)
         {
             NextGenerationCycle();
-            //GrowButton.IsEnabled = false;
-            //var nextGenerationResult = _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells);
-            //AddNewCells(nextGenerationResult.NewLiveCells);
-
-            //KillCells(nextGenerationResult.NewDeadCells);
-
-            //RegrowCells(nextGenerationResult.RegrownCells);
-
-            //ViewModel.GenerationNumber++;
-
-            //List<IPlayer> players = ViewModel.Players;
-
-            //if (MutationConsumptionRound())
-            //{
-            //    foreach (var player in ViewModel.Players)
-            //    {
-            //        await IncreasePlayerMutationPoints(player);
-            //    }
-
-            //    //--only allow points to be spent every X rounds
-            //    PromptForMutationChoice();
-            //}
-            //else
-            //{
-
-            //    //--players only get bonus mutations if not on a round with a free mutation
-            //    foreach (var player in players)
-            //    {
-            //        if (player.GetsFreeMutation())
-            //        {
-            //            IncreasePlayerMutationPoints(player);
-            //        }
-            //    }
-
-            //    //--since it's not a spending round we can keep the grow button enabled
-            //    GrowButton.IsEnabled = true;
-            //}
-
-            //CheckForGameEnd();
         }
 
         private async Task CheckForGameEnd()
