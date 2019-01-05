@@ -189,14 +189,11 @@ namespace CellTakeover
 
                 //TODO live cell count keeps getting off by a little bit. Perhaps moving to a single List for the whole grid will solve this problem...
                 player.LiveCells += playerGrowthSummary.NewLiveCellCount;
-                player.LiveCells += playerGrowthSummary.RegrownCellCount;
+                player.LiveCells += nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
                 player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
 
                 player.DeadCells += playerGrowthSummary.NewDeadCellCount;
-
-                var numberOfDeadCellsEliminated =
-                    nextGenerationResult.PlayerNumberToNumberOfDeadCellsEliminated[player.PlayerNumber];
-                player.DeadCells -= numberOfDeadCellsEliminated;
+                player.DeadCells -= nextGenerationResult.PlayerNumberToNumberOfDeadCellsEliminated[player.PlayerNumber];
 
                 var numberOfRegrownCells = nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
                 player.RegrownCells += numberOfRegrownCells;
