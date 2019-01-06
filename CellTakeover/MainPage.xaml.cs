@@ -187,7 +187,6 @@ namespace CellTakeover
             {
                 var playerGrowthSummary = nextGenerationResult.PlayerGrowthSummaries[player.PlayerNumber];
 
-                //TODO live cell count keeps getting off by a little bit. Perhaps moving to a single List for the whole grid will solve this problem...
                 player.LiveCells += playerGrowthSummary.NewLiveCellCount;
                 player.LiveCells += nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
                 player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
@@ -256,6 +255,8 @@ namespace CellTakeover
         private async void Grow_OnClick(object sender, RoutedEventArgs e)
         {
             NextGenerationCycle();
+            //
+            //await GameEndContentDialog.ShowAsync();
         }
 
         private async Task CheckForGameEnd()
@@ -264,6 +265,7 @@ namespace CellTakeover
             {
                 if (ViewModel.GameEndCountDown == 0)
                 {
+                    ViewModel.TriggerGameOverResultOnPropertyChanged();
                     await GameEndContentDialog.ShowAsync();
                 }
                 else

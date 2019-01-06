@@ -116,6 +116,11 @@ namespace CellTakeover
             }
         }
 
+        public void TriggerGameOverResultOnPropertyChanged()
+        {
+            OnPropertyChanged(nameof(GameOverResult));
+        }
+
         public int GameEndCountDown
         {
             get => _gameEndCountDown;
