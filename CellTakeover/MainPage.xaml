@@ -320,7 +320,7 @@
                                            VerticalAlignment="Center"></TextBlock>
                         </StackPanel>
 
-                        <Button Grid.Row="2" Grid.Column="2"
+                        <Button Grid.Row="1" Grid.Column="2" Grid.RowSpan="3"
                                 RenderTransformOrigin="0.5, 0.5"
                                 ToolTipService.ToolTip="View this player's skill tree and use mutation points to improve your organism"
                                 Click="SkillTreeButton_OnClick"
@@ -331,7 +331,8 @@
                             <TextBlock 
                                 Foreground="DarkGreen"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
-                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"></TextBlock>
+                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
+                                TextWrapping="NoWrap"></TextBlock>
                         </Button>
 
                         <TextBlock Grid.Row="0" Grid.Column="2"
