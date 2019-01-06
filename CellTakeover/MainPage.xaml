@@ -281,10 +281,13 @@
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
-                                    <Button Style="{StaticResource MutationChoiceButton}"
-                                            IsEnabled="False"
-                                            Click="ReduceHealthyCellDeathChance_Click"
-                                            Loaded="MutationOptionButton_Loaded">
+                                    <Button 
+                                        Name="ReduceHealthyCellDeathChanceButton"
+                                        Style="{StaticResource MutationChoiceButton}"
+                                        IsEnabled="False"
+                                        Click="ReduceHealthyCellDeathChance_Click"
+                                        Loaded="MutationOptionButton_Loaded">
+
                                         <Image Source="Assets/Skill Icons/reduced_death.png"></Image>
                                     </Button>
                                     <Grid Padding="5">

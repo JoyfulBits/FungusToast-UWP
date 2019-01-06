@@ -335,6 +335,10 @@ namespace CellTakeover
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.DecreaseHealthyCellDeathChance();
+            if (player.GrowthScorecard.HealthyCellDeathChancePercentage <= 0)
+            {
+                button.IsEnabled = false;
+            }
 
             CheckForRemainingMutationPoints(player);
         }
@@ -362,7 +366,14 @@ namespace CellTakeover
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
             foreach (var mutationButton in playerMutationButtons)
             {
-                mutationButton.IsEnabled = true;
+                if (mutationButton.Name == "ReduceHealthyCellDeathChanceButton" && player.GrowthScorecard.HealthyCellDeathChancePercentage <= 0)
+                {
+                    mutationButton.IsEnabled = false;
+                }
+                else
+                {
+                    mutationButton.IsEnabled = true;
+                }
             }
         }
 
@@ -413,10 +424,6 @@ namespace CellTakeover
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            if (player.AvailableMutationPoints > 0 && MutationConsumptionRound())
-            {
-                EnablePlayerMutationButtons(player);
-            };
             var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
