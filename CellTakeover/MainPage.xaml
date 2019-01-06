@@ -80,22 +80,21 @@
                 <GridView.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <!--<ColumnDefinition Width="20"></ColumnDefinition>-->
+                            <ColumnDefinition Width="20"></ColumnDefinition>
                             <ColumnDefinition Width="150"></ColumnDefinition>
                             <ColumnDefinition Width="90"></ColumnDefinition>
                             <ColumnDefinition Width="100"></ColumnDefinition>
                             <ColumnDefinition Width="90"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <!--<TextBlock Grid.Row="0" Grid.Column="0"></TextBlock>-->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Player" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Live Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Regrown Cells"  Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="3" Text="Dead Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="0"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Player" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Live Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="3" Text="Regrown Cells"  Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Dead Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                     </Grid>
                 </GridView.Header>
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <!--<WrapGrid Orientation="Vertical"/>-->
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
 
@@ -103,19 +102,19 @@
                     <DataTemplate x:DataType="logic:IPlayer">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <!--<ColumnDefinition Width="20"></ColumnDefinition>-->
+                                <ColumnDefinition Width="20"></ColumnDefinition>
                                 <ColumnDefinition Width="150"></ColumnDefinition>
                                 <ColumnDefinition Width="90"></ColumnDefinition>
                                 <ColumnDefinition Width="100"></ColumnDefinition>
                                 <ColumnDefinition Width="90"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <!--<Rectangle Grid.Column="0" Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                            <Rectangle Grid.Column="0" Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
                                        Width="15" Height="15" 
-                                       VerticalAlignment="Center"></Rectangle>-->
-                            <TextBlock Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}"/>
-                            <TextBlock Grid.Column="1" Text="{x:Bind LiveCells, Mode=OneWay}"/>
-                            <TextBlock Grid.Column="2" Text="{x:Bind RegrownCells, Mode=OneWay}"/>
-                            <TextBlock Grid.Column="3" Text="{x:Bind DeadCells, Mode=OneWay}"/>
+                                       VerticalAlignment="Center"></Rectangle>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind LiveCells, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind RegrownCells, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="4" Text="{x:Bind DeadCells, Mode=OneWay}"/>
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>

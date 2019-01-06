@@ -255,8 +255,6 @@ namespace CellTakeover
         private async void Grow_OnClick(object sender, RoutedEventArgs e)
         {
             NextGenerationCycle();
-            //
-            //await GameEndContentDialog.ShowAsync();
         }
 
         private async Task CheckForGameEnd()
