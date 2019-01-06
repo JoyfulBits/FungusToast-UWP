@@ -10,15 +10,15 @@ namespace Logic
         public static int AdditionalRegrowthChancePerAttributePoint = 1;
 
         public static string IncreaseMutationChanceMessage =>
-            $"Increase mutation chance for each generation by an additional {AdditionalMutationPercentageChancePerAttributePoint}%.";
+            $"Increase mutation chance by {AdditionalMutationPercentageChancePerAttributePoint}%.";
         public static string IncreaseCornerGrowthChanceMessage =>
-            $"Increase chance of a cell splitting into a diagonal corner by {AdditionalCornerGrowthChancePerAttributePoint}%.";
+            $"Increase of corner growth by {AdditionalCornerGrowthChancePerAttributePoint}%.";
 
         public static string DecreaseCellDeathChanceMessage =>
-            $"Decrease the chance of a healthy cell dying randomly by {ReducedCellDeathPercentagePerAttributePoint}%.";
+            $"Decrease chance of random cell death by {ReducedCellDeathPercentagePerAttributePoint}%.";
 
         public static string IncreaseRegrowthChanceMessage => 
-            $"Increase the chance of converting any adjacent dead cell into a live one by {AdditionalRegrowthChancePerAttributePoint}%.";
+            $"Increase chance of reviving adjacent dead cell by {AdditionalRegrowthChancePerAttributePoint}%.";
 
     }
 }
