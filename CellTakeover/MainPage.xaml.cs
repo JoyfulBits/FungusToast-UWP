@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.Store.Preview.InstallControl;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -12,6 +13,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Logic;
+using Logic.Players;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -87,9 +89,18 @@ namespace CellTakeover
         {
             var players = new List<IPlayer>();
             var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
-            for (int i = 0; i < numberOfHumanPlayers; i++)
+            for (int i = 1; i <= numberOfHumanPlayers; i++)
             {
-                players.Add(new Player($"Player {i}", _availableColors[i], i, _cellGrowthCalculator, _surroundingCellCalculator));
+                players.Add(new Player($"Player {i}", _availableColors[i-1], i, _cellGrowthCalculator, _surroundingCellCalculator, true));
+            }
+
+            var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
+
+            for (int i = 0; i < numberOfAiPlayers; i++)
+            {
+                players.Add(new AiPlayer($"AI Player {i + 1}", _availableColors[i + numberOfHumanPlayers], 
+                    i + 1 + numberOfHumanPlayers, 
+                    _cellGrowthCalculator, _surroundingCellCalculator, false));
             }
 
             //TODO add AI players
@@ -292,10 +303,74 @@ namespace CellTakeover
         {
             foreach (var player in ViewModel.Players)
             {
-                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
-                skillTreeButton.BorderBrush = _activeBorderBrush;
-                skillTreeButton.BorderThickness = _activeThickness;
-                EnablePlayerMutationButtons(player);
+                if (player.IsHuman)
+                {
+                    var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
+                    skillTreeButton.BorderBrush = _activeBorderBrush;
+                    skillTreeButton.BorderThickness = _activeThickness;
+                    EnablePlayerMutationButtons(player);
+                }
+                else
+                {
+                    MakeAiTurn(player as IAiPlayer);
+                }
+            }
+        }
+
+        private void MakeAiTurn(IAiPlayer aiPlayer)
+        {
+            switch (aiPlayer.AiType)
+            {
+                case AiType.ExtremeGrowth:
+                    while (aiPlayer.AvailableMutationPoints > 0)
+                    {
+                        if (aiPlayer.TopLeftGrowthChance < 50)
+                        {
+                            aiPlayer.IncreaseCornerGrowth();
+                        }
+                        else if(aiPlayer.GrowthScorecard.HealthyCellDeathChancePercentage > 0)
+                        {
+                            aiPlayer.DecreaseHealthyCellDeathChance();
+                        }
+                        else
+                        {
+                            aiPlayer.IncreaseRegrowthChance();
+                        }
+                    }
+
+                    break;
+
+                case AiType.Random:
+                    while (aiPlayer.AvailableMutationPoints > 0)
+                    {
+                        var mutationChoiceIndex = RandomNumberGenerator.Random.Next(0, 3);
+                        switch (mutationChoiceIndex)
+                        {
+                            case 0:
+                                aiPlayer.IncreaseMutationChance();
+                                break;
+                            case 1:
+                                aiPlayer.IncreaseCornerGrowth();
+                                break;
+                            case 2:
+                                aiPlayer.IncreaseRegrowthChance();
+                                break;
+                            case 3:
+                                if (aiPlayer.GrowthScorecard.HealthyCellDeathChancePercentage > 0)
+                                {
+                                    aiPlayer.DecreaseHealthyCellDeathChance();
+                                }
+                                else
+                                {
+                                    aiPlayer.IncreaseRegrowthChance();
+                                }
+                                break;
+                        }
+                    }
+
+                    break;
+                default:
+                    throw new Exception("Unexpected AiType: " + aiPlayer.AiType);
             }
         }
 

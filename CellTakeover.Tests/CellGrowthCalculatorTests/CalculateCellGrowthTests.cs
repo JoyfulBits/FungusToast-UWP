@@ -18,7 +18,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var growthScorecard = new GrowthScorecard();
             growthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] = 100;
             growthScorecard.GrowthChanceDictionary[RelativePosition.Top] = 100;
-            var player = new Player("name", new Color(), 1, _cellGrowthCalculator, _surroundingCellCalculatorMock);
+            var player = new Player("name", new Color(), 1, _cellGrowthCalculator, _surroundingCellCalculatorMock, true);
             player.GrowthScorecard = growthScorecard;
             var bioCell = new BioCell(player, 1, new Color(), _surroundingCellCalculatorMock);
 
@@ -55,7 +55,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var cellGrowthCalculator = new CellGrowthCalculator();
             var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
 
-            var player = new Player("name", new Color(), 1, cellGrowthCalculator, surroundingCellCalculatorMock);
+            var player = new Player("name", new Color(), 1, cellGrowthCalculator, surroundingCellCalculatorMock, true);
             player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
             var growthScorecard = new GrowthScorecard {DeathChanceForStarvedCells = 100};
             player.GrowthScorecard = growthScorecard;
@@ -77,7 +77,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var cellGrowthCalculator = new CellGrowthCalculator();
             var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
 
-            var player = new Player("name", new Color(), 1, cellGrowthCalculator, surroundingCellCalculatorMock);
+            var player = new Player("name", new Color(), 1, cellGrowthCalculator, surroundingCellCalculatorMock, true);
             player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
             var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 0 };
             player.GrowthScorecard = growthScorecard;
@@ -100,7 +100,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             var cellGrowthCalculator = new CellGrowthCalculator();
             var surroundingCellCalculatorMock = new Mock<ISurroundingCellCalculator>().Object;
 
-            var player = new Player("name", new Color(), 1, cellGrowthCalculator, surroundingCellCalculatorMock);
+            var player = new Player("name", new Color(), 1, cellGrowthCalculator, surroundingCellCalculatorMock, true);
             player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath - 1;
             var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 100 };
             player.GrowthScorecard = growthScorecard;

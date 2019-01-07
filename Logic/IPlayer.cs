@@ -15,6 +15,15 @@ namespace Logic
         int DeadCells { get; set; }
         int RegrownCells { get; set; }
         GrowthScorecard GrowthScorecard { get; set; }
+        int TopLeftGrowthChance { get; }
+        int TopGrowthChance { get; }
+        int TopRightGrowthChance { get; }
+        int RightGrowthChance { get; }
+        int BottomRightGrowthChance { get; }
+        int BottomGrowthChance { get; }
+        int BottomLeftGrowthChance { get; }
+        int LeftGrowthChance { get; }
+        bool IsHuman { get; }
         BioCell MakeCell(int cellIndex);
         CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
         bool GetsFreeMutation();

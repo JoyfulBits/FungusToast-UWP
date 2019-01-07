@@ -39,7 +39,8 @@ namespace Logic.Tests.PlayerTests
                 });
             _player = new Player("player 1", new Color(), 1, 
                 _cellGrowthCalculatorMock.Object, 
-                _surroundingCellCalculatorMock.Object);
+                _surroundingCellCalculatorMock.Object,
+                true);
 
             var cell = new BioCell(_player, 0, _player.Color, _surroundingCellCalculatorMock.Object);
             var surroundingCells = new SurroundingCells

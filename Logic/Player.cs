@@ -22,15 +22,19 @@ namespace Logic
 
         public Player(string name, Color playerCellColor, int playerNumber, 
             ICellGrowthCalculator cellGrowthCalculator, 
-            ISurroundingCellCalculator surroundingCellCalculator)
+            ISurroundingCellCalculator surroundingCellCalculator,
+            bool isHuman)
         {
             Name = name;
             Color = playerCellColor;
             PlayerNumber = playerNumber;
             _cellGrowthCalculator = cellGrowthCalculator;
             _surroundingCellCalculator = surroundingCellCalculator;
+            IsHuman = isHuman;
             _growthScorecard = new GrowthScorecard();
         }
+
+        public bool IsHuman { get; }
 
         public string Name
         {
