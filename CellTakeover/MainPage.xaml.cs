@@ -266,6 +266,8 @@ namespace CellTakeover
         private async void Grow_OnClick(object sender, RoutedEventArgs e)
         {
             NextGenerationCycle();
+            var growButton = sender as Button;
+            growButton.Visibility = Visibility.Collapsed;
         }
 
         private async Task CheckForGameEnd()
@@ -392,7 +394,7 @@ namespace CellTakeover
             }
 
             //--if no players have remaining mutation points then we can go back to growing
-            GrowButton.IsEnabled = true;
+            NextGenerationCycle();
         }
 
         private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
