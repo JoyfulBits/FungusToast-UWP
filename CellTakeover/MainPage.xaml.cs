@@ -30,7 +30,7 @@ namespace CellTakeover
             TintColor = Colors.White
         };
 
-        private readonly Dictionary<int, List<Button>> _playerNumberToMutationButtons = new Dictionary<int, List<Button>>();
+        private readonly Dictionary<int, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<int, Dictionary<string, Button>>();
         private readonly Dictionary<int, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<int, TextBlock>();
         private readonly Dictionary<int, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<int, ContentDialog>();
         private readonly Dictionary<int, Button> _playerNumberToSkillTreeButton = new Dictionary<int, Button>();
@@ -98,7 +98,7 @@ namespace CellTakeover
             foreach (var player in players)
             {
                 _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
-                _playerNumberToMutationButtons.Add(player.PlayerNumber, new List<Button>());
+                _playerNumberToMutationButtons.Add(player.PlayerNumber, new Dictionary<string, Button>());
             }
 
             InitializePetriDishWithPlayerCells();
@@ -366,13 +366,13 @@ namespace CellTakeover
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
             foreach (var mutationButton in playerMutationButtons)
             {
-                if (mutationButton.Name == "ReduceHealthyCellDeathChanceButton" && player.GrowthScorecard.HealthyCellDeathChancePercentage <= 0)
+                if (mutationButton.Key == "ReduceHealthyCellDeathChanceButton" && player.GrowthScorecard.HealthyCellDeathChancePercentage <= 0)
                 {
-                    mutationButton.IsEnabled = false;
+                    mutationButton.Value.IsEnabled = false;
                 }
                 else
                 {
-                    mutationButton.IsEnabled = true;
+                    mutationButton.Value.IsEnabled = true;
                 }
             }
         }
@@ -383,7 +383,7 @@ namespace CellTakeover
 
             foreach (var button in playerMutationButtons)
             {
-                button.IsEnabled = false;
+                button.Value.IsEnabled = false;
             }
 
             var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
@@ -393,7 +393,7 @@ namespace CellTakeover
             var dialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
             dialog.Hide();
         }
-
+        
         private void MutationOptionButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -403,7 +403,13 @@ namespace CellTakeover
             {
                 button.IsEnabled = true;
             }
-            playerButtons.Add(button);
+
+            //--make sure the buttons are only added to the dictionary once
+            if (!playerButtons.ContainsKey(button.Name))
+            {
+                playerButtons.Add(button.Name, button);
+            }
+
         }
 
         private void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)

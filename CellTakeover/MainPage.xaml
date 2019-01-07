@@ -177,9 +177,6 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
                                 <Grid.Resources>
                                     <Style TargetType="Button" x:Key="MutationChoiceButton">
                                         <Setter Property="Width" Value="75"></Setter>
@@ -195,6 +192,7 @@
 
                                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
                                     <Button Style="{StaticResource MutationChoiceButton}"
+                                            Name="WildMutationButton"
                                             IsEnabled="False" 
                                             Click="IncreaseMutationChance_Click"
                                             Loaded="MutationOptionButton_Loaded">
@@ -224,6 +222,7 @@
 
                                 <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
                                     <Button Style="{StaticResource MutationChoiceButton}"
+                                            Name="ExplosiveGrowthButton"
                                             IsEnabled="False" 
                                             Click="IncreaseCornerGrowthChance_Click"
                                             Loaded="MutationOptionButton_Loaded">
@@ -253,6 +252,7 @@
 
                                 <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
                                     <Button Style="{StaticResource MutationChoiceButton}"
+                                            Name="RegrowthButton"
                                             IsEnabled="False" 
                                             Click="IncreaseRegrowthChance_Click"
                                             Loaded="MutationOptionButton_Loaded">
