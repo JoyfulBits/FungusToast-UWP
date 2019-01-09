@@ -297,8 +297,8 @@ namespace CellTakeover
             var mutationPointAnnouncementMessage =
                 _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber];
 
-            await mutationPointAnnouncementMessage.Fade(1, 300, 0, easingMode: EasingMode.EaseInOut).StartAsync();
-            mutationPointAnnouncementMessage.Fade(0, 2000, 305).StartAsync();
+            mutationPointAnnouncementMessage.Opacity = 1;
+            mutationPointAnnouncementMessage.Fade(0, 2500).StartAsync();
         }
 
         private void PromptForMutationChoice()
