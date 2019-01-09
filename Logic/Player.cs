@@ -171,7 +171,7 @@ namespace Logic
 
         public string AddMutationChanceMessage => MutationOptionGenerator.IncreaseMutationChanceMessage;
         public string AddCornerGrowthChanceMessage => MutationOptionGenerator.IncreaseCornerGrowthChanceMessage;
-        public string ReduceCellDeathChanceMessage => MutationOptionGenerator.DecreaseCellDeathChanceMessage;
+        public string DecreaseApoptosisChanceMessage => MutationOptionGenerator.DecreaseApoptosisChanceMessage;
 
         public string AddRegrowthChanceMessage => MutationOptionGenerator.IncreaseRegrowthChanceMessage;
 
@@ -181,9 +181,9 @@ namespace Logic
             AvailableMutationPoints--;
         }
 
-        public void DecreaseHealthyCellDeathChance()
+        public void DecreaseApoptosisChance()
         {
-            GrowthScorecard.HealthyCellDeathChancePercentage -= MutationOptionGenerator.ReducedCellDeathPercentagePerAttributePoint;
+            GrowthScorecard.ApoptosisChancePercentage -= MutationOptionGenerator.ReducedCellDeathPercentagePerAttributePoint;
             AvailableMutationPoints--;
         }
 

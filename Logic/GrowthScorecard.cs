@@ -14,7 +14,7 @@ namespace Logic
         public const int BaseGrowthPercentage = 10;
         public const int BaseCellDeathChanceForSurroundedCells = 5;
         public const int BaseMutationChancePercentage = 10;
-        public const int BaseHealthyCellDeathChancePercentage = 5;
+        public const int BaseApoptosisChancePercentage = 5;
 
         public Dictionary<RelativePosition, int> GrowthChanceDictionary = new Dictionary<RelativePosition, int>
         {
@@ -31,7 +31,7 @@ namespace Logic
         private int _deathChanceForStarvedCells = BaseCellDeathChanceForSurroundedCells;
         private int _regrowthChancePercentage;
         private int _mutationChancePercentage = BaseMutationChancePercentage;
-        private double _healthyCellDeathChancePercentage = BaseHealthyCellDeathChancePercentage;
+        private double _apoptosisChancePercentage = BaseApoptosisChancePercentage;
 
         /// <summary>
         /// Percentage chance that a surrounded/starved cell will die each generation
@@ -58,13 +58,13 @@ namespace Logic
             }
         }
 
-        public double HealthyCellDeathChancePercentage
+        public double ApoptosisChancePercentage
         {
-            get => _healthyCellDeathChancePercentage;
+            get => _apoptosisChancePercentage;
             set
             {
-                if (Math.Abs(value - _healthyCellDeathChancePercentage) < .0001) return;
-                _healthyCellDeathChancePercentage = value;
+                if (Math.Abs(value - _apoptosisChancePercentage) < .0001) return;
+                _apoptosisChancePercentage = value;
                 OnPropertyChanged();
             }
         }

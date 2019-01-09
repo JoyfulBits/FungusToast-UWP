@@ -330,9 +330,9 @@ namespace CellTakeover
                         {
                             aiPlayer.IncreaseCornerGrowth();
                         }
-                        else if(aiPlayer.GrowthScorecard.HealthyCellDeathChancePercentage > 0)
+                        else if(aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
                         {
-                            aiPlayer.DecreaseHealthyCellDeathChance();
+                            aiPlayer.DecreaseApoptosisChance();
                         }
                         else
                         {
@@ -358,9 +358,9 @@ namespace CellTakeover
                                 aiPlayer.IncreaseRegrowthChance();
                                 break;
                             case 3:
-                                if (aiPlayer.GrowthScorecard.HealthyCellDeathChancePercentage > 0)
+                                if (aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
                                 {
-                                    aiPlayer.DecreaseHealthyCellDeathChance();
+                                    aiPlayer.DecreaseApoptosisChance();
                                 }
                                 else
                                 {
@@ -407,12 +407,12 @@ namespace CellTakeover
             CheckForRemainingMutationPoints(player);
         }
 
-        private void ReduceHealthyCellDeathChance_Click(object sender, RoutedEventArgs e)
+        private void AntiApoptosis_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            player.DecreaseHealthyCellDeathChance();
-            if (player.GrowthScorecard.HealthyCellDeathChancePercentage <= 0)
+            player.DecreaseApoptosisChance();
+            if (player.GrowthScorecard.ApoptosisChancePercentage <= 0)
             {
                 button.IsEnabled = false;
             }
@@ -443,7 +443,7 @@ namespace CellTakeover
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
             foreach (var mutationButton in playerMutationButtons)
             {
-                if (mutationButton.Key == "ReduceHealthyCellDeathChanceButton" && player.GrowthScorecard.HealthyCellDeathChancePercentage <= 0)
+                if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
                 {
                     mutationButton.Value.IsEnabled = false;
                 }

@@ -81,7 +81,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath;
             var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 0 };
             player.GrowthScorecard = growthScorecard;
-            player.GrowthScorecard.HealthyCellDeathChancePercentage = 100;
+            player.GrowthScorecard.ApoptosisChancePercentage = 100;
             var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
 
             var surroundingCells = CreateSurroundingCellsWithAllBioCells(player);
@@ -104,7 +104,7 @@ namespace Logic.Tests.CellGrowthCalculatorTests
             player.LiveCells = CellGrowthCalculator.MinimumLiveCellsForCellDeath - 1;
             var growthScorecard = new GrowthScorecard { DeathChanceForStarvedCells = 100 };
             player.GrowthScorecard = growthScorecard;
-            player.GrowthScorecard.HealthyCellDeathChancePercentage = 100;
+            player.GrowthScorecard.ApoptosisChancePercentage = 100;
             var bioCell = new BioCell(player, 1, new Color(), surroundingCellCalculatorMock);
 
             var surroundingCells = CreateSurroundingCellsWithAllBioCells(player);

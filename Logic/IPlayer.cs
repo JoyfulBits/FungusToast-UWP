@@ -28,7 +28,7 @@ namespace Logic
         CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
         bool GetsFreeMutation();
         void IncreaseMutationChance();
-        void DecreaseHealthyCellDeathChance();
+        void DecreaseApoptosisChance();
         void IncreaseCornerGrowth();
         void IncreaseRegrowthChance();
         BioCell RegrowCell(BioCell deadCell);

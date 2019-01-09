@@ -136,7 +136,6 @@
     <Compile Include="ICellRegrowthCalculator.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="ISurroundingCellCalculator.cs" />
-    <Compile Include="MutationChoice.cs" />
     <Compile Include="MutationOptionGenerator.cs" />
     <Compile Include="NextGenerationResults.cs" />
     <Compile Include="Player.cs" />

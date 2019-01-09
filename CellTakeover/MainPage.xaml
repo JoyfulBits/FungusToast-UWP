@@ -281,10 +281,10 @@
 
                                 <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
                                     <Button 
-                                        Name="ReduceHealthyCellDeathChanceButton"
+                                        Name="AntiApoptosisButton"
                                         Style="{StaticResource MutationChoiceButton}"
                                         IsEnabled="False"
-                                        Click="ReduceHealthyCellDeathChance_Click"
+                                        Click="AntiApoptosis_Click"
                                         Loaded="MutationOptionButton_Loaded">
 
                                         <Image Source="Assets/Skill Icons/reduced_death.png"></Image>
@@ -301,13 +301,13 @@
                                             <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Resilience"  
+                                                   Text="Anti-Apoptosis"  
                                                    Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
                                         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="{x:Bind ReduceCellDeathChanceMessage, Mode=OneTime}"
+                                                   Text="{x:Bind DecreaseApoptosisChanceMessage, Mode=OneTime}"
                                                    TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Death Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.HealthyCellDeathChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Apoptosis Chance:"></TextBlock>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.ApoptosisChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
                                     </Grid>
                                 </StackPanel>
                             </Grid>

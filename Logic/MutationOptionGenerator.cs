@@ -14,8 +14,8 @@ namespace Logic
         public static string IncreaseCornerGrowthChanceMessage =>
             $"Increase of corner growth by {AdditionalCornerGrowthChancePerAttributePoint}%.";
 
-        public static string DecreaseCellDeathChanceMessage =>
-            $"Decrease chance of random cell death by {ReducedCellDeathPercentagePerAttributePoint}%.";
+        public static string DecreaseApoptosisChanceMessage =>
+            $"Decrease chance of random cell death (apoptosis) by {ReducedCellDeathPercentagePerAttributePoint}%.";
 
         public static string IncreaseRegrowthChanceMessage => 
             $"Increase chance of reviving adjacent dead cell by {AdditionalRegrowthChancePerAttributePoint}%.";

@@ -34,8 +34,8 @@ namespace Logic
 
         private bool CellDiesRandomly(IPlayer player)
         {
-            //--since HealthyCellDeathChancePercentage is a double, need to add an order of magnitude for precision
-            return RandomNumberGenerator.Random.Next(0, 999) < player.GrowthScorecard.HealthyCellDeathChancePercentage * 10;
+            //--since ApoptosisChancePercentage is a double, need to add an order of magnitude for precision
+            return RandomNumberGenerator.Random.Next(0, 999) < player.GrowthScorecard.ApoptosisChancePercentage * 10;
         }
 
         private bool CellDiesOfStarvation(bool surroundingCellsSurroundedByLiveCells, IPlayer player)
