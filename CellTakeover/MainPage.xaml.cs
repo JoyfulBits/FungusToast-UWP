@@ -103,7 +103,6 @@ namespace CellTakeover
                     _cellGrowthCalculator, _surroundingCellCalculator, false));
             }
 
-            //TODO add AI players
             ViewModel.Players = players;
 
             foreach (var player in players)
