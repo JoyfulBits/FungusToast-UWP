@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CellTakeover", "CellTakeover\CellTakeover.csproj", "{9D2A7D98-3B42-4E4F-A369-016BED040487}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FungusToast", "CellTakeover\FungusToast.csproj", "{9D2A7D98-3B42-4E4F-A369-016BED040487}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Tests", "CellTakeover.Tests\Logic.Tests.csproj", "{D77BA91C-C7A1-4337-A829-7CED707AE5E8}"
 EndProject

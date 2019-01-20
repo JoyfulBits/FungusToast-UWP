@@ -7,8 +7,8 @@
     <ProjectGuid>{9D2A7D98-3B42-4E4F-A369-016BED040487}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CellTakeover</RootNamespace>
-    <AssemblyName>CellTakeover</AssemblyName>
+    <RootNamespace>FungusToast</RootNamespace>
+    <AssemblyName>FungusToast</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17134.0</TargetPlatformVersion>
