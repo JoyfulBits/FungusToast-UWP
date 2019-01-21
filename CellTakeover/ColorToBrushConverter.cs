@@ -3,7 +3,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
-namespace CellTakeover
+namespace FungusToast
 {
     public class ColorToBrushConverter : IValueConverter
     {

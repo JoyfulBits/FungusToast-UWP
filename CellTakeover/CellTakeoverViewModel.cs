@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using Logic;
 using Logic.Annotations;
 
-namespace CellTakeover
+namespace FungusToast
 {
     public class CellTakeoverViewModel : INotifyPropertyChanged
     {

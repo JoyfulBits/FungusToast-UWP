@@ -1,7 +1,6 @@
 ﻿<Application
-    x:Class="CellTakeover.App"
+    x:Class="FungusToast.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:CellTakeover">
-
+    xmlns:local="using:FungusToast">
 </Application>

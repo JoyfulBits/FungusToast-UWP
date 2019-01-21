@@ -1,21 +1,20 @@
 ﻿<Page
-    x:Class="CellTakeover.MainPage"
-    xmlns:viewmodel="using:CellTakeover"
+    x:Class="FungusToast.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:CellTakeover"
     xmlns:logic="using:Logic"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:fungusToast="using:FungusToast"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <UserControl.Resources>
-        <local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+        <fungusToast:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>
-        <local:CellTakeoverViewModel x:Key="ViewModel"></local:CellTakeoverViewModel>
+        <fungusToast:CellTakeoverViewModel x:Key="ViewModel"></fungusToast:CellTakeoverViewModel>
     </UserControl.Resources>
 
     <Grid Padding="15" Loaded="MainGrid_Loaded">

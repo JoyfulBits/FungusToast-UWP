@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FungusToastApiClient", "FungusToastApiClient\FungusToastApiClient.csproj", "{E14370EE-8819-4166-A251-2101FB4AB5E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FungusToastApiClient.Tests", "FungusToastApiClient.Tests\FungusToastApiClient.Tests.csproj", "{7C94C29C-28A6-4DFB-9ACC-17948E7AD7DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FungusToastApiClient.Tests", "FungusToastApiClient.Tests\FungusToastApiClient.Tests.csproj", "{7C94C29C-28A6-4DFB-9ACC-17948E7AD7DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +28,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Debug|Any CPU.Build.0 = Debug|x86
+		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Debug|ARM.ActiveCfg = Debug|ARM
 		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Debug|ARM.Build.0 = Debug|ARM
 		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -54,6 +56,7 @@ Global
 		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Release|x86.Build.0 = Release|x86
 		{9D2A7D98-3B42-4E4F-A369-016BED040487}.Release|x86.Deploy.0 = Release|x86
 		{D77BA91C-C7A1-4337-A829-7CED707AE5E8}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{D77BA91C-C7A1-4337-A829-7CED707AE5E8}.Debug|Any CPU.Build.0 = Debug|x86
 		{D77BA91C-C7A1-4337-A829-7CED707AE5E8}.Debug|ARM.ActiveCfg = Debug|ARM
 		{D77BA91C-C7A1-4337-A829-7CED707AE5E8}.Debug|ARM.Build.0 = Debug|ARM
 		{D77BA91C-C7A1-4337-A829-7CED707AE5E8}.Debug|ARM.Deploy.0 = Debug|ARM

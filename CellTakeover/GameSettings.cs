@@ -1,4 +1,4 @@
-﻿namespace CellTakeover
+﻿namespace FungusToast
 {
     internal static class GameSettings
     {
