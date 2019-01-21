@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FungusToastApiClient.Models;
+using FungusToastApiClient.Serialization;
 using NUnit.Framework;
 
 namespace FungusToastApiClient.Tests.GamesApiClientTests
@@ -11,7 +12,7 @@ namespace FungusToastApiClient.Tests.GamesApiClientTests
         [SetUp]
         public void SetUp()
         {
-            GamesClient = new GamesApiClient();
+            GamesClient = new GamesApiClient(new Serializer());
         }
 
         protected async Task<GameState> CreateValidGameForTesting(int numberOfHumanPlayers = 2, int numberOfAiPlayers = 1)

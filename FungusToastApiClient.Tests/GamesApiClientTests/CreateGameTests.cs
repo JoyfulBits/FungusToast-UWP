@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using FungusToastApiClient.Models;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -12,7 +13,7 @@ namespace FungusToastApiClient.Tests.GamesApiClientTests
     public class CreateGameTests : GamesApiClientTestBase
     {
         [Test]
-        public async void It_Creates_The_Game()
+        public async Task It_Creates_The_Game()
         {
             //--arrange
             var newGame = new NewGameRequest(2, 1);
@@ -23,6 +24,10 @@ namespace FungusToastApiClient.Tests.GamesApiClientTests
             //--assert
             result.NumberOfHumanPlayers.ShouldBe(newGame.NumberOfHumanPlayers);
             result.NumberOfAiPlayers.ShouldBe(newGame.NumberOfAiPlayers);
+            result.NumberOfRows.ShouldBe(50);
+            result.NumberOfColumns.ShouldBe(50);
+            result.Id.ShouldBeGreaterThan(0);
+            result.Active.ShouldBe(true);
         }
     }
 }

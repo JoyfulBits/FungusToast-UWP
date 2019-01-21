@@ -3,26 +3,35 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FungusToastApiClient.Exceptions;
 using FungusToastApiClient.Models;
+using FungusToastApiClient.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace FungusToastApiClient
 {
     public class GamesApiClient
     {
+        private readonly ISerializer _serialization;
+
+        public GamesApiClient(ISerializer serialization)
+        {
+            _serialization = serialization;
+        }
+
         public async Task<GameState> GetGameState(int gameId, string baseApiUrl)
         {
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
-                using (HttpResponseMessage response = await client.GetAsync(baseApiUrl + "/games/" + gameId))
+                using (var response = await client.GetAsync(baseApiUrl + "/games/" + gameId))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        using (HttpContent content = response.Content)
+                        using (var content = response.Content)
                         {
-                            string data = await content.ReadAsStringAsync();
+                            var data = await content.ReadAsStringAsync();
                             if (data != null)
                             {
-                                return JsonConvert.DeserializeObject<GameState>(data);
+                                return _serialization.DeserializeObject<GameState>(data);
                             }
                         }
                     }
@@ -34,21 +43,21 @@ namespace FungusToastApiClient
 
         public async Task<GameState> CreateGame(NewGameRequest newGame, string baseApiUrl)
         {
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
-                var jsonObject = JsonConvert.SerializeObject(newGame);
-                var stringifiedObject = new StringContent(jsonObject);
+                var stringifiedObject = _serialization.SerializeToHttpStringContent(newGame);
+               
                 var gamesUri = new Uri(baseApiUrl + "/games");
-                using (HttpResponseMessage response = await client.PostAsync(gamesUri, stringifiedObject))
+                using (var response = await client.PostAsync(gamesUri, stringifiedObject))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        using (HttpContent content = response.Content)
+                        using (var content = response.Content)
                         {
-                            string data = await content.ReadAsStringAsync();
+                            var data = await content.ReadAsStringAsync();
                             if (data != null)
                             {
-                                return JsonConvert.DeserializeObject<GameState>(data);
+                                return _serialization.DeserializeObject<GameState>(data);
                             }
                         }
                     }
