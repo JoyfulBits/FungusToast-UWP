@@ -7,7 +7,7 @@ using Logic.Annotations;
 
 namespace FungusToast
 {
-    public class CellTakeoverViewModel : INotifyPropertyChanged
+    public class FungusToastViewModel : INotifyPropertyChanged
     {
         public const int NumberOfTurnsAfterGridIsFullBeforeGameEnds = 5;
 

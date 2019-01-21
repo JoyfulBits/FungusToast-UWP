@@ -21,7 +21,7 @@ namespace FungusToast
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public CellTakeoverViewModel ViewModel { get; set; }
+        public FungusToastViewModel ViewModel { get; set; }
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
@@ -55,7 +55,7 @@ namespace FungusToast
         {
             InitializeDependencies();
             InitializeComponent();
-            ViewModel = new CellTakeoverViewModel();
+            ViewModel = new FungusToastViewModel();
         }
 
         private void InitializeDependencies()

@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <fungusToast:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>
-        <fungusToast:CellTakeoverViewModel x:Key="ViewModel"></fungusToast:CellTakeoverViewModel>
+        <fungusToast:FungusToastViewModel x:Key="ViewModel"></fungusToast:FungusToastViewModel>
     </UserControl.Resources>
 
     <Grid Padding="15" Loaded="MainGrid_Loaded">
