@@ -433,7 +433,7 @@
             </ListView.ItemTemplate>
         </ListView>
         
-        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="PetriDish" Padding="0 0 0 20" BorderThickness="1"></controls:UniformGrid>
+        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="Toast" Padding="0 0 0 20" BorderThickness="1"></controls:UniformGrid>
 
         <Grid Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left">
             <Grid.RowDefinitions>

@@ -107,22 +107,22 @@ namespace FungusToast
                 _playerNumberToMutationButtons.Add(player.PlayerNumber, new Dictionary<string, Button>());
             }
 
-            InitializePetriDishWithPlayerCells();
+            InitializeToastWithPlayerCells();
         }
 
-        private void InitializePetriDishWithPlayerCells()
+        private void InitializeToastWithPlayerCells()
         {
-            PetriDish.Columns = GameSettings.NumberOfColumnsAndRows;
-            PetriDish.Rows = GameSettings.NumberOfColumnsAndRows;
+            Toast.Columns = GameSettings.NumberOfColumnsAndRows;
+            Toast.Rows = GameSettings.NumberOfColumnsAndRows;
             //--make the grid a square since it wasn't doing that for some reason
-            PetriDish.Width = PetriDish.ActualHeight;
+            Toast.Width = Toast.ActualHeight;
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
             Thickness noPaddingOrMargin = new Thickness(0);
 
             for (var i = 0; i < GameSettings.NumberOfCells; i++)
             {
-                PetriDish.Children.Add(new Button
+                Toast.Children.Add(new Button
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
                     Background = _emptyCellBrush,
@@ -148,7 +148,7 @@ namespace FungusToast
                 //--make sure there is at least 2 rows between starting cells
                 var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
                 var startCellIndex = RandomNumberGenerator.Random.Next(firstCandidateStartCell, endCandidateStartCell);
-                var button = PetriDish.Children[startCellIndex] as Button;
+                var button = Toast.Children[startCellIndex] as Button;
                 button.Background = new SolidColorBrush(ViewModel.Players[i].Color);
                 button.Content = "  ";
                 //button.Content = player.PlayerSymbol;
@@ -222,7 +222,7 @@ namespace FungusToast
                 //--its possible for two different cells to split to the same cell. For now, the first cell wins
                 if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
                 {
-                    var button = PetriDish.Children[newCell.CellIndex] as Button;
+                    var button = Toast.Children[newCell.CellIndex] as Button;
                     button.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
                     //button.Content = newCell.Player.PlayerSymbol;
                     ViewModel.AddNewLiveCell(newCell);
@@ -236,7 +236,7 @@ namespace FungusToast
             {
                 if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
                 {
-                    var button = PetriDish.Children[newDeadCell.CellIndex] as Button;
+                    var button = Toast.Children[newDeadCell.CellIndex] as Button;
                     button.Background = _deadCellBrush;
                     button.Content = _deadCellSymbol;
                     ViewModel.AddNewDeadCell(newDeadCell);
@@ -252,7 +252,7 @@ namespace FungusToast
             {
                 ViewModel.RegrowCell(regrownCell);
 
-                var element = PetriDish.Children[regrownCell.CellIndex] as Button;
+                var element = Toast.Children[regrownCell.CellIndex] as Button;
                 element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
                 element.Content = string.Empty;
             }
