@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FungusToastApiClient\FungusToastApiClient.csproj" />
+    <ProjectReference Include="..\FungusToastApiClientLibrary\FungusToastApiClientLibrary.csproj" />
   </ItemGroup>
 
 </Project>

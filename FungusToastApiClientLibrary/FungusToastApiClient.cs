@@ -1,11 +1,7 @@
-﻿using System.Configuration;
-using System.Net.Http;
-using System.Threading.Tasks;
-using FungusToastApiClient.Exceptions;
-using FungusToastApiClient.Models;
-using Newtonsoft.Json;
+﻿using System.Threading.Tasks;
+using FungusToastApiClientLibrary.Models;
 
-namespace FungusToastApiClient
+namespace FungusToastApiClientLibrary
 {
     public class FungusToastApiClient : IFungusToastApiClient
     {

@@ -8,6 +8,7 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using FungusToastApiClientLibrary;
 using Logic;
 using Logic.Players;
 using Microsoft.Toolkit.Uwp.UI.Animations;
@@ -48,6 +49,7 @@ namespace FungusToast
         private ICellGrowthCalculator _cellGrowthCalculator;
         private ICellRegrowthCalculator _cellRegrowthCalculator;
         private ISurroundingCellCalculator _surroundingCellCalculator;
+        private IFungusToastApiClient _fungusToastApiClient;
         private GenerationAdvancer _generationAdvancer;
 
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using FungusToastApiClient.Models;
+using FungusToastApiClientLibrary.Models;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Shouldly;
