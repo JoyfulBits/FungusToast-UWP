@@ -1,4 +1,4 @@
-﻿namespace FungusToastApiClientLibrary.Models
+﻿namespace ApiClient.Models
 {
     public class NewGameRequest
     {

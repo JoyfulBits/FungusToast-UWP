@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using FungusToastApiClient.Exceptions;
+using ApiClient.Exceptions;
 using NUnit.Framework;
 using Shouldly;
 
-namespace FungusToastApiClient.Tests.GamesApiClientTests
+namespace ApiClient.Tests.GamesApiClientTests
 {
     [TestFixture]
     public class GetGameStateTests : GamesApiClientTestBase

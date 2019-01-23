@@ -1,8 +1,8 @@
 ﻿using System;
-using FungusToastApiClientLibrary.Models;
+using ApiClient.Models;
 using Newtonsoft.Json;
 
-namespace FungusToastApiClientLibrary.Exceptions
+namespace ApiClient.Exceptions
 {
     public class GameNotCreatedException : Exception
     {

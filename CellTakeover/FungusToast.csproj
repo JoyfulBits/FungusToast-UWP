@@ -169,9 +169,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FungusToastApiClientLibrary\FungusToastApiClientLibrary.csproj">
-      <Project>{5c66fbc2-3d45-4166-81a1-2843cae963cc}</Project>
-      <Name>FungusToastApiClientLibrary</Name>
+    <ProjectReference Include="..\ApiClient\ApiClient.csproj">
+      <Project>{be7ce809-7e3b-4774-bd58-9876fefa6b4e}</Project>
+      <Name>ApiClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logic\Logic.csproj">
       <Project>{5720e5a2-01ad-4e7c-9f4d-3697525d5662}</Project>

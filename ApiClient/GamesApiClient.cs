@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FungusToastApiClientLibrary.Exceptions;
-using FungusToastApiClientLibrary.Models;
-using FungusToastApiClientLibrary.Serialization;
+using ApiClient.Exceptions;
+using ApiClient.Models;
+using ApiClient.Serialization;
 
-namespace FungusToastApiClientLibrary
+namespace ApiClient
 {
     public class GamesApiClient
     {

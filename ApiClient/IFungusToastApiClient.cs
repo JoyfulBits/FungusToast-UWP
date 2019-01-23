@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using FungusToastApiClientLibrary.Models;
+using ApiClient.Models;
 
-namespace FungusToastApiClientLibrary
+namespace ApiClient
 {
     public interface IFungusToastApiClient
     {

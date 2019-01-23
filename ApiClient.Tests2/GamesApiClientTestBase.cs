@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using FungusToastApiClient.Models;
-using FungusToastApiClient.Serialization;
+using ApiClient.Models;
+using ApiClient.Serialization;
 using NUnit.Framework;
 
-namespace FungusToastApiClient.Tests.GamesApiClientTests
+namespace ApiClient.Tests
 {
     public class GamesApiClientTestBase
     {

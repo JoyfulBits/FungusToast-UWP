@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FungusToastApiClient.Exceptions
+namespace ApiClient.Exceptions
 {
     public class GameNotFoundException : Exception
     {

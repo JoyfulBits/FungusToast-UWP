@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace FungusToastApiClientLibrary.Serialization
+namespace ApiClient.Serialization
 {
     public interface ISerializer
     {

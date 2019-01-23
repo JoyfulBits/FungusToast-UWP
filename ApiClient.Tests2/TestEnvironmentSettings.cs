@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FungusToastApiClient.Tests
+﻿namespace ApiClient.Tests
 {
     public class TestEnvironmentSettings
     {

@@ -3,7 +3,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace FungusToastApiClientLibrary.Serialization
+namespace ApiClient.Serialization
 {
     public class Serializer : ISerializer
     {

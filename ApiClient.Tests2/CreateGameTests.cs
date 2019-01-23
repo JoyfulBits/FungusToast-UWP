@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using FungusToastApiClientLibrary.Models;
+﻿using System.Threading.Tasks;
+using ApiClient.Models;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Shouldly;
 
-namespace FungusToastApiClient.Tests.GamesApiClientTests
+namespace ApiClient.Tests
 {
     [TestFixture()]
     public class CreateGameTests : GamesApiClientTestBase
