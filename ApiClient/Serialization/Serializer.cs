@@ -11,7 +11,7 @@ namespace ApiClient.Serialization
         {
             ContractResolver = new DefaultContractResolver
             {
-                NamingStrategy = new SnakeCaseNamingStrategy()
+                NamingStrategy = new CamelCaseNamingStrategy()
             }
         };
 
