@@ -23,7 +23,20 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.NumberOfRows.ShouldBe(50);
             result.NumberOfColumns.ShouldBe(50);
             result.Id.ShouldBeGreaterThan(0);
-            result.Active.ShouldBe(true);
+            result.Status.ShouldBe("Not Started");
+        }
+
+        [Test]
+        public async Task It_Automatically_Starts_The_Game_If_There_Is_Only_One_Human_Player()
+        {
+            //--arrange
+            var newGame = new NewGameRequest(1, 1);
+
+            //--act
+            var result = await GamesClient.CreateGame(newGame, TestEnvironmentSettings.BaseApiUrl);
+
+            //--assert
+            result.Status.ShouldBe("In Progress");
         }
     }
 }

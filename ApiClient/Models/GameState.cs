@@ -7,6 +7,6 @@
         public int NumberOfAiPlayers { get; set; }
         public int NumberOfRows { get; set; }
         public int NumberOfColumns { get; set; }
-        public bool Active { get; set; }
+        public string Status { get; set; }
     }
 }
