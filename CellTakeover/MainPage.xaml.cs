@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using ApiClient;
 using ApiClient.Models;
+using ApiClient.Serialization;
 using Logic;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
@@ -24,6 +25,8 @@ namespace FungusToast
     public sealed partial class MainPage : Page
     {
         public FungusToastViewModel ViewModel { get; set; }
+
+        private string _userName = "jake";
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
@@ -45,19 +48,9 @@ namespace FungusToast
 
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
-
-        //--TODO introduce dependency injection framework
-        //private ICellGrowthCalculator _cellGrowthCalculator;
-        //private ICellRegrowthCalculator _cellRegrowthCalculator;
-        //private ISurroundingCellCalculator _surroundingCellCalculator;
-        //private GenerationAdvancer _generationAdvancer;
-
         private IFungusToastApiClient _fungusToastApiClient;
 
-        private ApplicationDataContainer _applicationDataContainer =
-            Windows.Storage.ApplicationData.Current.LocalSettings;
-        private Windows.Storage.StorageFolder _localFolder =
-            Windows.Storage.ApplicationData.Current.LocalFolder;
+        private readonly ApplicationDataContainer _applicationDataContainer = ApplicationData.Current.LocalSettings;
 
         private GameModel _gameModel;
 
@@ -71,16 +64,23 @@ namespace FungusToast
 
         private void InitializeDependencies()
         {
-            //_cellGrowthCalculator = new CellGrowthCalculator();
-            //_surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
-            //_cellRegrowthCalculator = new CellRegrowthCalculator(_surroundingCellCalculator);
-            //_generationAdvancer = new GenerationAdvancer(_cellRegrowthCalculator);
+            _fungusToastApiClient = new FungusToastApiClient(GameSettings.BaseURL, new GamesApiClient(new Serializer()));
         }
 
 
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            await GameSettingsDialog.ShowAsync();
+            //--if there is an active game then load that, otherwise prompt to start a new game
+            if(int.TryParse(_applicationDataContainer.Values["activeGameId"].ToString(), out var activeGameId))
+            {
+                _gameModel = await _fungusToastApiClient.GetGameState(activeGameId);
+
+                await InitializeGame(_gameModel);
+            }
+            else
+            {
+                await GameSettingsDialog.ShowAsync();
+            }
         }
 
         private readonly List<Color> _availableColors = new List<Color>
@@ -92,19 +92,26 @@ namespace FungusToast
             Colors.Gray
         };
 
-        private string _userName = "jake";
 
-        private async Task GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var players = new List<IPlayer>();
             var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
             var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
             _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
-            for (int i = 1; i <= _gameModel.Players.Count; i++)
+
+            await InitializeGame(_gameModel);
+        }
+
+        private async Task InitializeGame(GameModel game)
+        {
+            var players = new List<IPlayer>();
+
+            for (var i = 1; i <= game.Players.Count; i++)
             {
-                players.Add(new Player(_gameModel.Players[i].Name, _availableColors[i-1], _gameModel.Players[i].Id, _gameModel.Players[i].Human));
+                players.Add(new Player(game.Players[i].Name, _availableColors[i - 1], game.Players[i].Id,
+                    game.Players[i].Human));
             }
 
             ViewModel.Players = players;
@@ -115,10 +122,12 @@ namespace FungusToast
                 _playerNumberToMutationButtons.Add(player.PlayerId, new Dictionary<string, Button>());
             }
 
-            await InitializeToastWithPlayerCells();
+            InitializeToastWithPlayerCells(game);
+
+            await RenderUpdates(game);
         }
 
-        private async Task InitializeToastWithPlayerCells()
+        private void InitializeToastWithPlayerCells(GameModel game)
         {
             Toast.Columns = _gameModel.NumberOfColumns;
             Toast.Rows = _gameModel.NumberOfRows;
@@ -126,23 +135,27 @@ namespace FungusToast
             //--make the grid a square since it wasn't doing that for some reason
             Toast.Width = Toast.ActualHeight;
 
-            InitializeToast();
-
-            await UpdateToast();
-        }
-
-        private void InitializeToast()
-        {
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
-            Thickness noPaddingOrMargin = new Thickness(0);
-            var previousGameState = _gameModel.PreviousGameModel;
+            var noPaddingOrMargin = new Thickness(0);
+            var previousGameState = game.PreviousGameModel;
 
-            for (var i = 0; i < _gameModel.NumberOfCells; i++)
+            for (var i = 0; i < game.NumberOfCells; i++)
             {
+                Brush backgroundBrush;
+                if (previousGameState.Cells.ContainsKey(i))
+                {
+                    var cell = previousGameState.Cells[i];
+                    backgroundBrush = _playerNumberToColorBrushDictionary[cell.PlayerId];
+                }
+                else
+                {
+                    backgroundBrush = _emptyCellBrush;
+                }
+
                 Toast.Children.Add(new Button
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
-                    Background = _emptyCellBrush,
+                    Background = backgroundBrush,
                     BorderBrush = blackSolidColorBrush,
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Stretch,
@@ -157,9 +170,9 @@ namespace FungusToast
             }
         }
 
-        private async Task UpdateToast()
+        private async Task RenderUpdates(GameModel game)
         {
-            foreach (var growthCycle in _gameModel.GrowthCycles)
+            foreach (var growthCycle in game.GrowthCycles)
             {
                 foreach (var toastChange in growthCycle.ToastChanges)
                 {
@@ -202,146 +215,6 @@ namespace FungusToast
             await mutationPointAnnouncementMessage.Fade(0, 500).StartAsync();
         }
 
-        //private async void NextGenerationCycle()
-        //{
-        //    for (int i = 0; i < ViewModel.NumberOfGenerationsBetweenFreeMutations; i++)
-        //    {
-        //        await NextGeneration();
-        //    }
-
-        //    foreach (var player in ViewModel.Players)
-        //    {
-        //        await IncreasePlayerMutationPoints(player);
-        //    }
-
-        //    //--only allow points to be spent every X rounds
-        //    PromptForMutationChoice();
-        //}
-
-        //private async Task NextGeneration()
-        //{
-        //    GrowButton.IsEnabled = false;
-
-        //    List<IPlayer> players = ViewModel.Players;
-
-        //    var nextGenerationResult = await Task.Run(() => _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells,
-        //        players));
-
-        //    AddNewCells(nextGenerationResult.NewLiveCells);
-
-        //    KillCells(nextGenerationResult.NewDeadCells);
-
-        //    RegrowCells(nextGenerationResult.RegrownCells);
-
-        //    ViewModel.GenerationNumber++;
-
-        //    foreach (var player in players)
-        //    {
-        //        var playerGrowthSummary = nextGenerationResult.PlayerGrowthSummaries[player.PlayerNumber];
-
-        //        player.LiveCells += playerGrowthSummary.NewLiveCellCount;
-        //        player.LiveCells += nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
-        //        player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
-
-        //        player.DeadCells += playerGrowthSummary.NewDeadCellCount;
-        //        player.DeadCells -= nextGenerationResult.PlayerNumberToNumberOfDeadCellsEliminated[player.PlayerNumber];
-
-        //        var numberOfRegrownCells = nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
-        //        player.RegrownCells += numberOfRegrownCells;
-
-        //        if (player.GetsFreeMutation())
-        //        {
-        //            await IncreasePlayerMutationPoints(player);
-        //        }
-        //    }
-
-        //    //--since it's not a spending round we can keep the grow button enabled
-        //    GrowButton.IsEnabled = true;
-
-        //    await CheckForGameEnd();
-        //}
-
-        //private void AddNewCells(List<BioCell> newLiveCells)
-        //{
-        //    foreach (var newCell in newLiveCells)
-        //    {
-        //        //--its possible for two different cells to split to the same cell. For now, the first cell wins
-        //        if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
-        //        {
-        //            var button = Toast.Children[newCell.CellIndex] as Button;
-        //            button.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
-        //            //button.Content = newCell.Player.PlayerSymbol;
-        //            ViewModel.AddNewLiveCell(newCell);
-        //        }
-        //    }
-        //}
-
-        //private void KillCells(List<BioCell> newDeadCells)
-        //{
-        //    foreach (var newDeadCell in newDeadCells)
-        //    {
-        //        if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
-        //        {
-        //            var button = Toast.Children[newDeadCell.CellIndex] as Button;
-        //            button.Background = _deadCellBrush;
-        //            button.Content = _deadCellSymbol;
-        //            ViewModel.AddNewDeadCell(newDeadCell);
-        //        }
-
-        //        ViewModel.RemoveLiveCell(newDeadCell.CellIndex);
-        //    }
-        //}
-
-        //private void RegrowCells(List<BioCell> regrownCells)
-        //{
-        //    foreach (var regrownCell in regrownCells)
-        //    {
-        //        ViewModel.RegrowCell(regrownCell);
-
-        //        var element = Toast.Children[regrownCell.CellIndex] as Button;
-        //        element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
-        //        element.Content = string.Empty;
-        //    }
-        //}
-
-        //private async void Grow_OnClick(object sender, RoutedEventArgs e)
-        //{
-        //    NextGenerationCycle();
-        //    var growButton = sender as Button;
-        //    growButton.Visibility = Visibility.Collapsed;
-        //}
-
-        //private async Task CheckForGameEnd()
-        //{
-        //    if (ViewModel.TotalEmptyCells == 0)
-        //    {
-        //        if (ViewModel.GameEndCountDown == 0)
-        //        {
-        //            ViewModel.TriggerGameOverResultOnPropertyChanged();
-        //            await GameEndContentDialog.ShowAsync();
-        //        }
-        //        else
-        //        {
-        //            ViewModel.GameEndCountDown--;
-        //        }
-        //    }
-        //}
-
-        //private bool MutationConsumptionRound()
-        //{
-        //    return ViewModel.GenerationNumber % ViewModel.NumberOfGenerationsBetweenFreeMutations == 0;
-        //}
-
-        //private async Task IncreasePlayerMutationPoints(IPlayer player)
-        //{
-        //    player.AvailableMutationPoints++;
-        //    var mutationPointAnnouncementMessage =
-        //        _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber];
-
-        //    mutationPointAnnouncementMessage.Opacity = 1;
-        //    mutationPointAnnouncementMessage.Fade(0, 2500).StartAsync();
-        //}
-
         private void PromptForMutationChoice()
         {
             foreach (var player in ViewModel.Players)
@@ -355,63 +228,6 @@ namespace FungusToast
                 }
             }
         }
-
-        //private void MakeAiTurn(IAiPlayer aiPlayer)
-        //{
-        //    switch (aiPlayer.AiType)
-        //    {
-        //        case AiType.ExtremeGrowth:
-        //            while (aiPlayer.AvailableMutationPoints > 0)
-        //            {
-        //                if (aiPlayer.TopLeftGrowthChance < 50)
-        //                {
-        //                    aiPlayer.IncreaseCornerGrowth();
-        //                }
-        //                else if(aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
-        //                {
-        //                    aiPlayer.DecreaseApoptosisChance();
-        //                }
-        //                else
-        //                {
-        //                    aiPlayer.IncreaseRegrowthChance();
-        //                }
-        //            }
-
-        //            break;
-
-        //        case AiType.Random:
-        //            while (aiPlayer.AvailableMutationPoints > 0)
-        //            {
-        //                var mutationChoiceIndex = RandomNumberGenerator.Random.Next(0, 3);
-        //                switch (mutationChoiceIndex)
-        //                {
-        //                    case 0:
-        //                        aiPlayer.IncreaseMutationChance();
-        //                        break;
-        //                    case 1:
-        //                        aiPlayer.IncreaseCornerGrowth();
-        //                        break;
-        //                    case 2:
-        //                        aiPlayer.IncreaseRegrowthChance();
-        //                        break;
-        //                    case 3:
-        //                        if (aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
-        //                        {
-        //                            aiPlayer.DecreaseApoptosisChance();
-        //                        }
-        //                        else
-        //                        {
-        //                            aiPlayer.IncreaseRegrowthChance();
-        //                        }
-        //                        break;
-        //                }
-        //            }
-
-        //            break;
-        //        default:
-        //            throw new Exception("Unexpected AiType: " + aiPlayer.AiType);
-        //    }
-        //}
 
         private void CheckForRemainingMutationPoints(IPlayer player)
         {

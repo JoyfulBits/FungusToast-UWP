@@ -121,10 +121,6 @@
         </ContentDialog>
 
         <StackPanel Grid.Row="0" Grid.Column="0">
-            <Button Name="GrowButton" Click="Grow_OnClick" 
-                    ToolTipService.ToolTip="Trigger the next generation of cell growth" Content="Start Growing!" 
-                    ToolTipService.Placement="Right"
-                    FontSize="40" HorizontalAlignment="Center"></Button>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*"></ColumnDefinition>
