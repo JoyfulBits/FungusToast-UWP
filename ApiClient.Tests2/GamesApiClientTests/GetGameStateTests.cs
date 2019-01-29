@@ -8,7 +8,6 @@ namespace ApiClient.Tests.GamesApiClientTests
     [TestFixture]
     public class GetGameStateTests : GamesApiClientTestBase
     {
-
         [Test]
         public void It_Throws_A_GameStateNotFoundException_If_It_Cant_Find_The_Game()
         {
@@ -27,7 +26,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         public async Task It_Returns_The_Specified_Game()
         {
             //--arrange
-            var newGame = await CreateValidGameForTesting();
+            var newGame = await CreateValidGameForTesting(TestUserName);
 
             //--act
             var gameState = await GamesClient.GetGameState(newGame.Id, TestEnvironmentSettings.BaseApiUrl);

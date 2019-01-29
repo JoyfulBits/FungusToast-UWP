@@ -23,14 +23,10 @@ namespace Logic
         int BottomGrowthChance { get; }
         int BottomLeftGrowthChance { get; }
         int LeftGrowthChance { get; }
-        bool IsHuman { get; }
-        BioCell MakeCell(int cellIndex);
-        CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
-        bool GetsFreeMutation();
         void IncreaseMutationChance();
         void DecreaseApoptosisChance();
         void IncreaseCornerGrowth();
         void IncreaseRegrowthChance();
-        BioCell RegrowCell(BioCell deadCell);
+        bool IsCurrentPlayer(string userName);
     }
 }

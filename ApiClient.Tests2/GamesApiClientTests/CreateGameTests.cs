@@ -12,7 +12,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         public async Task It_Creates_The_Game()
         {
             //--arrange
-            var newGame = new NewGameRequest(2, 1);
+            var newGame = new NewGameRequest("username", 1);
 
             //--act
             var result = await GamesClient.CreateGame(newGame, TestEnvironmentSettings.BaseApiUrl);
@@ -30,7 +30,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         public async Task It_Automatically_Starts_The_Game_If_There_Is_Only_One_Human_Player()
         {
             //--arrange
-            var newGame = new NewGameRequest(1, 1);
+            var newGame = new NewGameRequest("username", 1);
 
             //--act
             var result = await GamesClient.CreateGame(newGame, TestEnvironmentSettings.BaseApiUrl);

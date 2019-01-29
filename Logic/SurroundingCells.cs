@@ -67,9 +67,9 @@ namespace Logic
                                     && BottomLeftCell.OrganicCell && !BottomLeftCell.Dead
                                     && LeftCell.OrganicCell && !LeftCell.Dead;
 
-        public Dictionary<int, IPlayer> GetAllSurroundingPlayersWithRegrowth()
+        public Dictionary<string, IPlayer> GetAllSurroundingPlayersWithRegrowth()
         {
-            var surroundingPlayers = new Dictionary<int, IPlayer>();
+            var surroundingPlayers = new Dictionary<string, IPlayer>();
 
             AddBioCellPlayerWithRegrowth(TopLeftCell, surroundingPlayers);
             AddBioCellPlayerWithRegrowth(TopCell, surroundingPlayers);
@@ -83,15 +83,15 @@ namespace Logic
             return surroundingPlayers;
         }
 
-        private void AddBioCellPlayerWithRegrowth(GridCell cell, Dictionary<int, IPlayer> uniqueSurroundingPlayers)
+        private void AddBioCellPlayerWithRegrowth(GridCell cell, Dictionary<string, IPlayer> uniqueSurroundingPlayers)
         {
             if (cell.OrganicCell && !cell.Dead)
             {
                 var bioCell = cell as BioCell;
 
-                if (bioCell.Player.GrowthScorecard.RegrowthChancePercentage > 0 && !uniqueSurroundingPlayers.ContainsKey(bioCell.Player.PlayerNumber))
+                if (bioCell.Player.GrowthScorecard.RegrowthChancePercentage > 0 && !uniqueSurroundingPlayers.ContainsKey(bioCell.Player.PlayerId))
                 {
-                    uniqueSurroundingPlayers.Add(bioCell.Player.PlayerNumber, bioCell.Player);
+                    uniqueSurroundingPlayers.Add(bioCell.Player.PlayerId, bioCell.Player);
                 }
             }
         }

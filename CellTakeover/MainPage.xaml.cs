@@ -12,8 +12,6 @@ using Windows.UI.Xaml.Media;
 using ApiClient;
 using ApiClient.Models;
 using Logic;
-using Logic.Exceptions;
-using Logic.Players;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -49,11 +47,12 @@ namespace FungusToast
         private readonly Thickness _normalThickness = new Thickness(1);
 
         //--TODO introduce dependency injection framework
-        private ICellGrowthCalculator _cellGrowthCalculator;
-        private ICellRegrowthCalculator _cellRegrowthCalculator;
-        private ISurroundingCellCalculator _surroundingCellCalculator;
+        //private ICellGrowthCalculator _cellGrowthCalculator;
+        //private ICellRegrowthCalculator _cellRegrowthCalculator;
+        //private ISurroundingCellCalculator _surroundingCellCalculator;
+        //private GenerationAdvancer _generationAdvancer;
+
         private IFungusToastApiClient _fungusToastApiClient;
-        private GenerationAdvancer _generationAdvancer;
 
         private ApplicationDataContainer _applicationDataContainer =
             Windows.Storage.ApplicationData.Current.LocalSettings;
@@ -72,7 +71,7 @@ namespace FungusToast
 
         private void InitializeDependencies()
         {
-            _cellGrowthCalculator = new CellGrowthCalculator();
+            //_cellGrowthCalculator = new CellGrowthCalculator();
             //_surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
             //_cellRegrowthCalculator = new CellRegrowthCalculator(_surroundingCellCalculator);
             //_generationAdvancer = new GenerationAdvancer(_cellRegrowthCalculator);
@@ -93,17 +92,19 @@ namespace FungusToast
             Colors.Gray
         };
 
+        private string _userName = "jake";
+
         private async Task GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var players = new List<IPlayer>();
             var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
-            var newGameRequest = new NewGameRequest(numberOfHumanPlayers, numberOfAiPlayers);
+            var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
             _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
             for (int i = 1; i <= _gameModel.Players.Count; i++)
             {
-                players.Add(new Player(_gameModel.Players[i].Name, _availableColors[i-1], _gameModel.Players[i].Id, _cellGrowthCalculator, _surroundingCellCalculator, _gameModel.Players[i].Human));
+                players.Add(new Player(_gameModel.Players[i].Name, _availableColors[i-1], _gameModel.Players[i].Id, _gameModel.Players[i].Human));
             }
 
             ViewModel.Players = players;
@@ -201,220 +202,216 @@ namespace FungusToast
             await mutationPointAnnouncementMessage.Fade(0, 500).StartAsync();
         }
 
-        private async void NextGenerationCycle()
-        {
-            for (int i = 0; i < ViewModel.NumberOfGenerationsBetweenFreeMutations; i++)
-            {
-                await NextGeneration();
-            }
+        //private async void NextGenerationCycle()
+        //{
+        //    for (int i = 0; i < ViewModel.NumberOfGenerationsBetweenFreeMutations; i++)
+        //    {
+        //        await NextGeneration();
+        //    }
 
-            foreach (var player in ViewModel.Players)
-            {
-                await IncreasePlayerMutationPoints(player);
-            }
+        //    foreach (var player in ViewModel.Players)
+        //    {
+        //        await IncreasePlayerMutationPoints(player);
+        //    }
 
-            //--only allow points to be spent every X rounds
-            PromptForMutationChoice();
-        }
+        //    //--only allow points to be spent every X rounds
+        //    PromptForMutationChoice();
+        //}
 
-        private async Task NextGeneration()
-        {
-            GrowButton.IsEnabled = false;
+        //private async Task NextGeneration()
+        //{
+        //    GrowButton.IsEnabled = false;
 
-            List<IPlayer> players = ViewModel.Players;
+        //    List<IPlayer> players = ViewModel.Players;
 
-            var nextGenerationResult = await Task.Run(() => _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells,
-                players));
+        //    var nextGenerationResult = await Task.Run(() => _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells,
+        //        players));
 
-            AddNewCells(nextGenerationResult.NewLiveCells);
+        //    AddNewCells(nextGenerationResult.NewLiveCells);
 
-            KillCells(nextGenerationResult.NewDeadCells);
+        //    KillCells(nextGenerationResult.NewDeadCells);
 
-            RegrowCells(nextGenerationResult.RegrownCells);
+        //    RegrowCells(nextGenerationResult.RegrownCells);
 
-            ViewModel.GenerationNumber++;
+        //    ViewModel.GenerationNumber++;
 
-            foreach (var player in players)
-            {
-                var playerGrowthSummary = nextGenerationResult.PlayerGrowthSummaries[player.PlayerNumber];
+        //    foreach (var player in players)
+        //    {
+        //        var playerGrowthSummary = nextGenerationResult.PlayerGrowthSummaries[player.PlayerNumber];
 
-                player.LiveCells += playerGrowthSummary.NewLiveCellCount;
-                player.LiveCells += nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
-                player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
+        //        player.LiveCells += playerGrowthSummary.NewLiveCellCount;
+        //        player.LiveCells += nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
+        //        player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
 
-                player.DeadCells += playerGrowthSummary.NewDeadCellCount;
-                player.DeadCells -= nextGenerationResult.PlayerNumberToNumberOfDeadCellsEliminated[player.PlayerNumber];
+        //        player.DeadCells += playerGrowthSummary.NewDeadCellCount;
+        //        player.DeadCells -= nextGenerationResult.PlayerNumberToNumberOfDeadCellsEliminated[player.PlayerNumber];
 
-                var numberOfRegrownCells = nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
-                player.RegrownCells += numberOfRegrownCells;
+        //        var numberOfRegrownCells = nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
+        //        player.RegrownCells += numberOfRegrownCells;
 
-                if (player.GetsFreeMutation())
-                {
-                    await IncreasePlayerMutationPoints(player);
-                }
-            }
+        //        if (player.GetsFreeMutation())
+        //        {
+        //            await IncreasePlayerMutationPoints(player);
+        //        }
+        //    }
 
-            //--since it's not a spending round we can keep the grow button enabled
-            GrowButton.IsEnabled = true;
+        //    //--since it's not a spending round we can keep the grow button enabled
+        //    GrowButton.IsEnabled = true;
 
-            await CheckForGameEnd();
-        }
+        //    await CheckForGameEnd();
+        //}
 
-        private void AddNewCells(List<BioCell> newLiveCells)
-        {
-            foreach (var newCell in newLiveCells)
-            {
-                //--its possible for two different cells to split to the same cell. For now, the first cell wins
-                if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
-                {
-                    var button = Toast.Children[newCell.CellIndex] as Button;
-                    button.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
-                    //button.Content = newCell.Player.PlayerSymbol;
-                    ViewModel.AddNewLiveCell(newCell);
-                }
-            }
-        }
+        //private void AddNewCells(List<BioCell> newLiveCells)
+        //{
+        //    foreach (var newCell in newLiveCells)
+        //    {
+        //        //--its possible for two different cells to split to the same cell. For now, the first cell wins
+        //        if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
+        //        {
+        //            var button = Toast.Children[newCell.CellIndex] as Button;
+        //            button.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
+        //            //button.Content = newCell.Player.PlayerSymbol;
+        //            ViewModel.AddNewLiveCell(newCell);
+        //        }
+        //    }
+        //}
 
-        private void KillCells(List<BioCell> newDeadCells)
-        {
-            foreach (var newDeadCell in newDeadCells)
-            {
-                if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
-                {
-                    var button = Toast.Children[newDeadCell.CellIndex] as Button;
-                    button.Background = _deadCellBrush;
-                    button.Content = _deadCellSymbol;
-                    ViewModel.AddNewDeadCell(newDeadCell);
-                }
+        //private void KillCells(List<BioCell> newDeadCells)
+        //{
+        //    foreach (var newDeadCell in newDeadCells)
+        //    {
+        //        if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
+        //        {
+        //            var button = Toast.Children[newDeadCell.CellIndex] as Button;
+        //            button.Background = _deadCellBrush;
+        //            button.Content = _deadCellSymbol;
+        //            ViewModel.AddNewDeadCell(newDeadCell);
+        //        }
 
-                ViewModel.RemoveLiveCell(newDeadCell.CellIndex);
-            }
-        }
+        //        ViewModel.RemoveLiveCell(newDeadCell.CellIndex);
+        //    }
+        //}
 
-        private void RegrowCells(List<BioCell> regrownCells)
-        {
-            foreach (var regrownCell in regrownCells)
-            {
-                ViewModel.RegrowCell(regrownCell);
+        //private void RegrowCells(List<BioCell> regrownCells)
+        //{
+        //    foreach (var regrownCell in regrownCells)
+        //    {
+        //        ViewModel.RegrowCell(regrownCell);
 
-                var element = Toast.Children[regrownCell.CellIndex] as Button;
-                element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
-                element.Content = string.Empty;
-            }
-        }
+        //        var element = Toast.Children[regrownCell.CellIndex] as Button;
+        //        element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
+        //        element.Content = string.Empty;
+        //    }
+        //}
 
-        private async void Grow_OnClick(object sender, RoutedEventArgs e)
-        {
-            NextGenerationCycle();
-            var growButton = sender as Button;
-            growButton.Visibility = Visibility.Collapsed;
-        }
+        //private async void Grow_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    NextGenerationCycle();
+        //    var growButton = sender as Button;
+        //    growButton.Visibility = Visibility.Collapsed;
+        //}
 
-        private async Task CheckForGameEnd()
-        {
-            if (ViewModel.TotalEmptyCells == 0)
-            {
-                if (ViewModel.GameEndCountDown == 0)
-                {
-                    ViewModel.TriggerGameOverResultOnPropertyChanged();
-                    await GameEndContentDialog.ShowAsync();
-                }
-                else
-                {
-                    ViewModel.GameEndCountDown--;
-                }
-            }
-        }
+        //private async Task CheckForGameEnd()
+        //{
+        //    if (ViewModel.TotalEmptyCells == 0)
+        //    {
+        //        if (ViewModel.GameEndCountDown == 0)
+        //        {
+        //            ViewModel.TriggerGameOverResultOnPropertyChanged();
+        //            await GameEndContentDialog.ShowAsync();
+        //        }
+        //        else
+        //        {
+        //            ViewModel.GameEndCountDown--;
+        //        }
+        //    }
+        //}
 
-        private bool MutationConsumptionRound()
-        {
-            return ViewModel.GenerationNumber % ViewModel.NumberOfGenerationsBetweenFreeMutations == 0;
-        }
+        //private bool MutationConsumptionRound()
+        //{
+        //    return ViewModel.GenerationNumber % ViewModel.NumberOfGenerationsBetweenFreeMutations == 0;
+        //}
 
-        private async Task IncreasePlayerMutationPoints(IPlayer player)
-        {
-            player.AvailableMutationPoints++;
-            var mutationPointAnnouncementMessage =
-                _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber];
+        //private async Task IncreasePlayerMutationPoints(IPlayer player)
+        //{
+        //    player.AvailableMutationPoints++;
+        //    var mutationPointAnnouncementMessage =
+        //        _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber];
 
-            mutationPointAnnouncementMessage.Opacity = 1;
-            mutationPointAnnouncementMessage.Fade(0, 2500).StartAsync();
-        }
+        //    mutationPointAnnouncementMessage.Opacity = 1;
+        //    mutationPointAnnouncementMessage.Fade(0, 2500).StartAsync();
+        //}
 
         private void PromptForMutationChoice()
         {
             foreach (var player in ViewModel.Players)
             {
-                if (player.IsHuman)
+                if (player.IsCurrentPlayer(_userName))
                 {
-                    var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
+                    var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
                     skillTreeButton.BorderBrush = _activeBorderBrush;
                     skillTreeButton.BorderThickness = _activeThickness;
                     EnablePlayerMutationButtons(player);
                 }
-                else
-                {
-                    MakeAiTurn(player as IAiPlayer);
-                }
             }
         }
 
-        private void MakeAiTurn(IAiPlayer aiPlayer)
-        {
-            switch (aiPlayer.AiType)
-            {
-                case AiType.ExtremeGrowth:
-                    while (aiPlayer.AvailableMutationPoints > 0)
-                    {
-                        if (aiPlayer.TopLeftGrowthChance < 50)
-                        {
-                            aiPlayer.IncreaseCornerGrowth();
-                        }
-                        else if(aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
-                        {
-                            aiPlayer.DecreaseApoptosisChance();
-                        }
-                        else
-                        {
-                            aiPlayer.IncreaseRegrowthChance();
-                        }
-                    }
+        //private void MakeAiTurn(IAiPlayer aiPlayer)
+        //{
+        //    switch (aiPlayer.AiType)
+        //    {
+        //        case AiType.ExtremeGrowth:
+        //            while (aiPlayer.AvailableMutationPoints > 0)
+        //            {
+        //                if (aiPlayer.TopLeftGrowthChance < 50)
+        //                {
+        //                    aiPlayer.IncreaseCornerGrowth();
+        //                }
+        //                else if(aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
+        //                {
+        //                    aiPlayer.DecreaseApoptosisChance();
+        //                }
+        //                else
+        //                {
+        //                    aiPlayer.IncreaseRegrowthChance();
+        //                }
+        //            }
 
-                    break;
+        //            break;
 
-                case AiType.Random:
-                    while (aiPlayer.AvailableMutationPoints > 0)
-                    {
-                        var mutationChoiceIndex = RandomNumberGenerator.Random.Next(0, 3);
-                        switch (mutationChoiceIndex)
-                        {
-                            case 0:
-                                aiPlayer.IncreaseMutationChance();
-                                break;
-                            case 1:
-                                aiPlayer.IncreaseCornerGrowth();
-                                break;
-                            case 2:
-                                aiPlayer.IncreaseRegrowthChance();
-                                break;
-                            case 3:
-                                if (aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
-                                {
-                                    aiPlayer.DecreaseApoptosisChance();
-                                }
-                                else
-                                {
-                                    aiPlayer.IncreaseRegrowthChance();
-                                }
-                                break;
-                        }
-                    }
+        //        case AiType.Random:
+        //            while (aiPlayer.AvailableMutationPoints > 0)
+        //            {
+        //                var mutationChoiceIndex = RandomNumberGenerator.Random.Next(0, 3);
+        //                switch (mutationChoiceIndex)
+        //                {
+        //                    case 0:
+        //                        aiPlayer.IncreaseMutationChance();
+        //                        break;
+        //                    case 1:
+        //                        aiPlayer.IncreaseCornerGrowth();
+        //                        break;
+        //                    case 2:
+        //                        aiPlayer.IncreaseRegrowthChance();
+        //                        break;
+        //                    case 3:
+        //                        if (aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
+        //                        {
+        //                            aiPlayer.DecreaseApoptosisChance();
+        //                        }
+        //                        else
+        //                        {
+        //                            aiPlayer.IncreaseRegrowthChance();
+        //                        }
+        //                        break;
+        //                }
+        //            }
 
-                    break;
-                default:
-                    throw new Exception("Unexpected AiType: " + aiPlayer.AiType);
-            }
-        }
+        //            break;
+        //        default:
+        //            throw new Exception("Unexpected AiType: " + aiPlayer.AiType);
+        //    }
+        //}
 
         private void CheckForRemainingMutationPoints(IPlayer player)
         {
@@ -425,16 +422,8 @@ namespace FungusToast
 
             DisablePlayerMutationButtons(player);
 
-            foreach (var p in ViewModel.Players)
-            {
-                if (p.AvailableMutationPoints > 0)
-                {
-                    return;
-                }
-            }
-
-            //--if no players have remaining mutation points then we can go back to growing
-            NextGenerationCycle();
+            //TODO this is where skill expenditures should be sent
+            //_fungusToastApiClient.PushSkillExpenditures()
         }
 
         private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
@@ -480,7 +469,7 @@ namespace FungusToast
 
         private void EnablePlayerMutationButtons(IPlayer player)
         {
-            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
+            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
             foreach (var mutationButton in playerMutationButtons)
             {
                 if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
@@ -496,18 +485,18 @@ namespace FungusToast
 
         private void DisablePlayerMutationButtons(IPlayer player)
         {
-            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
+            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
 
             foreach (var button in playerMutationButtons)
             {
                 button.Value.IsEnabled = false;
             }
 
-            var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
+            var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
             skillTreeButton.BorderBrush = _normalBorderBrush;
             skillTreeButton.BorderThickness = _normalThickness;
 
-            var dialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
+            var dialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             dialog.Hide();
         }
         
@@ -515,8 +504,9 @@ namespace FungusToast
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            var playerButtons = _playerNumberToMutationButtons[player.PlayerNumber];
-            if (player.AvailableMutationPoints > 0 && MutationConsumptionRound())
+            var playerButtons = _playerNumberToMutationButtons[player.PlayerId];
+
+            if (player.AvailableMutationPoints > 0 && player.IsCurrentPlayer(_userName))
             {
                 button.IsEnabled = true;
             }
@@ -533,21 +523,21 @@ namespace FungusToast
         {
             var mutationPointMessageTextBlock = sender as TextBlock;
             var player = mutationPointMessageTextBlock.DataContext as IPlayer;
-            _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber] = mutationPointMessageTextBlock;
+            _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerId] = mutationPointMessageTextBlock;
         }
 
         private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
         {
             var skillTreeDialog = sender as ContentDialog;
             var player = skillTreeDialog.DataContext as IPlayer;
-            _playerNumberToSkillTreeDialog[player.PlayerNumber] = skillTreeDialog;
+            _playerNumberToSkillTreeDialog[player.PlayerId] = skillTreeDialog;
         }
 
         private async void SkillTreeButton_OnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
+            var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
 
@@ -555,7 +545,7 @@ namespace FungusToast
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            _playerNumberToSkillTreeButton[player.PlayerNumber] = button;
+            _playerNumberToSkillTreeButton[player.PlayerId] = button;
         }
 
         private void Exit_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -574,11 +564,5 @@ namespace FungusToast
                 Debug.WriteLine("RequestRestartAsync failed: {0}", result);
             }
         }
-    }
-
-    public enum CellType
-    {
-        Empty,
-        LiveCell
     }
 }

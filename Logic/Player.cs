@@ -8,8 +8,6 @@ namespace Logic
 {
     public class Player : IPlayer
     {
-        private readonly ICellGrowthCalculator _cellGrowthCalculator;
-        private readonly ISurroundingCellCalculator _surroundingCellCalculator;
         private Color _color;
         private string _playerId;
         private GrowthScorecard _growthScorecard;
@@ -20,16 +18,12 @@ namespace Logic
         private int _regrownCells;
         private int _availableMutationPoints;
 
-        public Player(string name, Color playerCellColor, string playerId, 
-            ICellGrowthCalculator cellGrowthCalculator, 
-            ISurroundingCellCalculator surroundingCellCalculator,
+        public Player(string name, Color playerCellColor, string playerId,
             bool isHuman)
         {
             Name = name;
             Color = playerCellColor;
             PlayerId = playerId;
-            _cellGrowthCalculator = cellGrowthCalculator;
-            _surroundingCellCalculator = surroundingCellCalculator;
             IsHuman = isHuman;
             _growthScorecard = new GrowthScorecard();
         }
@@ -140,27 +134,6 @@ namespace Logic
             }
         }
 
-
-        public BioCell MakeCell(int cellIndex)
-        {
-            return new BioCell(this, cellIndex, Color, _surroundingCellCalculator);
-        }
-
-        public BioCell RegrowCell(BioCell deadCell)
-        {
-            return MakeCell(deadCell.CellIndex);
-        }
-
-        public CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)
-        {
-            return _cellGrowthCalculator.CalculateCellGrowth(cell, this, surroundingCells);
-        }
-
-        public bool GetsFreeMutation()
-        {
-            return RandomNumberGenerator.Random.Next(0, 99) < GrowthScorecard.MutationChancePercentage;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -212,6 +185,11 @@ namespace Logic
                 MutationOptionGenerator.AdditionalRegrowthChancePerAttributePoint;
 
             AvailableMutationPoints--;
+        }
+
+        public bool IsCurrentPlayer(string userName)
+        {
+            return Name == userName;
         }
     }
 }

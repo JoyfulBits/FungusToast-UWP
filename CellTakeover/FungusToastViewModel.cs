@@ -15,6 +15,9 @@ namespace FungusToast
         private List<IPlayer> _players = new List<IPlayer>();
 
         private int _gameEndCountDown = NumberOfTurnsAfterGridIsFullBeforeGameEnds;
+        private int _totalEmptyCells;
+        private int _totalDeadCells;
+        private int _totalLiveCells;
         public Dictionary<int, BioCell> CurrentLiveCells { get; } = new Dictionary<int, BioCell>();
         public Dictionary<int, BioCell> CurrentDeadCells { get; } = new Dictionary<int, BioCell>();
 
@@ -44,15 +47,41 @@ namespace FungusToast
             }
         }
 
-        public int TotalLiveCells => CurrentLiveCells.Count;
+        public int TotalLiveCells
+        {
+            get => _totalLiveCells;
+            set
+            {
+                if (value == _totalLiveCells) return;
+                _totalLiveCells = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public int TotalDeadCells => CurrentDeadCells.Count;
+        public int TotalDeadCells
+        {
+            get => _totalDeadCells;
+            set
+            {
+                if (value == _totalDeadCells) return;
+                _totalDeadCells = value;
+                OnPropertyChanged();
+            }
+        }
 
         public int RoundsUntilNextMutation => NumberOfGenerationsBetweenFreeMutations -
                                               GenerationNumber % NumberOfGenerationsBetweenFreeMutations;
 
-        public int TotalEmptyCells =>
-            GameSettings.NumberOfCells - CurrentLiveCells.Count - CurrentDeadCells.Count;
+        public int TotalEmptyCells  
+        {
+            get => _totalEmptyCells;
+            set
+            {
+                if (value == _totalEmptyCells) return;
+                _totalEmptyCells = value;
+                OnPropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -60,52 +89,6 @@ namespace FungusToast
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void AddNewLiveCell(BioCell newCell)
-        {
-            CurrentLiveCells.Add(newCell.CellIndex, newCell);
-
-            //newCell.Player.LiveCells++;
-            ////--at the moment, the only way there is a previous player is if the cell died. May introduce cell takeovers in the future
-            //if (newCell.PreviousPlayer != null)
-            //{
-            //    newCell.PreviousPlayer.DeadCells--;
-            //}
-            OnPropertyChanged(nameof(TotalLiveCells));
-            OnPropertyChanged(nameof(TotalEmptyCells));
-        }
-
-        public void AddNewDeadCell(BioCell newCell)
-        {
-            CurrentDeadCells.Add(newCell.CellIndex, newCell);
-            //newCell.Player.DeadCells++;
-            //newCell.Player.LiveCells--;
-            OnPropertyChanged(nameof(TotalDeadCells));
-            OnPropertyChanged(nameof(TotalEmptyCells));
-        }
-
-        public void RemoveLiveCell(int cellIndex)
-        {
-            CurrentLiveCells.Remove(cellIndex);
-            OnPropertyChanged(nameof(TotalLiveCells));
-            OnPropertyChanged(nameof(TotalEmptyCells));
-        }
-
-        public void RemoveDeadCell(int cellIndex)
-        {
-            CurrentDeadCells.Remove(cellIndex);
-            OnPropertyChanged(nameof(TotalDeadCells));
-            OnPropertyChanged(nameof(TotalEmptyCells));
-        }
-
-        public void RegrowCell(BioCell regrownCell)
-        {
-            //regrownCell.Player.RegrownCells++;
-            RemoveDeadCell(regrownCell.CellIndex);
-            AddNewLiveCell(regrownCell);
-            OnPropertyChanged(nameof(TotalLiveCells));
-            OnPropertyChanged(nameof(TotalDeadCells));
         }
 
         public List<IPlayer> GameOverResult
