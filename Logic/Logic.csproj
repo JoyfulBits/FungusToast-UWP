@@ -126,6 +126,7 @@
     <Compile Include="CellGrowthResult.cs" />
     <Compile Include="CellRegrowthCalculator.cs" />
     <Compile Include="CellRegrowthResult.cs" />
+    <Compile Include="Exceptions\InvalidGameStateException.cs" />
     <Compile Include="IAiPlayer.cs" />
     <Compile Include="Players\AiPlayer.cs" />
     <Compile Include="RandomNumberGenerator.cs" />

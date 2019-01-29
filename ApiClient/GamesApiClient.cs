@@ -16,7 +16,7 @@ namespace ApiClient
             _serialization = serialization;
         }
 
-        public async Task<GameState> GetGameState(int gameId, string baseApiUrl)
+        public async Task<GameModel> GetGameState(int gameId, string baseApiUrl)
         {
             using (var client = new HttpClient())
             {
@@ -29,7 +29,7 @@ namespace ApiClient
                             var data = await content.ReadAsStringAsync();
                             if (data != null)
                             {
-                                return _serialization.DeserializeObject<GameState>(data);
+                                return _serialization.DeserializeObject<GameModel>(data);
                             }
                         }
                     }
@@ -39,7 +39,7 @@ namespace ApiClient
             throw new GameNotFoundException(gameId);
         }
 
-        public async Task<GameState> CreateGame(NewGameRequest newGame, string baseApiUrl)
+        public async Task<GameModel> CreateGame(NewGameRequest newGame, string baseApiUrl)
         {
             using (var client = new HttpClient())
             {
@@ -55,7 +55,7 @@ namespace ApiClient
                             var data = await content.ReadAsStringAsync();
                             if (data != null)
                             {
-                                return _serialization.DeserializeObject<GameState>(data);
+                                return _serialization.DeserializeObject<GameModel>(data);
                             }
                         }
                     }

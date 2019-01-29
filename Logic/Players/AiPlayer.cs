@@ -3,12 +3,13 @@ using Windows.UI;
 
 namespace Logic.Players
 {
+    [Obsolete("AI logic will be handled server-side")]
     public class AiPlayer : Player, IAiPlayer
     {
-        public AiPlayer(string name, Color playerCellColor, int playerNumber,
+        public AiPlayer(string name, Color playerCellColor, int playerId,
             ICellGrowthCalculator cellGrowthCalculator, ISurroundingCellCalculator surroundingCellCalculator,
             bool isHuman, AiType? aiType = null) :
-            base(name, playerCellColor, playerNumber, cellGrowthCalculator, surroundingCellCalculator, isHuman)
+            base(name, playerCellColor, playerId, cellGrowthCalculator, surroundingCellCalculator, isHuman)
         {
             if (aiType == null)
             {

@@ -14,12 +14,12 @@ namespace ApiClient
             _gamesApiClient = gamesApiClient;
         }
 
-        public async Task<GameState> GetGameState(int gameId)
+        public async Task<GameModel> GetGameState(int gameId)
         {
             return await _gamesApiClient.GetGameState(gameId, _baseApiUrl);
         }
 
-        public async Task<GameState> CreateGame(NewGameRequest newGame)
+        public async Task<GameModel> CreateGame(NewGameRequest newGame)
         {
             return await _gamesApiClient.CreateGame(newGame, _baseApiUrl);
         }

@@ -5,7 +5,7 @@ namespace ApiClient
 {
     public interface IFungusToastApiClient
     {
-        Task<GameState> GetGameState(int gameId);
-        Task<GameState> CreateGame(NewGameRequest newGame);
+        Task<GameModel> GetGameState(int gameId);
+        Task<GameModel> CreateGame(NewGameRequest newGame);
     }
 }

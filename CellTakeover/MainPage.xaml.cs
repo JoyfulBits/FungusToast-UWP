@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using ApiClient;
+using ApiClient.Models;
 using Logic;
+using Logic.Exceptions;
 using Logic.Players;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
@@ -29,11 +32,11 @@ namespace FungusToast
             TintColor = Colors.White
         };
 
-        private readonly Dictionary<int, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<int, Dictionary<string, Button>>();
-        private readonly Dictionary<int, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<int, TextBlock>();
-        private readonly Dictionary<int, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<int, ContentDialog>();
-        private readonly Dictionary<int, Button> _playerNumberToSkillTreeButton = new Dictionary<int, Button>();
-        private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
+        private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<string, Dictionary<string, Button>>();
+        private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
+        private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
+        private readonly Dictionary<string, Button> _playerNumberToSkillTreeButton = new Dictionary<string, Button>();
+        private readonly Dictionary<string, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<string, SolidColorBrush>();
 
         private char _deadCellSymbol = '☠';
 
@@ -52,6 +55,13 @@ namespace FungusToast
         private IFungusToastApiClient _fungusToastApiClient;
         private GenerationAdvancer _generationAdvancer;
 
+        private ApplicationDataContainer _applicationDataContainer =
+            Windows.Storage.ApplicationData.Current.LocalSettings;
+        private Windows.Storage.StorageFolder _localFolder =
+            Windows.Storage.ApplicationData.Current.LocalFolder;
+
+        private GameModel _gameModel;
+
 
         public MainPage()
         {
@@ -63,9 +73,9 @@ namespace FungusToast
         private void InitializeDependencies()
         {
             _cellGrowthCalculator = new CellGrowthCalculator();
-            _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
-            _cellRegrowthCalculator = new CellRegrowthCalculator(_surroundingCellCalculator);
-            _generationAdvancer = new GenerationAdvancer(_cellRegrowthCalculator);
+            //_surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
+            //_cellRegrowthCalculator = new CellRegrowthCalculator(_surroundingCellCalculator);
+            //_generationAdvancer = new GenerationAdvancer(_cellRegrowthCalculator);
         }
 
 
@@ -83,46 +93,50 @@ namespace FungusToast
             Colors.Gray
         };
 
-        private void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async Task GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var players = new List<IPlayer>();
             var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
-            for (int i = 1; i <= numberOfHumanPlayers; i++)
-            {
-                players.Add(new Player($"Player {i}", _availableColors[i-1], i, _cellGrowthCalculator, _surroundingCellCalculator, true));
-            }
-
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
-            for (int i = 0; i < numberOfAiPlayers; i++)
+            var newGameRequest = new NewGameRequest(numberOfHumanPlayers, numberOfAiPlayers);
+            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
+            for (int i = 1; i <= _gameModel.Players.Count; i++)
             {
-                players.Add(new AiPlayer($"AI Player {i + 1}", _availableColors[i + numberOfHumanPlayers], 
-                    i + 1 + numberOfHumanPlayers, 
-                    _cellGrowthCalculator, _surroundingCellCalculator, false));
+                players.Add(new Player(_gameModel.Players[i].Name, _availableColors[i-1], _gameModel.Players[i].Id, _cellGrowthCalculator, _surroundingCellCalculator, _gameModel.Players[i].Human));
             }
 
             ViewModel.Players = players;
 
             foreach (var player in players)
             {
-                _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
-                _playerNumberToMutationButtons.Add(player.PlayerNumber, new Dictionary<string, Button>());
+                _playerNumberToColorBrushDictionary.Add(player.PlayerId, new SolidColorBrush(player.Color));
+                _playerNumberToMutationButtons.Add(player.PlayerId, new Dictionary<string, Button>());
             }
 
-            InitializeToastWithPlayerCells();
+            await InitializeToastWithPlayerCells();
         }
 
-        private void InitializeToastWithPlayerCells()
+        private async Task InitializeToastWithPlayerCells()
         {
-            Toast.Columns = GameSettings.NumberOfColumnsAndRows;
-            Toast.Rows = GameSettings.NumberOfColumnsAndRows;
+            Toast.Columns = _gameModel.NumberOfColumns;
+            Toast.Rows = _gameModel.NumberOfRows;
+
             //--make the grid a square since it wasn't doing that for some reason
             Toast.Width = Toast.ActualHeight;
 
+            InitializeToast();
+
+            await UpdateToast();
+        }
+
+        private void InitializeToast()
+        {
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
             Thickness noPaddingOrMargin = new Thickness(0);
+            var previousGameState = _gameModel.PreviousGameModel;
 
-            for (var i = 0; i < GameSettings.NumberOfCells; i++)
+            for (var i = 0; i < _gameModel.NumberOfCells; i++)
             {
                 Toast.Children.Add(new Button
                 {
@@ -140,22 +154,51 @@ namespace FungusToast
                     FontSize = 10
                 });
             }
+        }
 
-            var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
-            for (int i = 0; i < ViewModel.Players.Count; i++)
+        private async Task UpdateToast()
+        {
+            foreach (var growthCycle in _gameModel.GrowthCycles)
             {
-                var player = ViewModel.Players[i];
-                player.LiveCells++;
-                var firstCandidateStartCell = cellsPerPlayer * i;
-                //--make sure there is at least 2 rows between starting cells
-                var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
-                var startCellIndex = RandomNumberGenerator.Random.Next(firstCandidateStartCell, endCandidateStartCell);
-                var button = Toast.Children[startCellIndex] as Button;
-                button.Background = new SolidColorBrush(ViewModel.Players[i].Color);
-                button.Content = "  ";
-                //button.Content = player.PlayerSymbol;
-                ViewModel.AddNewLiveCell(player.MakeCell(startCellIndex));
+                foreach (var toastChange in growthCycle.ToastChanges)
+                {
+                    await RenderToastChange(toastChange);
+                }
+
+                foreach (var mutationPointEarned in growthCycle.MutationPointsEarned)
+                {
+                    await RenderMutationPointEarned(mutationPointEarned);
+                }
             }
+        }
+
+        private async Task RenderToastChange(ToastChange toastChange)
+        {
+            var currentGridCell = Toast.Children[toastChange.CellIndex] as Button;
+            currentGridCell.Opacity = 0;
+
+            if (toastChange.Dead)
+            {
+                currentGridCell.Background = _deadCellBrush;
+                currentGridCell.Content = _deadCellSymbol;
+            }
+            else
+            {
+                currentGridCell.Background = _playerNumberToColorBrushDictionary[toastChange.PlayerId];
+                currentGridCell.Content = string.Empty;
+            }
+
+            await currentGridCell.Fade(0, 500).StartAsync();
+        }
+
+        private async Task RenderMutationPointEarned(KeyValuePair<string, int> mutationPointEarned)
+        {
+            var mutationPointAnnouncementMessage =
+                _playerNumberToMutationPointAnnouncementTextBlock[mutationPointEarned.Key];
+            mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
+
+            mutationPointAnnouncementMessage.Opacity = 1;
+            await mutationPointAnnouncementMessage.Fade(0, 500).StartAsync();
         }
 
         private async void NextGenerationCycle()
@@ -531,5 +574,11 @@ namespace FungusToast
                 Debug.WriteLine("RequestRestartAsync failed: {0}", result);
             }
         }
+    }
+
+    public enum CellType
+    {
+        Empty,
+        LiveCell
     }
 }

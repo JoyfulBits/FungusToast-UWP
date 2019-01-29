@@ -15,7 +15,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             GamesClient = new GamesApiClient(new Serializer());
         }
 
-        protected async Task<GameState> CreateValidGameForTesting(int numberOfHumanPlayers = 2, int numberOfAiPlayers = 1)
+        protected async Task<GameModel> CreateValidGameForTesting(int numberOfHumanPlayers = 2, int numberOfAiPlayers = 1)
         {
             var newGameRequest = new NewGameRequest(numberOfHumanPlayers, numberOfAiPlayers);
             return await GamesClient.CreateGame(newGameRequest ,TestEnvironmentSettings.BaseApiUrl);
