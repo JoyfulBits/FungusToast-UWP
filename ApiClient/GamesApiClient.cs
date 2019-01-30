@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ApiClient.Exceptions;
@@ -16,7 +17,7 @@ namespace ApiClient
             _serialization = serialization;
         }
 
-        public async Task<GameModel> GetGameState(int gameId, string baseApiUrl)
+        public virtual async Task<GameModel> GetGameState(int gameId, string baseApiUrl)
         {
             using (var client = new HttpClient())
             {
@@ -39,7 +40,7 @@ namespace ApiClient
             throw new GameNotFoundException(gameId);
         }
 
-        public async Task<GameModel> CreateGame(NewGameRequest newGame, string baseApiUrl)
+        public virtual async Task<GameModel> CreateGame(NewGameRequest newGame, string baseApiUrl)
         {
             using (var client = new HttpClient())
             {
@@ -63,6 +64,32 @@ namespace ApiClient
             }
 
             throw new GameNotCreatedException(newGame);
+        }
+
+        public virtual async Task<SkillUpdateResult> PushSkillExpenditures(SkillExpenditureRequest skillExpenditureRequest, string baseApiUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                var stringifiedObject = _serialization.SerializeToHttpStringContent(skillExpenditureRequest);
+
+                var gamesUri = new Uri(baseApiUrl + "/player-skills");
+                using (var response = await client.PostAsync(gamesUri, stringifiedObject))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        using (var content = response.Content)
+                        {
+                            var data = await content.ReadAsStringAsync();
+                            if (data != null)
+                            {
+                                return _serialization.DeserializeObject<SkillUpdateResult>(data);
+                            }
+                        }
+                    }
+                }
+            }
+
+            throw new SkillsNotUpdatedException(skillExpenditureRequest);
         }
     }
 }

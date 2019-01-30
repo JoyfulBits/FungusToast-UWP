@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Logic.Annotations;
 
 namespace Logic
 {
     public class GrowthScorecard : INotifyPropertyChanged
     {
-        public const int BaseGrowthPercentage = 10;
-        public const int BaseCellDeathChanceForSurroundedCells = 5;
-        public const int BaseMutationChancePercentage = 10;
-        public const int BaseApoptosisChancePercentage = 5;
+        public const double BaseGrowthPercentage = 10;
+        public const double BaseCellDeathChanceForSurroundedCells = 5;
+        public const double BaseMutationChancePercentage = 10;
+        public const double BaseApoptosisChancePercentage = 5;
 
-        public Dictionary<RelativePosition, int> GrowthChanceDictionary = new Dictionary<RelativePosition, int>
+        public Dictionary<RelativePosition, double> GrowthChanceDictionary = new Dictionary<RelativePosition, double>
         {
             { RelativePosition.TopLeft, 0 },
             { RelativePosition.Top, BaseGrowthPercentage },
@@ -28,26 +25,27 @@ namespace Logic
             { RelativePosition.Left, BaseGrowthPercentage }
         };
 
-        private int _deathChanceForStarvedCells = BaseCellDeathChanceForSurroundedCells;
-        private int _regrowthChancePercentage;
-        private int _mutationChancePercentage = BaseMutationChancePercentage;
+        private double _starvedCellDeathChancePercentage = BaseCellDeathChanceForSurroundedCells;
+        private double _regenerationChancePercentage;
+        private double _mutationChancePercentage = BaseMutationChancePercentage;
         private double _apoptosisChancePercentage = BaseApoptosisChancePercentage;
+        private double _mycotoxinFungicideChancePercentage;
 
         /// <summary>
         /// Percentage chance that a surrounded/starved cell will die each generation
         /// </summary>
-        public int DeathChanceForStarvedCells
+        public double StarvedCellDeathChancePercentage
         {
-            get => _deathChanceForStarvedCells;
+            get => _starvedCellDeathChancePercentage;
             set
             {
-                if (value == _deathChanceForStarvedCells) return;
-                _deathChanceForStarvedCells = value;
+                if (value == _starvedCellDeathChancePercentage) return;
+                _starvedCellDeathChancePercentage = value;
                 OnPropertyChanged();
             }
         }
 
-        public int MutationChancePercentage
+        public double MutationChancePercentage
         {
             get => _mutationChancePercentage;
             set
@@ -70,21 +68,35 @@ namespace Logic
         }
 
         /// <summary>
-        /// Percentage chance that an adjacent dead cell will will regrow into a live cell
+        /// Percentage chance that an adjacent dead cell will regrow into a live cell
         /// </summary>
-        public int RegrowthChancePercentage
+        public double RegenerationChancePercentage
         {
-            get => _regrowthChancePercentage;
+            get => _regenerationChancePercentage;
             set
             {
-                if (value == _regrowthChancePercentage) return;
-                _regrowthChancePercentage = value;
+                if (value == _regenerationChancePercentage) return;
+                _regenerationChancePercentage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Percentage chance that an adjacent enemy live cell die due to mycotoxins
+        /// </summary>
+        public double MycotoxinFungicideChancePercentage
+        {
+            get => _mycotoxinFungicideChancePercentage;
+            set
+            {
+                if (value == _mycotoxinFungicideChancePercentage) return;
+                _mycotoxinFungicideChancePercentage = value;
                 OnPropertyChanged();
             }
         }
 
 
-        public int GetGrowthChance(RelativePosition position)
+        public double GetGrowthChance(RelativePosition position)
         {
             return GrowthChanceDictionary[position];
         }

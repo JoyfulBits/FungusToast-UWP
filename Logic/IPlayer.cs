@@ -15,14 +15,19 @@ namespace Logic
         int DeadCells { get; set; }
         int RegrownCells { get; set; }
         GrowthScorecard GrowthScorecard { get; set; }
-        int TopLeftGrowthChance { get; }
-        int TopGrowthChance { get; }
-        int TopRightGrowthChance { get; }
-        int RightGrowthChance { get; }
-        int BottomRightGrowthChance { get; }
-        int BottomGrowthChance { get; }
-        int BottomLeftGrowthChance { get; }
-        int LeftGrowthChance { get; }
+        double TopLeftGrowthChance { get; }
+        double TopGrowthChance { get; }
+        double TopRightGrowthChance { get; }
+        double RightGrowthChance { get; }
+        double BottomRightGrowthChance { get; }
+        double BottomGrowthChance { get; }
+        double BottomLeftGrowthChance { get;  }
+        double LeftGrowthChance { get; }
+        double HyperMutationSkillLevel { get; set; }
+        double AntiApoptosisSkillLevel { get; set; }
+        double RegenerationSkillLevel { get; set; }
+        double BuddingSkillLevel { get; set; }
+        double MycotoxinsSkillLevel { get; set; }
         void IncreaseMutationChance();
         void DecreaseApoptosisChance();
         void IncreaseCornerGrowth();

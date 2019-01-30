@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
@@ -71,9 +72,9 @@ namespace FungusToast
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
             //--if there is an active game then load that, otherwise prompt to start a new game
-            if(int.TryParse(_applicationDataContainer.Values["activeGameId"].ToString(), out var activeGameId))
+            if (_applicationDataContainer.Values.TryGetValue("activeGameId", out var activeGameId))
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(activeGameId);
+                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
 
                 await InitializeGame(_gameModel);
             }
@@ -92,6 +93,7 @@ namespace FungusToast
             Colors.Gray
         };
 
+        private List<SkillExpenditure> _skillExpenditures = new List<SkillExpenditure>();
 
         private async void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -100,6 +102,7 @@ namespace FungusToast
 
             var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
             _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
+            _applicationDataContainer.Values["activeGameId"] = _gameModel.Id;
 
             await InitializeGame(_gameModel);
         }
@@ -107,11 +110,21 @@ namespace FungusToast
         private async Task InitializeGame(GameModel game)
         {
             var players = new List<IPlayer>();
-
+            Player currentPlayer = null;
             for (var i = 1; i <= game.Players.Count; i++)
             {
-                players.Add(new Player(game.Players[i].Name, _availableColors[i - 1], game.Players[i].Id,
-                    game.Players[i].Human));
+                var playerState = game.Players[i - 1];
+                var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
+                    playerState.Human)
+                {
+                    AvailableMutationPoints = playerState.MutationPoints
+                };
+                players.Add(player);
+
+                if (player.IsCurrentPlayer(_userName))
+                {
+                    currentPlayer = player;
+                }
             }
 
             ViewModel.Players = players;
@@ -125,6 +138,11 @@ namespace FungusToast
             InitializeToastWithPlayerCells(game);
 
             await RenderUpdates(game);
+
+            if (currentPlayer != null)
+            {
+                EnableMutationButtons(currentPlayer);
+            }
         }
 
         private void InitializeToastWithPlayerCells(GameModel game)
@@ -137,7 +155,7 @@ namespace FungusToast
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
             var noPaddingOrMargin = new Thickness(0);
-            var previousGameState = game.PreviousGameModel;
+            var previousGameState = game.PreviousGameState;
 
             for (var i = 0; i < game.NumberOfCells; i++)
             {
@@ -184,6 +202,55 @@ namespace FungusToast
                     await RenderMutationPointEarned(mutationPointEarned);
                 }
             }
+
+            foreach (var playerState in game.Players)
+            {
+                var matchingPlayer = ViewModel.Players.FirstOrDefault(x => x.PlayerId == playerState.Id);
+                if (matchingPlayer == null)
+                {
+                    throw new InvalidOperationException($"Couldn't find a player in this game with id '{playerState.Id}'");
+                }
+
+                matchingPlayer.AvailableMutationPoints = playerState.MutationPoints;
+                matchingPlayer.DeadCells = playerState.DeadCells;
+                matchingPlayer.LiveCells = playerState.LiveCells;
+                matchingPlayer.RegrownCells = playerState.RegeneratedCells;
+
+                matchingPlayer.HyperMutationSkillLevel = playerState.HyperMutationSkillLevel;
+                matchingPlayer.AntiApoptosisSkillLevel = playerState.AntiApoptosisSkillLevel;
+                matchingPlayer.RegenerationSkillLevel = playerState.RegenerationSkillLevel;
+                matchingPlayer.BuddingSkillLevel = playerState.BuddingSkillLevel;
+                matchingPlayer.MycotoxinsSkillLevel = playerState.MycotoxinsSkillLevel;
+
+                var updatedGrowthScorecard = new GrowthScorecard
+                {
+                    ApoptosisChancePercentage = playerState.ApoptosisChancePercentage,
+                    StarvedCellDeathChancePercentage = playerState.StarvedCellDeathChancePercentage,
+                    MutationChancePercentage = playerState.MutationChancePercentage,
+                    RegenerationChancePercentage = playerState.RegenerationChancePercentage,
+                    MycotoxinFungicideChancePercentage = playerState.MycotoxinFungicideChancePercentage,
+                    GrowthChanceDictionary = new Dictionary<RelativePosition, double>
+                    {
+                        { RelativePosition.TopLeft, playerState.TopLeftGrowthChance },
+                        { RelativePosition.Top, playerState.TopGrowthChance },
+                        { RelativePosition.TopRight, playerState.TopRightGrowthChance },
+                        { RelativePosition.Right, playerState.RightGrowthChance },
+                        { RelativePosition.BottomRight, playerState.BottomRightGrowthChance },
+                        { RelativePosition.Bottom, playerState.BottomGrowthChance },
+                        { RelativePosition.BottomLeft, playerState.BottomLeftGrowthChance },
+                        { RelativePosition.Left, playerState.LeftGrowthChance },
+                    }
+                };
+
+                matchingPlayer.GrowthScorecard = updatedGrowthScorecard;
+            }
+
+            ViewModel.GenerationNumber = game.GenerationNumber;
+            ViewModel.RoundNumber = game.RoundNumber;
+            ViewModel.TotalDeadCells = game.TotalDeadCells;
+            ViewModel.TotalEmptyCells = game.TotalEmptyCells;
+            ViewModel.TotalLiveCells = game.TotalLiveCells;
+            ViewModel.TotalRegeneratedCells = game.TotalRegeneratedCells;
         }
 
         private async Task RenderToastChange(ToastChange toastChange)
@@ -215,21 +282,27 @@ namespace FungusToast
             await mutationPointAnnouncementMessage.Fade(0, 500).StartAsync();
         }
 
-        private void PromptForMutationChoice()
+        private void EnableMutationButtons(IPlayer player)
         {
-            foreach (var player in ViewModel.Players)
+
+            var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
+            skillTreeButton.BorderBrush = _activeBorderBrush;
+            skillTreeButton.BorderThickness = _activeThickness;
+            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
+            foreach (var mutationButton in playerMutationButtons)
             {
-                if (player.IsCurrentPlayer(_userName))
+                if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
                 {
-                    var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
-                    skillTreeButton.BorderBrush = _activeBorderBrush;
-                    skillTreeButton.BorderThickness = _activeThickness;
-                    EnablePlayerMutationButtons(player);
+                    mutationButton.Value.IsEnabled = false;
+                }
+                else
+                {
+                    mutationButton.Value.IsEnabled = true;
                 }
             }
         }
 
-        private void CheckForRemainingMutationPoints(IPlayer player)
+        private async Task CheckForRemainingMutationPoints(IPlayer player)
         {
             if (player.AvailableMutationPoints > 0)
             {
@@ -238,8 +311,18 @@ namespace FungusToast
 
             DisablePlayerMutationButtons(player);
 
-            //TODO this is where skill expenditures should be sent
-            //_fungusToastApiClient.PushSkillExpenditures()
+            var skillExpenditureRequest =
+                new SkillExpenditureRequest(_gameModel.Id, player.PlayerId, _skillExpenditures);
+            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(skillExpenditureRequest);
+
+            if (skillUpdateResult.NextRoundAvailable)
+            {
+                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);
+
+                await RenderUpdates(_gameModel);
+
+                EnableMutationButtons(player);
+            }
         }
 
         private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
@@ -283,22 +366,6 @@ namespace FungusToast
             CheckForRemainingMutationPoints(player);
         }
 
-        private void EnablePlayerMutationButtons(IPlayer player)
-        {
-            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
-            foreach (var mutationButton in playerMutationButtons)
-            {
-                if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
-                {
-                    mutationButton.Value.IsEnabled = false;
-                }
-                else
-                {
-                    mutationButton.Value.IsEnabled = true;
-                }
-            }
-        }
-
         private void DisablePlayerMutationButtons(IPlayer player)
         {
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
@@ -332,7 +399,6 @@ namespace FungusToast
             {
                 playerButtons.Add(button.Name, button);
             }
-
         }
 
         private void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)

@@ -89,7 +89,7 @@ namespace Logic
             {
                 var bioCell = cell as BioCell;
 
-                if (bioCell.Player.GrowthScorecard.RegrowthChancePercentage > 0 && !uniqueSurroundingPlayers.ContainsKey(bioCell.Player.PlayerId))
+                if (bioCell.Player.GrowthScorecard.RegenerationChancePercentage > 0 && !uniqueSurroundingPlayers.ContainsKey(bioCell.Player.PlayerId))
                 {
                     uniqueSurroundingPlayers.Add(bioCell.Player.PlayerId, bioCell.Player);
                 }

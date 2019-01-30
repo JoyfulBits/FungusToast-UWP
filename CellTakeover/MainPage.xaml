@@ -204,7 +204,7 @@
                                             <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Wild Mutation"  
+                                                   Text="Hypermutation"  
                                                    Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
                                         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                                    Text="{x:Bind AddMutationChanceMessage, Mode=OneTime}"
@@ -270,7 +270,7 @@
                                                    Text="{x:Bind AddRegrowthChanceMessage, Mode=OneTime}"
                                                    TextWrapping="Wrap"></TextBlock>
                                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Regrowth Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegrowthChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegenerationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
                                     </Grid>
                                 </StackPanel>
 

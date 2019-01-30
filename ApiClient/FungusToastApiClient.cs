@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ApiClient.Exceptions;
 using ApiClient.Models;
 
 namespace ApiClient
@@ -22,6 +24,11 @@ namespace ApiClient
         public async Task<GameModel> CreateGame(NewGameRequest newGame)
         {
             return await _gamesApiClient.CreateGame(newGame, _baseApiUrl);
+        }
+
+        public async Task<SkillUpdateResult> PushSkillExpenditures(SkillExpenditureRequest skillExpenditureRequest)
+        {
+            return await _gamesApiClient.PushSkillExpenditures(skillExpenditureRequest, _baseApiUrl);
         }
     }
 }
