@@ -6,14 +6,14 @@
         public string Id { get; set; }
         public int MutationPoints { get; set; }
         public bool Human { get; set; }
-        public int TopLeftGrowthChance { get; set; }
-        public int TopGrowthChance { get; set; }
-        public int TopRightGrowthChance { get; set; }
-        public int RightGrowthChance { get; set; }
-        public int BottomRightGrowthChance { get; set; }
-        public int BottomGrowthChance { get; set; }
-        public int BottomLeftGrowthChance { get; set; }
-        public int LeftGrowthChance { get; set; }
+        public double TopLeftGrowthChance { get; set; }
+        public double TopGrowthChance { get; set; }
+        public double TopRightGrowthChance { get; set; }
+        public double RightGrowthChance { get; set; }
+        public double BottomRightGrowthChance { get; set; }
+        public double BottomGrowthChance { get; set; }
+        public double BottomLeftGrowthChance { get; set; }
+        public double LeftGrowthChance { get; set; }
         public int DeadCells { get; set; }
         public int LiveCells { get; set; }
         public int RegeneratedCells { get; set; }
