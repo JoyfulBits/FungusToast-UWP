@@ -12,6 +12,7 @@ namespace ApiClient.Tests.GamesApiClientTests
     [TestFixture]
     public class SerializedModelExampleTests
     {
+        [Ignore("Used for providing JSON examples to API developers only")]
         [Test]
         public void Example_Model_Json_For_New_Game_Not_Started()
         {
