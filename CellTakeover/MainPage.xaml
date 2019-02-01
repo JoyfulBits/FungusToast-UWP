@@ -188,7 +188,7 @@
                                     <Button Style="{StaticResource MutationChoiceButton}"
                                             Name="WildMutationButton"
                                             IsEnabled="False" 
-                                            Click="IncreaseMutationChance_Click"
+                                            Click="IncreaseHypermutation_Click"
                                             Loaded="MutationOptionButton_Loaded">
                                         <Image Source="Assets/Skill Icons/mutation_chance.png"></Image>
                                     </Button>
@@ -218,7 +218,7 @@
                                     <Button Style="{StaticResource MutationChoiceButton}"
                                             Name="ExplosiveGrowthButton"
                                             IsEnabled="False" 
-                                            Click="IncreaseCornerGrowthChance_Click"
+                                            Click="IncreaseBudding_Click"
                                             Loaded="MutationOptionButton_Loaded">
                                         <Image Source="Assets/Skill Icons/corner_growth.png"></Image>
                                     </Button>
@@ -248,7 +248,7 @@
                                     <Button Style="{StaticResource MutationChoiceButton}"
                                             Name="RegrowthButton"
                                             IsEnabled="False" 
-                                            Click="IncreaseRegrowthChance_Click"
+                                            Click="IncreaseRegeneration_Click"
                                             Loaded="MutationOptionButton_Loaded">
                                         <Image Source="Assets/Skill Icons/regrowth.png"></Image>
                                     </Button>

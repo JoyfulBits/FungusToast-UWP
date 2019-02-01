@@ -2,7 +2,10 @@
 {
     public class SkillExpenditure
     {
-        public int SkillId { get; set; }
-        public int MutationPoints { get; set; }
+        public int HypermutationPoints { get; set; }
+        public int BuddingPoints { get; set; }
+        public int AntiApoptosisPoints { get; set; }
+        public int RegenerationPoints { get; set; }
+        public int MycotoxicityPoints { get; set; }
     }
 }

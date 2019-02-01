@@ -6,13 +6,13 @@ namespace ApiClient.Models
     {
         public int GameId { get; }
         public string PlayerId { get; }
-        public List<SkillExpenditure> SkillExpenditures { get; }
+        public SkillExpenditure SkillExpenditure { get; }
 
-        public SkillExpenditureRequest(int gameId, string playerId, List<SkillExpenditure> skillExpenditures)
+        public SkillExpenditureRequest(int gameId, string playerId, SkillExpenditure skillExpenditure)
         {
             GameId = gameId;
             PlayerId = playerId;
-            SkillExpenditures = skillExpenditures;
+            SkillExpenditure = skillExpenditure;
         }
     }
 }

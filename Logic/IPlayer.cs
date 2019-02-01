@@ -28,10 +28,10 @@ namespace Logic
         double RegenerationSkillLevel { get; set; }
         double BuddingSkillLevel { get; set; }
         double MycotoxinsSkillLevel { get; set; }
-        void IncreaseMutationChance();
+        void IncreaseHypermutation();
         void DecreaseApoptosisChance();
-        void IncreaseCornerGrowth();
-        void IncreaseRegrowthChance();
+        void IncreaseBudding();
+        void IncreaseRegeneration();
         bool IsCurrentPlayer(string userName);
     }
 }

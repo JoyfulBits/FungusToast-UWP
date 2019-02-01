@@ -21,5 +21,6 @@ namespace ApiClient.Models
         public int TotalEmptyCells { get; set; }
         public int TotalLiveCells { get; set; }
         public int TotalRegeneratedCells { get; set; }
+        public string JoinGamePassword { get; set; }
     }
 }

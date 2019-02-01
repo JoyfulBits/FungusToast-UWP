@@ -93,7 +93,7 @@ namespace FungusToast
             Colors.Gray
         };
 
-        private List<SkillExpenditure> _skillExpenditures = new List<SkillExpenditure>();
+        private SkillExpenditure _skillExpenditure = new SkillExpenditure();
 
         private async void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -258,7 +258,7 @@ namespace FungusToast
                 currentGridCell.Content = string.Empty;
             }
 
-            await currentGridCell.Fade(0, 500).StartAsync();
+            await currentGridCell.Fade(1, 500).StartAsync();
         }
 
         private async Task RenderMutationPointEarned(KeyValuePair<string, int> mutationPointEarned)
@@ -300,8 +300,10 @@ namespace FungusToast
             DisablePlayerMutationButtons(player);
 
             var skillExpenditureRequest =
-                new SkillExpenditureRequest(_gameModel.Id, player.PlayerId, _skillExpenditures);
+                new SkillExpenditureRequest(_gameModel.Id, player.PlayerId, _skillExpenditure);
             var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(skillExpenditureRequest);
+
+            _skillExpenditure = new SkillExpenditure();
 
             if (skillUpdateResult.NextRoundAvailable)
             {
@@ -313,12 +315,13 @@ namespace FungusToast
             }
         }
 
-        private async void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseHypermutation_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
 
-            player.IncreaseMutationChance();
+            player.IncreaseHypermutation();
+            _skillExpenditure.HypermutationPoints++;
 
             await CheckForRemainingMutationPoints(player);
         }
@@ -328,6 +331,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.DecreaseApoptosisChance();
+            _skillExpenditure.AntiApoptosisPoints++;
             if (player.GrowthScorecard.ApoptosisChancePercentage <= 0)
             {
                 button.IsEnabled = false;
@@ -336,20 +340,22 @@ namespace FungusToast
             await CheckForRemainingMutationPoints(player);
         }
 
-        private async void IncreaseCornerGrowthChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseBudding_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            player.IncreaseCornerGrowth();
+            player.IncreaseBudding();
+            _skillExpenditure.BuddingPoints++;
 
             await CheckForRemainingMutationPoints(player);
         }
 
-        private async void IncreaseRegrowthChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseRegeneration_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            player.IncreaseRegrowthChance();
+            player.IncreaseRegeneration();
+            _skillExpenditure.RegenerationPoints++;
 
             await CheckForRemainingMutationPoints(player);
         }
@@ -396,11 +402,16 @@ namespace FungusToast
             _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerId] = mutationPointMessageTextBlock;
         }
 
-        private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
+        private async void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
         {
             var skillTreeDialog = sender as ContentDialog;
             var player = skillTreeDialog.DataContext as IPlayer;
             _playerNumberToSkillTreeDialog[player.PlayerId] = skillTreeDialog;
+
+            if (player.IsCurrentPlayer(_userName))
+            {
+               await CheckForRemainingMutationPoints(player);
+            }
         }
 
         private async void SkillTreeButton_OnClick(object sender, RoutedEventArgs e)

@@ -12,13 +12,12 @@ namespace ApiClient.Tests.GamesApiClientTests
     [TestFixture]
     public class SerializedModelExampleTests
     {
-        [Ignore("Used for providing JSON examples to API developers only")]
+        [Category("Integration")]
         [Test]
         public void Example_Model_Json_For_New_Game_Not_Started()
         {
             //--arrange
             var player1Id = "player 1 id";
-            var player2Id = "player 2 id";
             var gameModel = new GameModel
             {
                 GenerationNumber = 1,
@@ -29,6 +28,7 @@ namespace ApiClient.Tests.GamesApiClientTests
                 NumberOfColumns = 50,
                 NumberOfRows = 50,
                 Status = "Not Started",
+                JoinGamePassword = "GY3LO2",
                 Players = new List<PlayerState>
                 {
                     new PlayerState
@@ -36,13 +36,6 @@ namespace ApiClient.Tests.GamesApiClientTests
                         Id = player1Id,
                         Name = "Slowdawg 50",
                         Status = "Joined",
-                        Human = true,
-                    },
-                    new PlayerState
-                    {
-                        Id = player2Id,
-                        Name = "Moldy Mouse",
-                        Status = "Not Joined",
                         Human = true,
                     },
                     new PlayerState
@@ -84,6 +77,7 @@ namespace ApiClient.Tests.GamesApiClientTests
                 NumberOfColumns = 45,
                 NumberOfRows = 45,
                 Status = "Started",
+                JoinGamePassword = "GY3LO2",
                 TotalLiveCells = 2,
                 TotalEmptyCells = 2023,
                 Players = new List<PlayerState>
@@ -92,7 +86,7 @@ namespace ApiClient.Tests.GamesApiClientTests
                     {
                         Id = player1Id,
                         MutationPoints = 5,
-                        Name = "player 1 name",
+                        Name = "jake",
                         ApoptosisChancePercentage = 5,
                         RightGrowthChance = 7.5,
                         StarvedCellDeathChancePercentage = 10,
@@ -182,6 +176,7 @@ namespace ApiClient.Tests.GamesApiClientTests
                 NumberOfColumns = 45,
                 NumberOfRows = 45,
                 Status = "Started",
+                JoinGamePassword = "GY3LO2",
                 TotalLiveCells = 525,
                 TotalDeadCells = 400,
                 TotalRegeneratedCells = 40,
@@ -192,7 +187,7 @@ namespace ApiClient.Tests.GamesApiClientTests
                     {
                         Id = player1Id,
                         MutationPoints = 9,
-                        Name = "player 1 name",
+                        Name = "jake",
                         MycotoxinFungicideChancePercentage = 0.2,
                         MycotoxinsSkillLevel = 2,
                         BuddingSkillLevel = 7,
@@ -382,6 +377,33 @@ namespace ApiClient.Tests.GamesApiClientTests
                 }
             });
 
+            //--assert
+            Debug.WriteLine(jsonObject);
+        }
+
+        [Test]
+        public void Example_SkillExpenditure()
+        {
+            //--arrange
+            var request = new SkillExpenditureRequest(1, "player id 1", new SkillExpenditure
+            {
+                AntiApoptosisPoints = 1,
+                BuddingPoints = 2,
+                HypermutationPoints = 0,
+                MycotoxicityPoints = 1,
+                RegenerationPoints = 3
+            });
+
+            //--act
+            var jsonObject = JsonConvert.SerializeObject(request, new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            });
+
+            //--assert
             //--assert
             Debug.WriteLine(jsonObject);
         }

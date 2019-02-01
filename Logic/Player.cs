@@ -221,7 +221,7 @@ namespace Logic
 
         public string AddRegrowthChanceMessage => MutationOptionGenerator.IncreaseRegrowthChanceMessage;
 
-        public void IncreaseMutationChance()
+        public void IncreaseHypermutation()
         {
             GrowthScorecard.MutationChancePercentage += MutationOptionGenerator.AdditionalMutationPercentageChancePerAttributePoint;
             AvailableMutationPoints--;
@@ -233,7 +233,7 @@ namespace Logic
             AvailableMutationPoints--;
         }
 
-        public void IncreaseCornerGrowth()
+        public void IncreaseBudding()
         {
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] +=
                 MutationOptionGenerator.AdditionalCornerGrowthChancePerAttributePoint;
@@ -252,7 +252,7 @@ namespace Logic
             OnPropertyChanged(nameof(BottomLeftGrowthChance));
         }
 
-        public void IncreaseRegrowthChance()
+        public void IncreaseRegeneration()
         {
             GrowthScorecard.RegenerationChancePercentage +=
                 MutationOptionGenerator.AdditionalRegrowthChancePerAttributePoint;
