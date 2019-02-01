@@ -110,7 +110,6 @@ namespace FungusToast
         private async Task InitializeGame(GameModel game)
         {
             var players = new List<IPlayer>();
-            Player currentPlayer = null;
             for (var i = 1; i <= game.Players.Count; i++)
             {
                 var playerState = game.Players[i - 1];
@@ -120,11 +119,6 @@ namespace FungusToast
                     AvailableMutationPoints = playerState.MutationPoints
                 };
                 players.Add(player);
-
-                if (player.IsCurrentPlayer(_userName))
-                {
-                    currentPlayer = player;
-                }
             }
 
             ViewModel.Players = players;
@@ -138,11 +132,6 @@ namespace FungusToast
             InitializeToastWithPlayerCells(game);
 
             await RenderUpdates(game);
-
-            if (currentPlayer != null)
-            {
-                EnableMutationButtons(currentPlayer);
-            }
         }
 
         private void InitializeToastWithPlayerCells(GameModel game)
@@ -284,7 +273,6 @@ namespace FungusToast
 
         private void EnableMutationButtons(IPlayer player)
         {
-
             var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
             skillTreeButton.BorderBrush = _activeBorderBrush;
             skillTreeButton.BorderThickness = _activeThickness;
@@ -325,17 +313,17 @@ namespace FungusToast
             }
         }
 
-        private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
 
             player.IncreaseMutationChance();
 
-            CheckForRemainingMutationPoints(player);
+            await CheckForRemainingMutationPoints(player);
         }
 
-        private void AntiApoptosis_Click(object sender, RoutedEventArgs e)
+        private async void AntiApoptosis_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
@@ -345,25 +333,25 @@ namespace FungusToast
                 button.IsEnabled = false;
             }
 
-            CheckForRemainingMutationPoints(player);
+            await CheckForRemainingMutationPoints(player);
         }
 
-        private void IncreaseCornerGrowthChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseCornerGrowthChance_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseCornerGrowth();
 
-            CheckForRemainingMutationPoints(player);
+            await CheckForRemainingMutationPoints(player);
         }
 
-        private void IncreaseRegrowthChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseRegrowthChance_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseRegrowthChance();
 
-            CheckForRemainingMutationPoints(player);
+            await CheckForRemainingMutationPoints(player);
         }
 
         private void DisablePlayerMutationButtons(IPlayer player)

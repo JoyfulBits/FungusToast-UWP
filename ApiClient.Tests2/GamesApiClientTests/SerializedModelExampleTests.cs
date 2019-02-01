@@ -52,9 +52,7 @@ namespace ApiClient.Tests.GamesApiClientTests
                         Status = "Not Joined",
                         Human = false,
                     }
-                },
-                GrowthCycles = null,
-                PreviousGameState = null
+                }
             };
 
             //--act
@@ -152,8 +150,7 @@ namespace ApiClient.Tests.GamesApiClientTests
                             }
                         }
                     }
-                },
-                PreviousGameState = null
+                }
             };
 
             //--act

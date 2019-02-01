@@ -13,8 +13,8 @@ namespace ApiClient.Models
         
         public int NumberOfCells => NumberOfRows * NumberOfColumns;
         public List<PlayerState> Players { get; set; }
-        public GameState PreviousGameState { get; set; }
-        public List<GrowthCycle> GrowthCycles { get; set; }
+        public GameState PreviousGameState { get; set; } = new GameState();
+        public List<GrowthCycle> GrowthCycles { get; set; } = new List<GrowthCycle>();
         public int GenerationNumber { get; set; }
         public int RoundNumber { get; set; }
         public int TotalDeadCells { get; set; }
