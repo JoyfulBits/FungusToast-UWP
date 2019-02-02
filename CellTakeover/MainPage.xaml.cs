@@ -27,7 +27,8 @@ namespace FungusToast
     {
         public FungusToastViewModel ViewModel { get; set; }
 
-        private string _userName = "jake";
+        //TODO this is hard-coded until we get authentication working
+        private readonly string _userName = MockDataBuilder.AppUserName;
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
@@ -55,6 +56,9 @@ namespace FungusToast
 
         private GameModel _gameModel;
 
+        private bool _mainGridLoaded = false;
+        private bool _playersListViewLoaded = false;
+        private bool _gameLoaded = false;
 
         public MainPage()
         {
@@ -71,12 +75,13 @@ namespace FungusToast
 
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
+            _mainGridLoaded = true;
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_applicationDataContainer.Values.TryGetValue("activeGameId", out var activeGameId))
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
-
-                await InitializeGame(_gameModel);
+                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()), MockOption.NewGame);
+                _gameLoaded = true;
+                InitializeGame(_gameModel);
             }
             else
             {
@@ -101,13 +106,13 @@ namespace FungusToast
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
             var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
-            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
+            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, true);
             _applicationDataContainer.Values["activeGameId"] = _gameModel.Id;
 
-            await InitializeGame(_gameModel);
+            InitializeGame(_gameModel);
         }
 
-        private async Task InitializeGame(GameModel game)
+        private void InitializeGame(GameModel game)
         {
             var players = new List<IPlayer>();
             for (var i = 1; i <= game.Players.Count; i++)
@@ -130,8 +135,6 @@ namespace FungusToast
             }
 
             InitializeToastWithPlayerCells(game);
-
-            await RenderUpdates(game);
         }
 
         private void InitializeToastWithPlayerCells(GameModel game)
@@ -179,17 +182,25 @@ namespace FungusToast
 
         private async Task RenderUpdates(GameModel game)
         {
+            List<Task> tasks = new List<Task>();
             foreach (var growthCycle in game.GrowthCycles)
             {
                 foreach (var toastChange in growthCycle.ToastChanges)
                 {
-                    await RenderToastChange(toastChange);
+                    tasks.Add(RenderToastChange(toastChange));
                 }
 
                 foreach (var mutationPointEarned in growthCycle.MutationPointsEarned)
                 {
-                    await RenderMutationPointEarned(mutationPointEarned);
+                    tasks.Add(RenderMutationPointEarned(mutationPointEarned));
                 }
+
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+
+            foreach (var task in tasks)
+            {
+                await task;
             }
 
             foreach (var playerState in game.Players)
@@ -258,7 +269,7 @@ namespace FungusToast
                 currentGridCell.Content = string.Empty;
             }
 
-            await currentGridCell.Fade(1, 500).StartAsync();
+            await currentGridCell.Fade(1, 1000).StartAsync();
         }
 
         private async Task RenderMutationPointEarned(KeyValuePair<string, int> mutationPointEarned)
@@ -268,7 +279,7 @@ namespace FungusToast
             mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
 
             mutationPointAnnouncementMessage.Opacity = 1;
-            await mutationPointAnnouncementMessage.Fade(0, 500).StartAsync();
+            await mutationPointAnnouncementMessage.Fade(0, 1000).StartAsync();
         }
 
         private void EnableMutationButtons(IPlayer player)
@@ -301,13 +312,13 @@ namespace FungusToast
 
             var skillExpenditureRequest =
                 new SkillExpenditureRequest(_gameModel.Id, player.PlayerId, _skillExpenditure);
-            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(skillExpenditureRequest);
+            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(skillExpenditureRequest, mockNextRoundAvailable : true);
 
             _skillExpenditure = new SkillExpenditure();
 
             if (skillUpdateResult.NextRoundAvailable)
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);
+                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id, MockOption.AdvancedGame);
 
                 await RenderUpdates(_gameModel);
 
@@ -395,11 +406,16 @@ namespace FungusToast
             }
         }
 
-        private void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
+        private async void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
         {
             var mutationPointMessageTextBlock = sender as TextBlock;
             var player = mutationPointMessageTextBlock.DataContext as IPlayer;
             _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerId] = mutationPointMessageTextBlock;
+
+            if (_gameLoaded && _playerNumberToMutationPointAnnouncementTextBlock.Keys.Count == _gameModel.Players.Count)
+            {
+                await RenderUpdates(_gameModel);
+            }
         }
 
         private async void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
@@ -443,6 +459,14 @@ namespace FungusToast
                 result == AppRestartFailureReason.Other)
             {
                 Debug.WriteLine("RequestRestartAsync failed: {0}", result);
+            }
+        }
+
+        private async Task RenderUpdatesIfUiIsReady()
+        {
+            if (_gameLoaded && _mainGridLoaded && _playerNumberToMutationButtons.Count == _gameModel.Players.Count)
+            {
+                await RenderUpdates(_gameModel);
             }
         }
     }

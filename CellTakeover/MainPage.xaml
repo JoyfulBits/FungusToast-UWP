@@ -9,7 +9,7 @@
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:fungusToast="using:FungusToast"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
     <UserControl.Resources>
         <fungusToast:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
@@ -119,25 +119,6 @@
                 </GridView.ItemTemplate>
             </GridView>
         </ContentDialog>
-
-        <StackPanel Grid.Row="0" Grid.Column="0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Rounds until next mutation: " 
-                           ToolTipService.ToolTip="When the round counter is up each player must spend their mutation points to enhance their organism."
-                           Style="{StaticResource SubtitleTextBlockStyle}" 
-                           HorizontalAlignment="Right"
-                           Margin="0 15 0 0"></TextBlock>
-                <TextBlock Grid.Column="1" 
-                           Text="{x:Bind ViewModel.RoundsUntilNextMutation, Mode=OneWay}" 
-                           HorizontalAlignment="Left" 
-                           Style="{StaticResource SubtitleTextBlockStyle}"
-                           Margin="5 15 0 0"></TextBlock>
-            </Grid>
-        </StackPanel>
 
         <TextBlock Grid.Row="0" Grid.Column="1"
                 Style="{StaticResource HeaderTextBlockStyle}" 

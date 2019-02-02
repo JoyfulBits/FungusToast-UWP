@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ApiClient.Exceptions;
@@ -17,34 +16,45 @@ namespace ApiClient
             _serialization = serialization;
         }
 
-        public virtual async Task<GameModel> GetGameState(int gameId, string baseApiUrl)
+        public virtual async Task<GameModel> GetGameState(int gameId, string baseApiUrl, MockOption? mockOption = null)
         {
-            return MakeMockGameModelForJustStartedGame();
+            if (mockOption.HasValue)
+            {
+                if (mockOption.Value == MockOption.NewGame)
+                {
+                    return MockDataBuilder.MakeMockGameModelForJustStartedGame();
+                }
 
-            //using (var client = new HttpClient())
-            //{
-            //    using (var response = await client.GetAsync(baseApiUrl + "/games/" + gameId))
-            //    {
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            using (var content = response.Content)
-            //            {
-            //                var data = await content.ReadAsStringAsync();
-            //                if (data != null)
-            //                {
-            //                    return _serialization.DeserializeObject<MakeMockGameModelForNotStartedGame>(data);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+                return MockDataBuilder.MakeMockGameModelForGameThatIsWellUnderWay();
+            }
+
+            using (var client = new HttpClient())
+            {
+                using (var response = await client.GetAsync(baseApiUrl + "/games/" + gameId))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        using (var content = response.Content)
+                        {
+                            var data = await content.ReadAsStringAsync();
+                            if (data != null)
+                            {
+                                return _serialization.DeserializeObject<GameModel>(data);
+                            }
+                        }
+                    }
+                }
+            }
 
             throw new GameNotFoundException(gameId);
         }
 
-        public virtual async Task<GameModel> CreateGame(NewGameRequest newGame, string baseApiUrl)
+        public virtual async Task<GameModel> CreateGame(NewGameRequest newGame, string baseApiUrl, bool returnMock = false)
         {
-            return MakeMockGameModelForNotStartedGame();
+            if (returnMock)
+            {
+                return MockDataBuilder.MakeMockGameModelForJustStartedGame();
+            }
             using (var client = new HttpClient())
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(newGame);
@@ -69,118 +79,16 @@ namespace ApiClient
             throw new GameNotCreatedException(newGame);
         }
 
-        private static GameModel MakeMockGameModelForNotStartedGame()
+        public virtual async Task<SkillUpdateResult> PushSkillExpenditures(
+            SkillExpenditureRequest skillExpenditureRequest, string baseApiUrl, bool? mockNextRoundAvailable = null)
         {
-            string player1Id = "player 1 id";
-            string player2Id = "player 2 id";
-            return new GameModel
+            if (mockNextRoundAvailable.HasValue)
             {
-                GenerationNumber = 1,
-                Id = 2391,
-                RoundNumber = 1,
-                NumberOfAiPlayers = 1,
-                NumberOfHumanPlayers = 2,
-                NumberOfColumns = 50,
-                NumberOfRows = 50,
-                Status = "Not Started",
-                JoinGamePassword = "password",
-                Players = new List<PlayerState>
+                return new SkillUpdateResult
                 {
-                    new PlayerState
-                    {
-                        Id = player1Id,
-                        Name = "jake",
-                        Status = "Joined",
-                        Human = true
-                    },
-                    new PlayerState
-                    {
-                        Id = "player id 3",
-                        Name = "AI 1",
-                        Status = "Not Joined",
-                        Human = false,
-                    }
-                }
-            };
-        }
-
-        private static GameModel MakeMockGameModelForJustStartedGame()
-        {
-            var player1Id = "player 1 id";
-            var player2Id = "player 2 id";
-            var gameModel = MakeMockGameModelForNotStartedGame();
-            gameModel.Status = "Started";
-            gameModel.Players = new List<PlayerState>
-            {
-                new PlayerState
-                {
-                    Id = player1Id,
-                    MutationPoints = 5,
-                    Name = "jake",
-                    ApoptosisChancePercentage = 5,
-                    RightGrowthChance = 7.5,
-                    StarvedCellDeathChancePercentage = 10,
-                    Status = "Joined",
-                    LiveCells = 1,
-                    Human = true,
-                    BottomGrowthChance = 7.5,
-                    MutationChancePercentage = 10,
-                    AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
-                },
-                new PlayerState
-                {
-                    Id = player2Id,
-                    MutationPoints = 0,
-                    Name = "player 2 name",
-                    ApoptosisChancePercentage = 5,
-                    RightGrowthChance = 7.5,
-                    StarvedCellDeathChancePercentage = 10,
-                    Status = "Joined",
-                    LiveCells = 1,
-                    Human = true,
-                    BottomGrowthChance = 7.5,
-                    MutationChancePercentage = 10,
-                    AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
-                }
-            };
-            gameModel.GrowthCycles = new List<GrowthCycle>
-            {
-                new GrowthCycle
-                {
-                    MutationPointsEarned = new Dictionary<string, int>
-                    {
-                        { player1Id, 5 },
-                        { player2Id, 5 }
-                    },
-                    ToastChanges = new List<ToastChange>
-                    {
-                        new ToastChange
-                        {
-                            PlayerId = player1Id,
-                            CellIndex = 215,
-                            Dead = false,
-                            PreviousPlayerId = null
-                        },
-                        new ToastChange
-                        {
-                            PlayerId = player2Id,
-                            CellIndex = 1198,
-                            Dead = false,
-                            PreviousPlayerId = null
-                        }
-                    }
-                }
-            };
-
-            return gameModel;
-        }
-
-        public virtual async Task<SkillUpdateResult> PushSkillExpenditures(SkillExpenditureRequest skillExpenditureRequest, string baseApiUrl)
-        {
+                    NextRoundAvailable = mockNextRoundAvailable.Value
+                };
+            }
             using (var client = new HttpClient())
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(skillExpenditureRequest);

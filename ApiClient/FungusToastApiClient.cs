@@ -16,19 +16,20 @@ namespace ApiClient
             _gamesApiClient = gamesApiClient;
         }
 
-        public async Task<GameModel> GetGameState(int gameId)
+        public async Task<GameModel> GetGameState(int gameId, MockOption? mockOption = null)
         {
-            return await _gamesApiClient.GetGameState(gameId, _baseApiUrl);
+            return await _gamesApiClient.GetGameState(gameId, _baseApiUrl, mockOption);
         }
 
-        public async Task<GameModel> CreateGame(NewGameRequest newGame)
+        public async Task<GameModel> CreateGame(NewGameRequest newGame, bool returnMock = false)
         {
-            return await _gamesApiClient.CreateGame(newGame, _baseApiUrl);
+            return await _gamesApiClient.CreateGame(newGame, _baseApiUrl, returnMock);
         }
 
-        public async Task<SkillUpdateResult> PushSkillExpenditures(SkillExpenditureRequest skillExpenditureRequest)
+        public async Task<SkillUpdateResult> PushSkillExpenditures(SkillExpenditureRequest skillExpenditureRequest,
+            bool? mockNextRoundAvailable = null)
         {
-            return await _gamesApiClient.PushSkillExpenditures(skillExpenditureRequest, _baseApiUrl);
+            return await _gamesApiClient.PushSkillExpenditures(skillExpenditureRequest, _baseApiUrl, mockNextRoundAvailable);
         }
     }
 }

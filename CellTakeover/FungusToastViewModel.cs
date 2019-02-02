@@ -35,8 +35,6 @@ namespace FungusToast
             }
         }
 
-        public int NumberOfGenerationsBetweenFreeMutations { get; } = 5;
-
         public int GenerationNumber
         {
             get => _generationNumber;
@@ -45,7 +43,6 @@ namespace FungusToast
                 if (value == _generationNumber) return;
                 _generationNumber = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(RoundsUntilNextMutation));
             }
         }
 
@@ -70,9 +67,6 @@ namespace FungusToast
                 OnPropertyChanged();
             }
         }
-
-        public int RoundsUntilNextMutation => NumberOfGenerationsBetweenFreeMutations -
-                                              GenerationNumber % NumberOfGenerationsBetweenFreeMutations;
 
         public int TotalEmptyCells  
         {
