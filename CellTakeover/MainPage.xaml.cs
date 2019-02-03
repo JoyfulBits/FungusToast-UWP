@@ -79,7 +79,7 @@ namespace FungusToast
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_applicationDataContainer.Values.TryGetValue("activeGameId", out var activeGameId))
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()), MockOption.NewGame);
+                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()), MockOption.AdvancedGame);
                 _gameLoaded = true;
                 InitializeGame(_gameModel);
             }
@@ -152,10 +152,19 @@ namespace FungusToast
             for (var i = 0; i < game.NumberOfCells; i++)
             {
                 Brush backgroundBrush;
+                char gridCellContent = ' ';
                 if (previousGameState.Cells.ContainsKey(i))
                 {
                     var cell = previousGameState.Cells[i];
-                    backgroundBrush = _playerNumberToColorBrushDictionary[cell.PlayerId];
+                    if (cell.Dead)
+                    {
+                        backgroundBrush = _deadCellBrush;
+                        gridCellContent = _deadCellSymbol;
+                    }
+                    else
+                    {
+                        backgroundBrush = _playerNumberToColorBrushDictionary[cell.PlayerId];
+                    }
                 }
                 else
                 {
@@ -166,6 +175,7 @@ namespace FungusToast
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
                     Background = backgroundBrush,
+                    Content = gridCellContent,
                     BorderBrush = blackSolidColorBrush,
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Stretch,
@@ -195,13 +205,17 @@ namespace FungusToast
                     tasks.Add(RenderMutationPointEarned(mutationPointEarned));
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                foreach (var task in tasks)
+                {
+                    await task;
+                }
+
+                tasks = new List<Task>();
+
+                ViewModel.GenerationNumber = growthCycle.GenerationNumber;
             }
 
-            foreach (var task in tasks)
-            {
-                await task;
-            }
+            ViewModel.RoundNumber = game.RoundNumber;
 
             foreach (var playerState in game.Players)
             {
@@ -269,17 +283,20 @@ namespace FungusToast
                 currentGridCell.Content = string.Empty;
             }
 
-            await currentGridCell.Fade(1, 1000).StartAsync();
+            await currentGridCell.Fade(1, 1500).StartAsync();
         }
 
         private async Task RenderMutationPointEarned(KeyValuePair<string, int> mutationPointEarned)
         {
-            var mutationPointAnnouncementMessage =
-                _playerNumberToMutationPointAnnouncementTextBlock[mutationPointEarned.Key];
-            mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
+            if (mutationPointEarned.Value > 0)
+            {
+                var mutationPointAnnouncementMessage =
+                    _playerNumberToMutationPointAnnouncementTextBlock[mutationPointEarned.Key];
+                mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
 
-            mutationPointAnnouncementMessage.Opacity = 1;
-            await mutationPointAnnouncementMessage.Fade(0, 1000).StartAsync();
+                mutationPointAnnouncementMessage.Opacity = 1;
+                await mutationPointAnnouncementMessage.Fade(0, 1500).StartAsync();
+            }
         }
 
         private void EnableMutationButtons(IPlayer player)

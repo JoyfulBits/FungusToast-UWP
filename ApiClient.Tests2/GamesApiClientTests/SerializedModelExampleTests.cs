@@ -9,44 +9,15 @@ using NUnit.Framework;
 
 namespace ApiClient.Tests.GamesApiClientTests
 {
+    [Category("Integration")]
     [TestFixture]
     public class SerializedModelExampleTests
     {
-        [Category("Integration")]
         [Test]
         public void Example_Model_Json_For_New_Game_Not_Started()
         {
             //--arrange
-            var player1Id = "player 1 id";
-            var gameModel = new GameModel
-            {
-                GenerationNumber = 1,
-                Id = 2391,
-                RoundNumber = 1,
-                NumberOfAiPlayers = 1,
-                NumberOfHumanPlayers = 2,
-                NumberOfColumns = 50,
-                NumberOfRows = 50,
-                Status = "Not Started",
-                JoinGamePassword = "GY3LO2",
-                Players = new List<PlayerState>
-                {
-                    new PlayerState
-                    {
-                        Id = player1Id,
-                        Name = "Slowdawg 50",
-                        Status = "Joined",
-                        Human = true,
-                    },
-                    new PlayerState
-                    {
-                        Id = "player id 3",
-                        Name = "Organic Mold #151621",
-                        Status = "Not Joined",
-                        Human = false,
-                    }
-                }
-            };
+            var gameModel = MockDataBuilder.MakeMockGameModelForNotStartedGame();
 
             //--act
             var jsonObject = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings
@@ -65,87 +36,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         public void Example_Model_Json_For_New_That_Just_Started()
         {
             //--arrange
-            var player1Id = "player 1 id";
-            var player2Id = "player 2 id";
-            var gameModel = new GameModel
-            {
-                GenerationNumber = 1,
-                Id = 2391,
-                RoundNumber = 1,
-                NumberOfAiPlayers = 0,
-                NumberOfHumanPlayers = 2,
-                NumberOfColumns = 45,
-                NumberOfRows = 45,
-                Status = "Started",
-                JoinGamePassword = "GY3LO2",
-                TotalLiveCells = 2,
-                TotalEmptyCells = 2023,
-                Players = new List<PlayerState>
-                {
-                    new PlayerState
-                    {
-                        Id = player1Id,
-                        MutationPoints = 5,
-                        Name = "jake",
-                        ApoptosisChancePercentage = 5,
-                        RightGrowthChance = 7.5,
-                        StarvedCellDeathChancePercentage = 10,
-                        Status = "Joined",
-                        LiveCells = 1,
-                        Human = true,
-                        BottomGrowthChance = 7.5,
-                        MutationChancePercentage = 10,
-                        AntiApoptosisSkillLevel = 7,
-                        LeftGrowthChance = 7.5,
-                        TopGrowthChance = 7.5
-                    },
-                    new PlayerState
-                    {
-                        Id = player2Id,
-                        MutationPoints = 5,
-                        Name = "player 2 name",
-                        ApoptosisChancePercentage = 5,
-                        RightGrowthChance = 7.5,
-                        StarvedCellDeathChancePercentage = 10,
-                        Status = "Joined",
-                        LiveCells = 1,
-                        Human = true,
-                        BottomGrowthChance = 7.5,
-                        MutationChancePercentage = 10,
-                        AntiApoptosisSkillLevel = 7,
-                        LeftGrowthChance = 7.5,
-                        TopGrowthChance = 7.5
-                    }
-                },
-                GrowthCycles = new List<GrowthCycle>
-                {
-                    new GrowthCycle
-                    {
-                        MutationPointsEarned = new Dictionary<string, int>
-                        {
-                            { player1Id, 5 },
-                            { player2Id, 5 }
-                        },
-                        ToastChanges = new List<ToastChange>
-                        {
-                            new ToastChange
-                            {
-                                PlayerId = player1Id,
-                                CellIndex = 215,
-                                Dead = false,
-                                PreviousPlayerId = null
-                            },
-                            new ToastChange
-                            {
-                                PlayerId = player2Id,
-                                CellIndex = 1198,
-                                Dead = false,
-                                PreviousPlayerId = null
-                            }
-                        }
-                    }
-                }
-            };
+            var gameModel = MockDataBuilder.MakeMockGameModelForJustStartedGame();
 
             //--act
             var jsonObject = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings

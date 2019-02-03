@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ApiClient.Models;
 
 namespace ApiClient
@@ -15,13 +16,11 @@ namespace ApiClient
         public static readonly string Player2Name = "Other Human";
         public static readonly string Player3Name = "AI Player";
 
-        private static GameModel MakeMockGameModelForNotStartedGame()
+        public static GameModel MakeMockGameModelForNotStartedGame()
         {
             return new GameModel
             {
-                GenerationNumber = 1,
                 Id = 2391,
-                RoundNumber = 1,
                 NumberOfAiPlayers = 1,
                 NumberOfHumanPlayers = 2,
                 NumberOfColumns = 50,
@@ -54,6 +53,10 @@ namespace ApiClient
             gameModel.Status = "Started";
             gameModel.TotalLiveCells = 3;
             gameModel.TotalEmptyCells = 2497;
+            gameModel.RoundNumber = 1;
+            gameModel.GenerationNumber = 1;
+            gameModel.PreviousGameState.RoundNumber = 0;
+            gameModel.PreviousGameState.GenerationNumber = 0;
             gameModel.Players = new List<PlayerState>
             {
                 new PlayerState
@@ -112,6 +115,7 @@ namespace ApiClient
             {
                 new GrowthCycle
                 {
+                    GenerationNumber = 1,
                     MutationPointsEarned = new Dictionary<string, int>
                     {
                         { Player1Id, 5 },
@@ -150,8 +154,23 @@ namespace ApiClient
             gameModel.TotalRegeneratedCells = 77;
             gameModel.TotalLiveCells = 400;
             gameModel.TotalEmptyCells = 1900;
-            gameModel.GenerationNumber = 95;
+            gameModel.PreviousGameState.RoundNumber = 18;
             gameModel.RoundNumber = 19;
+            gameModel.PreviousGameState.GenerationNumber = 91;
+            gameModel.GenerationNumber = 95;
+
+            
+
+            var numberOfCells = _random.Next(10, 100);
+            for (int i = 0; i < numberOfCells; i++)
+            {
+                var keyValuePair = MakeRandomCell();
+                if (!gameModel.PreviousGameState.Cells.ContainsKey(keyValuePair.Key))
+                {
+                    gameModel.PreviousGameState.Cells.Add(keyValuePair.Key, keyValuePair.Value);
+                }
+            }
+
             gameModel.Players = new List<PlayerState>
             {
                 new PlayerState
@@ -214,6 +233,7 @@ namespace ApiClient
             {
                 new GrowthCycle
                 {
+                    GenerationNumber = 1,
                     MutationPointsEarned = new Dictionary<string, int>
                     {
                         { Player1Id, 0 },
@@ -242,6 +262,7 @@ namespace ApiClient
                 },
                 new GrowthCycle
                 {
+                    GenerationNumber = 2,
                     MutationPointsEarned = new Dictionary<string, int>
                     {
                         { Player1Id, 1 },
@@ -270,6 +291,7 @@ namespace ApiClient
                 },
                 new GrowthCycle
                 {
+                    GenerationNumber = 3,
                     MutationPointsEarned = new Dictionary<string, int>
                     {
                         { Player1Id, 2 },
@@ -297,6 +319,7 @@ namespace ApiClient
                 },
                 new GrowthCycle
                 {
+                    GenerationNumber = 4,
                     MutationPointsEarned = new Dictionary<string, int>
                     {
                         { Player1Id, 0 },
@@ -324,6 +347,7 @@ namespace ApiClient
                 },
                 new GrowthCycle
                 {
+                    GenerationNumber = 5,
                     MutationPointsEarned = new Dictionary<string, int>
                     {
                         { Player1Id, 1 },
@@ -459,6 +483,50 @@ namespace ApiClient
             };
 
             return gameModel;
+        }
+
+        private static readonly Random _random = new Random();
+
+        private static KeyValuePair<int, FungalCell> MakeRandomCell()
+        {
+            var cellIndex = _random.Next(0, 2499);
+
+            var playerIndex = _random.Next(0, 3);
+
+            string playerId = Player1Id;
+            switch (playerIndex)
+            {
+                case 0:
+                    playerId = Player1Id;
+                    break;
+                case 1:
+                    playerId = Player2Id;
+                    break;
+                case 2:
+                    playerId = Player3Id;
+                    break;
+            }
+
+            //--make 1 in 3 cells dead
+            bool dead = playerIndex % 3 == 0;
+            FungalCell fungalCell;
+            if (dead)
+            {
+                fungalCell = new FungalCell
+                {
+                    PreviousPlayerId = playerId,
+                    Dead = true
+                };
+            }
+            else
+            {
+                fungalCell = new FungalCell
+                {
+                    PlayerId = playerId,
+                };
+            }
+
+            return new KeyValuePair<int, FungalCell>(cellIndex, fungalCell);
         }
     }
 }
