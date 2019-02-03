@@ -153,9 +153,9 @@ namespace FungusToast
             {
                 Brush backgroundBrush;
                 char gridCellContent = ' ';
-                if (previousGameState.Cells.ContainsKey(i))
+                if (previousGameState.CellsDictionary.ContainsKey(i))
                 {
-                    var cell = previousGameState.Cells[i];
+                    var cell = previousGameState.CellsDictionary[i];
                     if (cell.Dead)
                     {
                         backgroundBrush = _deadCellBrush;

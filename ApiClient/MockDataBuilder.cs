@@ -159,15 +159,16 @@ namespace ApiClient
             gameModel.PreviousGameState.GenerationNumber = 91;
             gameModel.GenerationNumber = 95;
 
-            
-
             var numberOfCells = _random.Next(10, 100);
-            for (int i = 0; i < numberOfCells; i++)
+            var keysAlreadyAdded = new HashSet<int>();
+            for (var i = 0; i < numberOfCells; i++)
             {
-                var keyValuePair = MakeRandomCell();
-                if (!gameModel.PreviousGameState.Cells.ContainsKey(keyValuePair.Key))
+                var fungalCell = MakeRandomCell();
+
+                if (!keysAlreadyAdded.Contains(fungalCell.CellIndex))
                 {
-                    gameModel.PreviousGameState.Cells.Add(keyValuePair.Key, keyValuePair.Value);
+                    keysAlreadyAdded.Add(fungalCell.CellIndex);
+                    gameModel.PreviousGameState.FungalCells.Add(fungalCell);
                 }
             }
 
@@ -487,13 +488,13 @@ namespace ApiClient
 
         private static readonly Random _random = new Random();
 
-        private static KeyValuePair<int, FungalCell> MakeRandomCell()
+        private static FungalCell MakeRandomCell()
         {
             var cellIndex = _random.Next(0, 2499);
 
             var playerIndex = _random.Next(0, 3);
 
-            string playerId = Player1Id;
+            var playerId = Player1Id;
             switch (playerIndex)
             {
                 case 0:
@@ -508,25 +509,23 @@ namespace ApiClient
             }
 
             //--make 1 in 3 cells dead
-            bool dead = playerIndex % 3 == 0;
-            FungalCell fungalCell;
+            var dead = playerIndex % 3 == 0;
+            var fungalCell = new FungalCell
+            {
+                CellIndex = cellIndex
+            };
+
             if (dead)
             {
-                fungalCell = new FungalCell
-                {
-                    PreviousPlayerId = playerId,
-                    Dead = true
-                };
+                fungalCell.PreviousPlayerId = playerId;
+                fungalCell.Dead = true;
             }
             else
             {
-                fungalCell = new FungalCell
-                {
-                    PlayerId = playerId,
-                };
+                fungalCell.PlayerId = playerId;
             }
 
-            return new KeyValuePair<int, FungalCell>(cellIndex, fungalCell);
+            return fungalCell;
         }
     }
 }
