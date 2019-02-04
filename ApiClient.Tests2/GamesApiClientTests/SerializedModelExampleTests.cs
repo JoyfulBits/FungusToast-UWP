@@ -14,13 +14,13 @@ namespace ApiClient.Tests.GamesApiClientTests
     public class SerializedModelExampleTests
     {
         [Test]
-        public void Example_Model_Json_For_New_Game_Not_Started()
+        public void Example_Json_For_Creating_A_Game()
         {
             //--arrange
-            var gameModel = MockDataBuilder.MakeMockGameModelForNotStartedGame();
+            var newGameRequest = new NewGameRequest("jake", 1, 2);
 
             //--act
-            var jsonObject = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings
+            var jsonString = JsonConvert.SerializeObject(newGameRequest, new JsonSerializerSettings
             {
                 ContractResolver = new DefaultContractResolver
                 {
@@ -29,7 +29,26 @@ namespace ApiClient.Tests.GamesApiClientTests
             });
 
             //--assert
-            Debug.WriteLine(jsonObject);
+            Debug.WriteLine(jsonString);
+        }
+
+        [Test]
+        public void Example_Model_Json_For_New_Game_Not_Started()
+        {
+            //--arrange
+            var gameModel = MockDataBuilder.MakeMockGameModelForNotStartedGame();
+
+            //--act
+            var jsonString = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            });
+
+            //--assert
+            Debug.WriteLine(jsonString);
         }
 
         [Test]
@@ -39,7 +58,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             var gameModel = MockDataBuilder.MakeMockGameModelForJustStartedGame();
 
             //--act
-            var jsonObject = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings
+            var jsonString = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings
             {
                 ContractResolver = new DefaultContractResolver
                 {
@@ -48,7 +67,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             });
 
             //--assert
-            Debug.WriteLine(jsonObject);
+            Debug.WriteLine(jsonString);
         }
 
         [Test]
@@ -58,7 +77,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             var gameModel = MockDataBuilder.MakeMockGameModelForGameThatIsWellUnderWay();
 
             //--act
-            var jsonObject = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings
+            var jsonString = JsonConvert.SerializeObject(gameModel, new JsonSerializerSettings
             {
                 ContractResolver = new DefaultContractResolver
                 {
@@ -67,7 +86,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             });
 
             //--assert
-            Debug.WriteLine(jsonObject);
+            Debug.WriteLine(jsonString);
         }
 
         [Test]
@@ -84,7 +103,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             });
 
             //--act
-            var jsonObject = JsonConvert.SerializeObject(request, new JsonSerializerSettings
+            var jsonString = JsonConvert.SerializeObject(request, new JsonSerializerSettings
             {
                 ContractResolver = new DefaultContractResolver
                 {
@@ -94,7 +113,7 @@ namespace ApiClient.Tests.GamesApiClientTests
 
             //--assert
             //--assert
-            Debug.WriteLine(jsonObject);
+            Debug.WriteLine(jsonString);
         }
     }
 }
