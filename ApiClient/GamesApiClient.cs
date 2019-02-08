@@ -55,6 +55,7 @@ namespace ApiClient
             {
                 return MockDataBuilder.MakeMockGameModelForJustStartedGame();
             }
+
             using (var client = new HttpClient())
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(newGame);
@@ -62,24 +63,22 @@ namespace ApiClient
                 var gamesUri = new Uri(baseApiUrl + "/games");
                 using (var response = await client.PostAsync(gamesUri, stringifiedObject))
                 {
-                    if (response.IsSuccessStatusCode)
+                    using (var content = response.Content)
                     {
-                        using (var content = response.Content)
+                        var data = await content.ReadAsStringAsync();
+                        if (data != null && response.IsSuccessStatusCode)
                         {
-                            var data = await content.ReadAsStringAsync();
-                            if (data != null)
-                            {
-                                return _serialization.DeserializeObject<GameModel>(data);
-                            }
+                            return _serialization.DeserializeObject<GameModel>(data);
                         }
+
+                        var requestDataJson = await stringifiedObject.ReadAsStringAsync();
+                        throw new ApiException(gamesUri, HttpMethod.Post, requestDataJson, response.StatusCode, data);
                     }
                 }
             }
-
-            throw new GameNotCreatedException(newGame);
         }
 
-        public virtual async Task<SkillUpdateResult> PushSkillExpenditures(
+        public virtual async Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId,
             SkillExpenditureRequest skillExpenditureRequest, string baseApiUrl, bool? mockNextRoundAvailable = null)
         {
             if (mockNextRoundAvailable.HasValue)
@@ -89,28 +88,27 @@ namespace ApiClient
                     NextRoundAvailable = mockNextRoundAvailable.Value
                 };
             }
+
             using (var client = new HttpClient())
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(skillExpenditureRequest);
 
-                var gamesUri = new Uri(baseApiUrl + "/player-skills");
-                using (var response = await client.PostAsync(gamesUri, stringifiedObject))
+                var uri = new Uri(baseApiUrl + $"/games/{gameId}/players/{playerId}");
+                using (var response = await client.PostAsync(uri, stringifiedObject))
                 {
-                    if (response.IsSuccessStatusCode)
+                    using (var content = response.Content)
                     {
-                        using (var content = response.Content)
+                        var data = await content.ReadAsStringAsync();
+                        if (data != null && response.IsSuccessStatusCode)
                         {
-                            var data = await content.ReadAsStringAsync();
-                            if (data != null)
-                            {
-                                return _serialization.DeserializeObject<SkillUpdateResult>(data);
-                            }
+                            return _serialization.DeserializeObject<SkillUpdateResult>(data);
                         }
+
+                        var requestDataJson = await stringifiedObject.ReadAsStringAsync();
+                        throw new ApiException(uri, HttpMethod.Post, requestDataJson, response.StatusCode, data);
                     }
                 }
             }
-
-            throw new SkillsNotUpdatedException(skillExpenditureRequest);
         }
     }
 }

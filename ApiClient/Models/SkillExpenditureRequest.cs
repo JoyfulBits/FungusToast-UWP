@@ -1,17 +1,54 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace ApiClient.Models
 {
     public class SkillExpenditureRequest
     {
-        public int GameId { get; }
-        public string PlayerId { get; }
+        public List<SkillUpgrade> SkillUpgrades =>
+            new List<SkillUpgrade>
+            {
+                new SkillUpgrade
+                {
+                    Id = Skills.Hypermutation,
+                    PointsSpent = HypermutationPoints
+                },
+                new SkillUpgrade
+                {
+                    Id = Skills.Regeneration,
+                    PointsSpent = RegenerationPoints
+                },
+                new SkillUpgrade
+                {
+                    Id = Skills.AntiApoptosis,
+                    PointsSpent = AntiApoptosisPoints
+                },
+                new SkillUpgrade
+                {
+                    Id = Skills.Budding,
+                    PointsSpent = BuddingPoints
+                },
+                new SkillUpgrade
+                {
+                    Id = Skills.Mycotoxicity,
+                    PointsSpent = MycotoxicityPoints
+                }
+            };
+
+        [JsonIgnore]
+        public int HypermutationPoints { get; set; }
+        [JsonIgnore]
+        public int BuddingPoints { get; set; }
+        [JsonIgnore]
+        public int AntiApoptosisPoints { get; set; }
+        [JsonIgnore]
+        public int RegenerationPoints { get; set; }
+        [JsonIgnore]
+        public int MycotoxicityPoints { get; set; }
         public SkillExpenditure SkillExpenditure { get; }
 
-        public SkillExpenditureRequest(int gameId, string playerId, SkillExpenditure skillExpenditure)
+        public SkillExpenditureRequest(SkillExpenditure skillExpenditure)
         {
-            GameId = gameId;
-            PlayerId = playerId;
             SkillExpenditure = skillExpenditure;
         }
     }

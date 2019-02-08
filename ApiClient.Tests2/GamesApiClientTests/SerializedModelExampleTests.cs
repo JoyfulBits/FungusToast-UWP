@@ -93,13 +93,13 @@ namespace ApiClient.Tests.GamesApiClientTests
         public void Example_SkillExpenditure()
         {
             //--arrange
-            var request = new SkillExpenditureRequest(1, "player id 1", new SkillExpenditure
+            var request = new SkillExpenditureRequest(new SkillExpenditure
             {
                 AntiApoptosisPoints = 1,
                 BuddingPoints = 2,
-                HypermutationPoints = 0,
-                MycotoxicityPoints = 1,
-                RegenerationPoints = 3
+                HypermutationPoints = 3,
+                RegenerationPoints = 4,
+                MycotoxicityPoints = 5
             });
 
             //--act

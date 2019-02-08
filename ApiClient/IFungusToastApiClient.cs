@@ -8,6 +8,6 @@ namespace ApiClient
     {
         Task<GameModel> GetGameState(int gameId, MockOption? mockOption = null);
         Task<GameModel> CreateGame(NewGameRequest newGame, bool returnMock = false);
-        Task<SkillUpdateResult> PushSkillExpenditures(SkillExpenditureRequest skillExpenditureRequest, bool? mockNextRoundAvailable = null);
+        Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId, SkillExpenditureRequest skillExpenditureRequest, bool? mockNextRoundAvailable = null);
     }
 }

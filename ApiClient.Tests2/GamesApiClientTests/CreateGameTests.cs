@@ -13,8 +13,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         {
             //--arrange
             var numberOfHumanPlayers = 2;
-            var userName = "username";
-            var newGame = new NewGameRequest(userName, numberOfHumanPlayers);
+            var newGame = new NewGameRequest(TestUserName, numberOfHumanPlayers);
 
             //--act
             var result = await GamesClient.CreateGame(newGame, TestEnvironmentSettings.BaseApiUrl);
@@ -36,7 +35,9 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.GrowthCycles.ShouldNotBeNull();
             //--there should be no growth cycles if the game hasn't started
             result.GrowthCycles.Count.ShouldBe(0);
-            result.PreviousGameState.ShouldBeNull();
+            result.PreviousGameState.FungalCells.Count.ShouldBe(0);
+            result.PreviousGameState.GenerationNumber.ShouldBe(0);
+            result.PreviousGameState.RoundNumber.ShouldBe(0);
         }
 
         [Test]
@@ -45,8 +46,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             //--arrange
             var numberOfHumanPlayers = 1;
             var numberOfAiPlayers = 1;
-            var userName = "username";
-            var newGame = new NewGameRequest(userName, numberOfHumanPlayers, numberOfAiPlayers);
+            var newGame = new NewGameRequest(TestUserName, numberOfHumanPlayers, numberOfAiPlayers);
 
             //--act
             var result = await GamesClient.CreateGame(newGame, TestEnvironmentSettings.BaseApiUrl);
@@ -91,7 +91,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.Players.Count.ShouldBe(numberOfHumanPlayers);
             var player = result.Players[0];
             AssertPlayerLooksRight(player, true);
-            player.Name.ShouldBe(userName);
+            player.Name.ShouldBe(TestUserName);
             player.Status.ShouldBe("Joined");
 
             player = result.Players[1];

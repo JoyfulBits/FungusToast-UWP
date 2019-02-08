@@ -79,7 +79,7 @@ namespace FungusToast
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_applicationDataContainer.Values.TryGetValue("activeGameId", out var activeGameId))
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()), MockOption.AdvancedGame);
+                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));//, MockOption.AdvancedGame);
                 _gameLoaded = true;
                 InitializeGame(_gameModel);
             }
@@ -106,7 +106,7 @@ namespace FungusToast
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
             var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
-            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, true);
+            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
             _applicationDataContainer.Values["activeGameId"] = _gameModel.Id;
 
             InitializeGame(_gameModel);
@@ -328,14 +328,14 @@ namespace FungusToast
             DisablePlayerMutationButtons(player);
 
             var skillExpenditureRequest =
-                new SkillExpenditureRequest(_gameModel.Id, player.PlayerId, _skillExpenditure);
-            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(skillExpenditureRequest, mockNextRoundAvailable : true);
+                new SkillExpenditureRequest( _skillExpenditure);
+            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, skillExpenditureRequest, mockNextRoundAvailable : true);
 
             _skillExpenditure = new SkillExpenditure();
 
             if (skillUpdateResult.NextRoundAvailable)
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id, MockOption.AdvancedGame);
+                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);//, MockOption.AdvancedGame);
 
                 await RenderUpdates(_gameModel);
 
