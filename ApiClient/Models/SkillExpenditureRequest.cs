@@ -44,12 +44,6 @@ namespace ApiClient.Models
         [JsonIgnore]
         public int RegenerationPoints { get; set; }
         [JsonIgnore]
-        public int MycotoxicityPoints { get; set; }
-        public SkillExpenditure SkillExpenditure { get; }
-
-        public SkillExpenditureRequest(SkillExpenditure skillExpenditure)
-        {
-            SkillExpenditure = skillExpenditure;
-        }
+        public int MycotoxicityPoints { get; set; } 
     }
 }

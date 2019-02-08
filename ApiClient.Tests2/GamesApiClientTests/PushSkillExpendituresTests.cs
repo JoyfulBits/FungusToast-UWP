@@ -15,13 +15,11 @@ namespace ApiClient.Tests.GamesApiClientTests
             var newGame = await CreateValidGameForTesting(TestUserName, 2, 0);
             var firstPlayer = newGame.Players[0];
 
-            var skillExpenditure = new SkillExpenditure
+            var skillExpenditureRequest = new SkillExpenditureRequest
             {
                 RegenerationPoints = firstPlayer.MutationPoints - 1,
                 BuddingPoints = 1
             };
-            var skillExpenditureRequest =
-                new SkillExpenditureRequest(skillExpenditure);
 
             //--act
             var result = await GamesClient.PushSkillExpenditures(newGame.Id, firstPlayer.Id, skillExpenditureRequest, TestEnvironmentSettings.BaseApiUrl);
@@ -37,12 +35,10 @@ namespace ApiClient.Tests.GamesApiClientTests
             var newGame = await CreateValidGameForTesting(TestUserName, 1, 1);
             var firstPlayer = newGame.Players[0];
 
-            var skillExpenditure = new SkillExpenditure
+            var skillExpenditureRequest = new SkillExpenditureRequest
             {
                 RegenerationPoints = firstPlayer.MutationPoints
             };
-            var skillExpenditureRequest =
-                new SkillExpenditureRequest(skillExpenditure);
 
             //--act
             var result = await GamesClient.PushSkillExpenditures(newGame.Id, firstPlayer.Id, skillExpenditureRequest, TestEnvironmentSettings.BaseApiUrl);

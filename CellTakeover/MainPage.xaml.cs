@@ -56,6 +56,8 @@ namespace FungusToast
 
         private GameModel _gameModel;
 
+        private SkillExpenditureRequest _skillExpenditureRequest = new SkillExpenditureRequest();
+
         private bool _mainGridLoaded = false;
         private bool _playersListViewLoaded = false;
         private bool _gameLoaded = false;
@@ -97,8 +99,6 @@ namespace FungusToast
             Colors.Orange,
             Colors.Gray
         };
-
-        private SkillExpenditure _skillExpenditure = new SkillExpenditure();
 
         private async void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -326,12 +326,10 @@ namespace FungusToast
             }
 
             DisablePlayerMutationButtons(player);
+            
+            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, _skillExpenditureRequest, mockNextRoundAvailable : true);
 
-            var skillExpenditureRequest =
-                new SkillExpenditureRequest( _skillExpenditure);
-            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, skillExpenditureRequest, mockNextRoundAvailable : true);
-
-            _skillExpenditure = new SkillExpenditure();
+            _skillExpenditureRequest = new SkillExpenditureRequest();
 
             if (skillUpdateResult.NextRoundAvailable)
             {
@@ -349,7 +347,7 @@ namespace FungusToast
             var player = button.DataContext as IPlayer;
 
             player.IncreaseHypermutation();
-            _skillExpenditure.HypermutationPoints++;
+            _skillExpenditureRequest.HypermutationPoints++;
 
             await CheckForRemainingMutationPoints(player);
         }
@@ -359,7 +357,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.DecreaseApoptosisChance();
-            _skillExpenditure.AntiApoptosisPoints++;
+            _skillExpenditureRequest.AntiApoptosisPoints++;
             if (player.GrowthScorecard.ApoptosisChancePercentage <= 0)
             {
                 button.IsEnabled = false;
@@ -373,7 +371,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseBudding();
-            _skillExpenditure.BuddingPoints++;
+            _skillExpenditureRequest.BuddingPoints++;
 
             await CheckForRemainingMutationPoints(player);
         }
@@ -383,7 +381,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseRegeneration();
-            _skillExpenditure.RegenerationPoints++;
+            _skillExpenditureRequest.RegenerationPoints++;
 
             await CheckForRemainingMutationPoints(player);
         }
