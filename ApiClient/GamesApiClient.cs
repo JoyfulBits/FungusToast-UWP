@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ApiClient.Exceptions;
@@ -30,13 +31,17 @@ namespace ApiClient
 
             using (var client = new HttpClient())
             {
-                using (var response = await client.GetAsync(baseApiUrl + "/games/" + gameId))
+                var uri = new Uri(baseApiUrl + "/games/" + gameId);
+                using (var response = await client.GetAsync(uri))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         using (var content = response.Content)
                         {
                             var data = await content.ReadAsStringAsync();
+                            Debug.WriteLine($"GET request sent to '{uri.AbsolutePath}'.");
+                            Debug.WriteLine($"Got response: '{data}'");
+
                             if (data != null)
                             {
                                 return _serialization.DeserializeObject<GameModel>(data);
@@ -66,6 +71,9 @@ namespace ApiClient
                     using (var content = response.Content)
                     {
                         var data = await content.ReadAsStringAsync();
+                        Debug.WriteLine($"POST request sent to '{gamesUri.AbsolutePath}' with data: '{await stringifiedObject.ReadAsStringAsync()}'.");
+                        Debug.WriteLine($"Got response: '{data}'");
+
                         if (data != null && response.IsSuccessStatusCode)
                         {
                             return _serialization.DeserializeObject<GameModel>(data);
@@ -93,12 +101,16 @@ namespace ApiClient
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(skillExpenditureRequest);
 
+
                 var uri = new Uri(baseApiUrl + $"/games/{gameId}/players/{playerId}/skills");
                 using (var response = await client.PostAsync(uri, stringifiedObject))
                 {
                     using (var content = response.Content)
                     {
                         var data = await content.ReadAsStringAsync();
+                        Debug.WriteLine($"POST request sent to '{uri.AbsolutePath}' with data: '{await stringifiedObject.ReadAsStringAsync()}'.");
+                        Debug.WriteLine($"Got response: '{data}'");
+
                         if (data != null && response.IsSuccessStatusCode)
                         {
                             return _serialization.DeserializeObject<SkillUpdateResult>(data);
