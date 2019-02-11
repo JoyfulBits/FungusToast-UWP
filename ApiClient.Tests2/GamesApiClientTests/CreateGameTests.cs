@@ -57,7 +57,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.NumberOfRows.ShouldBe(50);
             result.NumberOfColumns.ShouldBe(50);
             result.Id.ShouldBeGreaterThan(0);
-            result.Status.ShouldBe("In Progress");
+            result.Status.ShouldBe("Started");
 
             //--if the game is started then we will start at Generation 1 and Round 1 (since live cells exist on the board for each player)
             result.GenerationNumber.ShouldBe(1);
