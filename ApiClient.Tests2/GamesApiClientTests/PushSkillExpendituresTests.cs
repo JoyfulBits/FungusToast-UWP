@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using ApiClient.Models;
 using NUnit.Framework;
 using Shouldly;
@@ -33,7 +34,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         {
             //--arrange
             var newGame = await CreateValidGameForTesting(TestUserName, 1, 1);
-            var firstPlayer = newGame.Players[0];
+            var firstPlayer = newGame.Players.FirstOrDefault(x => x.Human);
 
             var skillExpenditureRequest = new SkillExpenditureRequest
             {
