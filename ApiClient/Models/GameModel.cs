@@ -7,11 +7,10 @@ namespace ApiClient.Models
         public int Id { get; set; }
         public int NumberOfHumanPlayers { get; set; }
         public int NumberOfAiPlayers { get; set; }
-        public int NumberOfRows { get; set; }
-        public int NumberOfColumns { get; set; }
+        public int GridSize { get; set; }
         public string Status { get; set; }
         
-        public int NumberOfCells => NumberOfRows * NumberOfColumns;
+        public int NumberOfCells => GridSize * GridSize;
         public List<PlayerState> Players { get; set; }
         public GameState PreviousGameState { get; set; } = new GameState();
         public List<GrowthCycle> GrowthCycles { get; set; } = new List<GrowthCycle>();

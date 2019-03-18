@@ -21,8 +21,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             //--assert
             result.NumberOfHumanPlayers.ShouldBe(newGame.NumberOfHumanPlayers);
             result.NumberOfAiPlayers.ShouldBe(newGame.NumberOfAiPlayers);
-            result.NumberOfRows.ShouldBe(50);
-            result.NumberOfColumns.ShouldBe(50);
+            result.GridSize.ShouldBe(50);
             result.Id.ShouldBeGreaterThan(0);
             result.Status.ShouldBe("Not Started");
 
@@ -54,13 +53,10 @@ namespace ApiClient.Tests.GamesApiClientTests
             //--assert
             result.NumberOfHumanPlayers.ShouldBe(newGame.NumberOfHumanPlayers);
             result.NumberOfAiPlayers.ShouldBe(newGame.NumberOfAiPlayers);
-            result.NumberOfRows.ShouldBe(50);
-            result.NumberOfColumns.ShouldBe(50);
+            result.GridSize.ShouldBe(50);
             result.Id.ShouldBeGreaterThan(0);
             result.Status.ShouldBe("Started");
 
-            //--if the game is started then we will start at Generation 1 and Round 1 (since live cells exist on the board for each player)
-            result.GenerationNumber.ShouldBe(1);
             result.RoundNumber.ShouldBe(1);
             result.TotalDeadCells.ShouldBe(0);
             result.TotalRegeneratedCells.ShouldBe(0);

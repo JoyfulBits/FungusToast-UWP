@@ -139,8 +139,8 @@ namespace FungusToast
 
         private void InitializeToastWithPlayerCells(GameModel game)
         {
-            Toast.Columns = _gameModel.NumberOfColumns;
-            Toast.Rows = _gameModel.NumberOfRows;
+            Toast.Columns = _gameModel.GridSize;
+            Toast.Rows = _gameModel.GridSize;
 
             //--make the grid a square since it wasn't doing that for some reason
             Toast.Width = Toast.ActualHeight;

@@ -23,8 +23,7 @@ namespace ApiClient
                 Id = 2391,
                 NumberOfAiPlayers = 1,
                 NumberOfHumanPlayers = 2,
-                NumberOfColumns = 50,
-                NumberOfRows = 50,
+                GridSize = 50,
                 Status = "Not Started",
                 JoinGamePassword = "password",
                 Players = new List<PlayerState>
