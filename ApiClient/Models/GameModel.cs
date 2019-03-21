@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace ApiClient.Models
 {
@@ -10,6 +11,7 @@ namespace ApiClient.Models
         public int GridSize { get; set; }
         public string Status { get; set; }
         
+        [JsonIgnore]
         public int NumberOfCells => GridSize * GridSize;
         public List<PlayerState> Players { get; set; }
         public GameState PreviousGameState { get; set; } = new GameState();
