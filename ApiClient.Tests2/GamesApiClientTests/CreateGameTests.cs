@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using ApiClient.Models;
 using NUnit.Framework;
 using Shouldly;
@@ -34,9 +35,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.GrowthCycles.ShouldNotBeNull();
             //--there should be no growth cycles if the game hasn't started
             result.GrowthCycles.Count.ShouldBe(0);
-            result.PreviousGameState.FungalCells.Count.ShouldBe(0);
-            result.PreviousGameState.GenerationNumber.ShouldBe(0);
-            result.PreviousGameState.RoundNumber.ShouldBe(0);
+            result.StartingGamingState.FungalCells.Count.ShouldBe(0);
         }
 
         [Test]
@@ -46,6 +45,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             var numberOfHumanPlayers = 1;
             var numberOfAiPlayers = 1;
             var newGame = new NewGameRequest(TestUserName, numberOfHumanPlayers, numberOfAiPlayers);
+            var totalNumberOfPlayers = numberOfHumanPlayers + numberOfAiPlayers;
 
             //--act
             var result = await GamesClient.CreateGame(newGame, TestEnvironmentSettings.BaseApiUrl);
@@ -61,10 +61,11 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.TotalDeadCells.ShouldBe(0);
             result.TotalRegeneratedCells.ShouldBe(0);
             //--we start with 1 live cell per player
-            result.TotalLiveCells.ShouldBe(numberOfHumanPlayers);
+            result.TotalLiveCells.ShouldBe(totalNumberOfPlayers);
 
-            //--there is no previous game state since we start with an empty toast
-            result.PreviousGameState.ShouldBeNull();
+            //--there starting game state will be empty
+            result.StartingGamingState.ShouldNotBeNull();
+            result.StartingGamingState.FungalCells.Count.ShouldBe(0);
             
             result.GrowthCycles.ShouldNotBeNull();
             //--there should be a single growth cycle that places each player's starting cell
@@ -78,22 +79,22 @@ namespace ApiClient.Tests.GamesApiClientTests
             }
 
             //--there should be one toast change (i.e. new live cell placed) for each player
-            growthCycle.ToastChanges.Count.ShouldBe(numberOfHumanPlayers);
+            growthCycle.ToastChanges.Count.ShouldBe(totalNumberOfPlayers);
             var maxCellIndex = result.NumberOfCells - 1;
             AssertToastChangeIsCorrect(growthCycle.ToastChanges[0], maxCellIndex);
             AssertToastChangeIsCorrect(growthCycle.ToastChanges[1], maxCellIndex);
 
             result.Players.ShouldNotBeNull();
-            result.Players.Count.ShouldBe(numberOfHumanPlayers);
-            var player = result.Players[0];
+            result.Players.Count.ShouldBe(totalNumberOfPlayers);
+            var player = result.Players.First(x => x.Human);
             AssertPlayerLooksRight(player, true);
             player.Name.ShouldBe(TestUserName);
             player.Status.ShouldBe("Joined");
 
-            player = result.Players[1];
+            player = result.Players.First(x => !x.Human);
             AssertPlayerLooksRight(player, false);
-            player.Name.ShouldBeNull();
-            player.Status.ShouldBe("Not Joined");
+            player.Name.ShouldNotBeNull();
+            player.Status.ShouldBe("Joined");
         }
         private static void AssertPlayerLooksRight(PlayerState player, bool shouldBeHuman)
         {
@@ -121,15 +122,15 @@ namespace ApiClient.Tests.GamesApiClientTests
             player.MycotoxinsSkillLevel.ShouldBe(0);
 
             //--players' cells will start off with some positive chance of apoptosis
-            player.ApoptosisChancePercentage.ShouldBeGreaterThan(0);
+            player.ApoptosisChance.ShouldBeGreaterThan(0);
 
             //--player's cells with start off with some positive chance of death due to starvation (i.e. being surrounded by other live cells)
-            player.StarvedCellDeathChancePercentage.ShouldBeGreaterThan(0);
+            player.StarvedCellDeathChance.ShouldBeGreaterThan(0);
 
-            player.MycotoxinFungicideChancePercentage.ShouldBe(0);
-            player.RegenerationChancePercentage.ShouldBe(0);
+            player.MycotoxinFungicideChance.ShouldBe(0);
+            player.RegenerationChance.ShouldBe(0);
 
-            player.MutationChancePercentage.ShouldBeGreaterThan(0);
+            player.MutationChance.ShouldBeGreaterThan(0);
         }
 
         private static void AssertToastChangeIsCorrect(ToastChange toastChange1, int maxCellIndex)

@@ -22,11 +22,11 @@
         public int RegenerationSkillLevel { get; set; }
         public int BuddingSkillLevel { get; set; }
         public int MycotoxinsSkillLevel { get; set; }
-        public double ApoptosisChancePercentage { get; set; }
-        public double StarvedCellDeathChancePercentage { get; set; }
-        public double MutationChancePercentage { get; set; }
-        public double RegenerationChancePercentage { get; set; }
-        public double MycotoxinFungicideChancePercentage { get; set; }
+        public double ApoptosisChance { get; set; }
+        public double StarvedCellDeathChance { get; set; }
+        public double MutationChance { get; set; }
+        public double RegenerationChance { get; set; }
+        public double MycotoxinFungicideChance { get; set; }
         public string Status { get; set; }
     }
 }

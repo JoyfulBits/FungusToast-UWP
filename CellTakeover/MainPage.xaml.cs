@@ -147,7 +147,7 @@ namespace FungusToast
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
             var noPaddingOrMargin = new Thickness(0);
-            var previousGameState = game.PreviousGameState;
+            var previousGameState = game.StartingGamingState;
 
             for (var i = 0; i < game.NumberOfCells; i++)
             {
@@ -156,7 +156,7 @@ namespace FungusToast
                 if (previousGameState.CellsDictionary.ContainsKey(i))
                 {
                     var cell = previousGameState.CellsDictionary[i];
-                    if (cell.Dead)
+                    if (!cell.Live)
                     {
                         backgroundBrush = _deadCellBrush;
                         gridCellContent = _deadCellSymbol;
@@ -238,11 +238,11 @@ namespace FungusToast
 
                 var updatedGrowthScorecard = new GrowthScorecard
                 {
-                    ApoptosisChancePercentage = playerState.ApoptosisChancePercentage,
-                    StarvedCellDeathChancePercentage = playerState.StarvedCellDeathChancePercentage,
-                    MutationChancePercentage = playerState.MutationChancePercentage,
-                    RegenerationChancePercentage = playerState.RegenerationChancePercentage,
-                    MycotoxinFungicideChancePercentage = playerState.MycotoxinFungicideChancePercentage,
+                    ApoptosisChancePercentage = playerState.ApoptosisChance,
+                    StarvedCellDeathChancePercentage = playerState.StarvedCellDeathChance,
+                    MutationChancePercentage = playerState.MutationChance,
+                    RegenerationChancePercentage = playerState.RegenerationChance,
+                    MycotoxinFungicideChancePercentage = playerState.MycotoxinFungicideChance,
                     GrowthChanceDictionary = new Dictionary<RelativePosition, double>
                     {
                         { RelativePosition.TopLeft, playerState.TopLeftGrowthChance },

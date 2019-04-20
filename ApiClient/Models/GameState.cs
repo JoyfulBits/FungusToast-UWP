@@ -14,12 +14,9 @@ namespace ApiClient.Models
         {
             get
             {
-                return _cellDictionary ?? (_cellDictionary = FungalCells.ToDictionary(x => x.CellIndex, y => y));
+                return _cellDictionary ?? (_cellDictionary = FungalCells.ToDictionary(x => x.Index, y => y));
             }
         }
-
-        public int RoundNumber { get; set; }
-        public int GenerationNumber { get; set; }
 
         public List<FungalCell> FungalCells
         {
