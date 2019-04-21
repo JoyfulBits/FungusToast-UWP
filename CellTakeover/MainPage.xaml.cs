@@ -81,7 +81,7 @@ namespace FungusToast
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_applicationDataContainer.Values.TryGetValue("activeGameId", out var activeGameId))
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));//, MockOption.AdvancedGame);
+                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
                 _gameLoaded = true;
                 InitializeGame(_gameModel);
             }
@@ -327,13 +327,13 @@ namespace FungusToast
 
             DisablePlayerMutationButtons(player);
             
-            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, _skillExpenditureRequest, mockNextRoundAvailable : true);
+            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, _skillExpenditureRequest);
 
             _skillExpenditureRequest = new SkillExpenditureRequest();
 
             if (skillUpdateResult.NextRoundAvailable)
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);//, MockOption.AdvancedGame);
+                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);
 
                 await RenderUpdates(_gameModel);
 
