@@ -100,8 +100,7 @@ namespace ApiClient
             using (var client = new HttpClient())
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(skillExpenditureRequest);
-
-
+                
                 var uri = new Uri(baseApiUrl + $"/games/{gameId}/players/{playerId}/skills");
                 using (var response = await client.PostAsync(uri, stringifiedObject))
                 {

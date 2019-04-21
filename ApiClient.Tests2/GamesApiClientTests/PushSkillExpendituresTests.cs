@@ -10,6 +10,25 @@ namespace ApiClient.Tests.GamesApiClientTests
     public class PushSkillExpendituresTests : GamesApiClientTestBase
     {
         [Test]
+        public async Task It_Returns_The_Updated_Player()
+        {
+            //--arrange
+            var newGame = await CreateValidGameForTesting(TestUserName, 2, 0);
+            var firstPlayer = newGame.Players[0];
+
+            var skillExpenditureRequest = new SkillExpenditureRequest
+            {
+                BuddingPoints = 1
+            };
+
+            //--act
+            var result = await GamesClient.PushSkillExpenditures(newGame.Id, firstPlayer.Id, skillExpenditureRequest, TestEnvironmentSettings.BaseApiUrl);
+
+            //--assert
+            result.UpdatedPlayer.MutationPoints.ShouldBe(firstPlayer.MutationPoints - 1);
+        }
+
+        [Test]
         public async Task It_Returns_Next_Round_Not_Available_If_Not_All_Players_Have_Pushed_Their_Points()
         {
             //--arrange
