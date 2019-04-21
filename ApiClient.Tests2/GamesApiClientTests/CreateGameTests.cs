@@ -87,19 +87,20 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.Players.ShouldNotBeNull();
             result.Players.Count.ShouldBe(totalNumberOfPlayers);
             var player = result.Players.First(x => x.Human);
-            AssertPlayerLooksRight(player, true);
+            AssertHumanPlayerLooksRight(player);
             player.Name.ShouldBe(TestUserName);
             player.Status.ShouldBe("Joined");
 
             player = result.Players.First(x => !x.Human);
-            AssertPlayerLooksRight(player, false);
+
+            player.Id.ShouldNotBeNullOrEmpty();
             player.Name.ShouldNotBeNull();
             player.Status.ShouldBe("Joined");
         }
-        private static void AssertPlayerLooksRight(PlayerState player, bool shouldBeHuman)
+        private static void AssertHumanPlayerLooksRight(PlayerState player)
         {
             player.Id.ShouldNotBeNullOrEmpty();
-            player.Human.ShouldBe(shouldBeHuman);
+            player.Human.ShouldBeTrue();
 
             //--we will start the game with some mutation points
             player.MutationPoints.ShouldBeGreaterThan(0);
