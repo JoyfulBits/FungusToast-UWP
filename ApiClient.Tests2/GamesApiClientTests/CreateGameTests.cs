@@ -138,7 +138,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         private static void AssertToastChangeIsCorrect(ToastChange toastChange1, int maxCellIndex)
         {
             toastChange1.Index.ShouldBeInRange(0, maxCellIndex);
-            toastChange1.Dead.ShouldBe(false);
+            toastChange1.Live.ShouldBe(false);
             toastChange1.PlayerId.ShouldNotBeNullOrEmpty();
             //--this is only set if the cell is regenerated
             toastChange1.PreviousPlayerId.ShouldBeNull();

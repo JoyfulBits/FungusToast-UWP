@@ -278,15 +278,15 @@ namespace FungusToast
             var currentGridCell = Toast.Children[toastChange.Index] as Button;
             currentGridCell.Opacity = 0;
 
-            if (toastChange.Dead)
-            {
-                currentGridCell.Background = _deadCellBrush;
-                currentGridCell.Content = _deadCellSymbol;
-            }
-            else
+            if (toastChange.Live)
             {
                 currentGridCell.Background = _playerNumberToColorBrushDictionary[toastChange.PlayerId];
                 currentGridCell.Content = string.Empty;
+            }
+            else
+            {
+                currentGridCell.Background = _deadCellBrush;
+                currentGridCell.Content = _deadCellSymbol;
             }
 
             await currentGridCell.Fade(1, 1500).StartAsync();
@@ -447,6 +447,12 @@ namespace FungusToast
             var skillTreeDialog = sender as ContentDialog;
             var player = skillTreeDialog.DataContext as IPlayer;
             _playerNumberToSkillTreeDialog[player.PlayerId] = skillTreeDialog;
+        }
+
+        private void SkillTreeDialog_OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            var skillTreeDialog = sender as ContentDialog;
+            var player = skillTreeDialog.DataContext as IPlayer;
 
             if (player.IsCurrentPlayer(_userName))
             {
@@ -499,9 +505,9 @@ namespace FungusToast
             }
         }
 
-        private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private async void ClearExistingGame_OnClick(object sender, RoutedEventArgs e)
         {
-            _applicationDataContainer.Values.Remove(ActiveGameIdSetting);
+            _settingsDataContainer.Values.Remove(ActiveGameIdSetting);
             await RestartApp();
         }
     }

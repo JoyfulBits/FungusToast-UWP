@@ -125,14 +125,14 @@ namespace ApiClient
                         {
                             PlayerId = Player1Id,
                             Index = 215,
-                            Dead = false,
+                            Live = true,
                             PreviousPlayerId = null
                         },
                         new ToastChange
                         {
                             PlayerId = Player2Id,
                             Index = 1198,
-                            Dead = false,
+                            Live = true,
                             PreviousPlayerId = null
                         }
                     }
@@ -241,18 +241,18 @@ namespace ApiClient
                             new ToastChange {
                                 PlayerId = null,
                                 Index = 200,
-                                Dead = true,
+                                Live = true,
                                 PreviousPlayerId = Player2Id
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 201,
-                                Dead = false,
+                                Live = true,
                             },
                             new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 202,
-                                Dead = false,
+                                Live = true,
                             }
                         }
                 },
@@ -270,18 +270,18 @@ namespace ApiClient
                         new ToastChange {
                             PlayerId = null,
                             Index = 203,
-                            Dead = true,
+                            Live = true,
                             PreviousPlayerId = Player2Id
                         },
                         new ToastChange {
                             PlayerId = Player1Id,
                             Index = 204,
-                            Dead = false,
+                            Live = true,
                         },
                         new ToastChange {
                             PlayerId = Player2Id,
                             Index = 205,
-                            Dead = false,
+                            Live = true,
                         }
                     }
                 },
@@ -299,17 +299,17 @@ namespace ApiClient
                         new ToastChange {
                             PlayerId = Player1Id,
                             Index = 206,
-                            Dead = false,
+                            Live = true,
                         },
                         new ToastChange {
                             PlayerId = Player1Id,
                             Index = 207,
-                            Dead = false,
+                            Live = true,
                         },
                         new ToastChange {
                             PlayerId = Player3Id,
                             Index = 208,
-                            Dead = false,
+                            Live = true,
                         }
                     }
                 },
@@ -327,17 +327,17 @@ namespace ApiClient
                         new ToastChange {
                             PlayerId = Player1Id,
                             Index = 209,
-                            Dead = false,
+                            Live = true,
                         },
                         new ToastChange {
                             PlayerId = Player2Id,
                             Index = 210,
-                            Dead = false,
+                            Live = true,
                         },
                         new ToastChange {
                             PlayerId = Player3Id,
                             Index = 211,
-                            Dead = false
+                            Live = true
                         }
                     }
                 },
@@ -356,122 +356,122 @@ namespace ApiClient
                             {
                                 PlayerId = Player1Id,
                                 Index = 1,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = null,
                                 Index = 2,
-                                Dead = true,
+                                Live = true,
                                 PreviousPlayerId = Player1Id
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 6,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = Player2Id
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 8,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 23,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 26,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 27,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 123,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 1366,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player1Id,
                                 Index = 1456,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 1457,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 1458,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 1460,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 1461,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 1469,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 1653,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = Player2Id,
                                 Index = 1655,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             },
                             new ToastChange {
                                 PlayerId = null,
                                 Index = 1656,
-                                Dead = true,
+                                Live = true,
                                 PreviousPlayerId = Player2Id
                             },
                             new ToastChange {
                                 PlayerId = null,
                                 Index = 2011,
-                                Dead = true,
+                                Live = true,
                                 PreviousPlayerId = Player2Id
                             },
                             new ToastChange {
                                 PlayerId = Player3Id,
                                 Index = 2012,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = Player2Id
                             },
                             new ToastChange {
                                 PlayerId = Player3Id,
                                 Index = 2012,
-                                Dead = false,
+                                Live = true,
                                 PreviousPlayerId = null
                             }
                         }
