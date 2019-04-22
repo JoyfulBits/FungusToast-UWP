@@ -32,7 +32,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         public void The_Surrounding_Left_Cells_Are_An_EdgeCell_If_At_The_Left_Column_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown, _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
 
             //--act
             var actualSurroundingCells = _surroundingCellCalculator.GetSurroundingCells(bioCell, _dummyDictionary, _dummyDictionary);
@@ -47,7 +47,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         public void The_Surrounding_Top_Cells_Are_An_EdgeCell_If_At_The_Top_Row_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown, _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -63,7 +63,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         public void The_Surrounding_Right_Cells_Are_An_EdgeCell_If_At_The_Right_Column_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_mockPlayer.Object, _numberOfRowsAndColumns - 1, Colors.Brown, _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, _numberOfRowsAndColumns - 1, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -79,7 +79,7 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         public void The_Surrounding_Bottom_Cells_Are_An_EdgeCell_If_At_The_Bottom_Row_Of_The_Grid()
         {
             //--arrange
-            var bioCell = new BioCell(_mockPlayer.Object, _numberOfCells - 1, Colors.Brown, _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, _numberOfCells - 1, Colors.Brown);
             var liveCells = new Dictionary<int, BioCell>();
 
             //--act
@@ -95,8 +95,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         public void It_Finds_Live_Cells_To_The_Left()
         {
             //--arrange
-            var currentBioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color(), _surroundingCellCalculator);
+            var currentBioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -116,8 +116,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             //--arrange
             var secondRowSecondColumnIndex = _numberOfRowsAndColumns + 1;
 
-            var bioCell = new BioCell(_mockPlayer.Object, secondRowSecondColumnIndex, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color(), _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, secondRowSecondColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -137,8 +137,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             //--arrange
             var secondRowFirstColumnIndex = _numberOfRowsAndColumns;
 
-            var bioCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color(), _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 0, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -158,8 +158,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             //--arrange
             var secondRowFirstColumnIndex = _numberOfRowsAndColumns;
 
-            var bioCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, 1, new Color(), _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 1, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -177,8 +177,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
         public void It_Finds_Live_Cells_To_The_Right()
         {
             //--arrange
-            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, 1, new Color(), _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, 1, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -198,8 +198,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             //--arrange
             var secondRowSecondColumnIndex = _numberOfRowsAndColumns + 1;
 
-            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, secondRowSecondColumnIndex, new Color(), _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, secondRowSecondColumnIndex, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -219,8 +219,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             //--arrange
             var secondRowFirstColumnIndex = _numberOfRowsAndColumns;
 
-            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, new Color(), _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, 0, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }
@@ -240,8 +240,8 @@ namespace Logic.Tests.SurroundingCellCalculatorTests
             //--arrange
             var secondRowFirstColumnIndex = _numberOfRowsAndColumns;
   
-            var bioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown, _surroundingCellCalculator);
-            var expectedCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, new Color(), _surroundingCellCalculator);
+            var bioCell = new BioCell(_mockPlayer.Object, 1, Colors.Brown);
+            var expectedCell = new BioCell(_mockPlayer.Object, secondRowFirstColumnIndex, new Color());
             var liveCells = new Dictionary<int, BioCell>
             {
                 {expectedCell.CellIndex, expectedCell }

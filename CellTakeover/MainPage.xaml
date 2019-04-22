@@ -1,21 +1,20 @@
 ﻿<Page
-    x:Class="CellTakeover.MainPage"
-    xmlns:viewmodel="using:CellTakeover"
+    x:Class="FungusToast.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:CellTakeover"
     xmlns:logic="using:Logic"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:fungusToast="using:FungusToast"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
     <UserControl.Resources>
-        <local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+        <fungusToast:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>
-        <local:CellTakeoverViewModel x:Key="ViewModel"></local:CellTakeoverViewModel>
+        <fungusToast:FungusToastViewModel x:Key="ViewModel"></fungusToast:FungusToastViewModel>
     </UserControl.Resources>
 
     <Grid Padding="15" Loaded="MainGrid_Loaded">
@@ -90,7 +89,7 @@
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="Player" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="Live Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                         <TextBlock Grid.Row="0" Grid.Column="3" Text="Regrown Cells"  Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Dead Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Live Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                     </Grid>
                 </GridView.Header>
                 <GridView.ItemsPanel>
@@ -121,37 +120,17 @@
             </GridView>
         </ContentDialog>
 
-        <StackPanel Grid.Row="0" Grid.Column="0">
-            <Button Name="GrowButton" Click="Grow_OnClick" 
-                    ToolTipService.ToolTip="Trigger the next generation of cell growth" Content="Start Growing!" 
-                    ToolTipService.Placement="Right"
-                    FontSize="40" HorizontalAlignment="Center"></Button>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Rounds until next mutation: " 
-                           ToolTipService.ToolTip="When the round counter is up each player must spend their mutation points to enhance their organism."
-                           Style="{StaticResource SubtitleTextBlockStyle}" 
-                           HorizontalAlignment="Right"
-                           Margin="0 15 0 0"></TextBlock>
-                <TextBlock Grid.Column="1" 
-                           Text="{x:Bind ViewModel.RoundsUntilNextMutation, Mode=OneWay}" 
-                           HorizontalAlignment="Left" 
-                           Style="{StaticResource SubtitleTextBlockStyle}"
-                           Margin="5 15 0 0"></TextBlock>
-            </Grid>
-        </StackPanel>
-
         <TextBlock Grid.Row="0" Grid.Column="1"
                 Style="{StaticResource HeaderTextBlockStyle}" 
-                Text="Cell Takeover" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
+                Text="Fungus Toast" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">
+        </TextBlock>
+
+        <Button Content="Clear Existing Game" Click="ClearExistingGame_OnClick"></Button>
 
         <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
-                    <Grid Name="{x:Bind PlayerNumber}" Padding="10" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
+                    <Grid Name="{x:Bind PlayerId}" Padding="10" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
                         <Grid.RowDefinitions>
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
@@ -167,7 +146,8 @@
 
                         <ContentDialog Title="{x:Bind Path=Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0} Skill Tree'}" 
                                        CloseButtonText="Close"
-                                       Loaded="SkillTreeDialog_Loaded">
+                                       Loaded="SkillTreeDialog_Loaded"
+                                       Opened="SkillTreeDialog_OnOpened">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition></RowDefinition>
@@ -193,7 +173,7 @@
                                     <Button Style="{StaticResource MutationChoiceButton}"
                                             Name="WildMutationButton"
                                             IsEnabled="False" 
-                                            Click="IncreaseMutationChance_Click"
+                                            Click="IncreaseHypermutation_Click"
                                             Loaded="MutationOptionButton_Loaded">
                                         <Image Source="Assets/Skill Icons/mutation_chance.png"></Image>
                                     </Button>
@@ -209,7 +189,7 @@
                                             <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Wild Mutation"  
+                                                   Text="Hypermutation"  
                                                    Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
                                         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                                    Text="{x:Bind AddMutationChanceMessage, Mode=OneTime}"
@@ -223,7 +203,7 @@
                                     <Button Style="{StaticResource MutationChoiceButton}"
                                             Name="ExplosiveGrowthButton"
                                             IsEnabled="False" 
-                                            Click="IncreaseCornerGrowthChance_Click"
+                                            Click="IncreaseBudding_Click"
                                             Loaded="MutationOptionButton_Loaded">
                                         <Image Source="Assets/Skill Icons/corner_growth.png"></Image>
                                     </Button>
@@ -253,7 +233,7 @@
                                     <Button Style="{StaticResource MutationChoiceButton}"
                                             Name="RegrowthButton"
                                             IsEnabled="False" 
-                                            Click="IncreaseRegrowthChance_Click"
+                                            Click="IncreaseRegeneration_Click"
                                             Loaded="MutationOptionButton_Loaded">
                                         <Image Source="Assets/Skill Icons/regrowth.png"></Image>
                                     </Button>
@@ -275,7 +255,7 @@
                                                    Text="{x:Bind AddRegrowthChanceMessage, Mode=OneTime}"
                                                    TextWrapping="Wrap"></TextBlock>
                                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Regrowth Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegrowthChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegenerationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
                                     </Grid>
                                 </StackPanel>
 
@@ -421,7 +401,7 @@
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="{x:Bind LiveCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="☠" TextAlignment="Center"></TextBlock>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Dead Cells:"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Live Cells:"></TextBlock>
                             <TextBlock Grid.Row="1" Grid.Column="2" Text="{x:Bind DeadCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
 
                             <TextBlock Grid.Row="2" Grid.Column="0" Text="🌲" TextAlignment="Center"></TextBlock>
@@ -434,7 +414,7 @@
             </ListView.ItemTemplate>
         </ListView>
         
-        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="PetriDish" Padding="0 0 0 20" BorderThickness="1"></controls:UniformGrid>
+        <controls:UniformGrid Grid.Row="1" Grid.Column="1" Name="Toast" Padding="0 0 0 20" BorderThickness="1"></controls:UniformGrid>
 
         <Grid Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left">
             <Grid.RowDefinitions>
@@ -463,7 +443,7 @@
 
             <TextBlock Grid.Row="2" Grid.Column="0" 
                            Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="Total Dead Cells:" ></TextBlock>
+                           Text="Total Live Cells:" ></TextBlock>
             <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
                            Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>

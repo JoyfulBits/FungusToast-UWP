@@ -8,10 +8,8 @@ namespace Logic
 {
     public class Player : IPlayer
     {
-        private readonly ICellGrowthCalculator _cellGrowthCalculator;
-        private readonly ISurroundingCellCalculator _surroundingCellCalculator;
         private Color _color;
-        private int _playerNumber;
+        private string _playerId;
         private GrowthScorecard _growthScorecard;
         private int _liveCells;
         private int _deadCells;
@@ -19,17 +17,18 @@ namespace Logic
         private string _name;
         private int _regrownCells;
         private int _availableMutationPoints;
+        private double _hyperMutationSkillLevel;
+        private double _antiApoptosisSkillLevel;
+        private double _regenerationSkillLevel;
+        private double _buddingSkillLevel;
+        private double _mycotoxinsSkillLevel;
 
-        public Player(string name, Color playerCellColor, int playerNumber, 
-            ICellGrowthCalculator cellGrowthCalculator, 
-            ISurroundingCellCalculator surroundingCellCalculator,
+        public Player(string name, Color playerCellColor, string playerId,
             bool isHuman)
         {
             Name = name;
             Color = playerCellColor;
-            PlayerNumber = playerNumber;
-            _cellGrowthCalculator = cellGrowthCalculator;
-            _surroundingCellCalculator = surroundingCellCalculator;
+            PlayerId = playerId;
             IsHuman = isHuman;
             _growthScorecard = new GrowthScorecard();
         }
@@ -68,13 +67,13 @@ namespace Logic
             }
         }
 
-        public int PlayerNumber
+        public string PlayerId
         {
-            get => _playerNumber;
+            get => _playerId;
             set
             {
-                if (value == _playerNumber) return;
-                _playerNumber = value;
+                if (value == _playerId) return;
+                _playerId = value;
                 OnPropertyChanged();
             }
         }
@@ -95,17 +94,85 @@ namespace Logic
                 OnPropertyChanged(nameof(BottomGrowthChance));
                 OnPropertyChanged(nameof(BottomLeftGrowthChance));
                 OnPropertyChanged(nameof(LeftGrowthChance));
+
+                OnPropertyChanged(nameof(ApoptosisChancePercentage));
+                OnPropertyChanged(nameof(StarvedCellDeathChancePercentage));
+                OnPropertyChanged(nameof(RegenerationChancePercentage));
+                OnPropertyChanged(nameof(MutationChancePercentage));
+                OnPropertyChanged(nameof(MycotoxinFungicideChancePercentage));
             }
         }
 
-        public int TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
-        public int TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
-        public int TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
-        public int RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right];
-        public int BottomRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight];
-        public int BottomGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Bottom];
-        public int BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft];
-        public int LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left];
+        public double ApoptosisChancePercentage => GrowthScorecard.ApoptosisChancePercentage;
+        public double StarvedCellDeathChancePercentage => GrowthScorecard.StarvedCellDeathChancePercentage;
+        public double RegenerationChancePercentage => GrowthScorecard.RegenerationChancePercentage;
+        public double MutationChancePercentage => GrowthScorecard.MutationChancePercentage;
+        public double MycotoxinFungicideChancePercentage => GrowthScorecard.MycotoxinFungicideChancePercentage;
+
+
+        public double TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
+        public double TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
+        public double TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
+        public double RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right];
+        public double BottomRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight];
+        public double BottomGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Bottom];
+        public double BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft];
+        public double LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left];
+
+        public double HyperMutationSkillLevel
+        {
+            get => _hyperMutationSkillLevel;
+            set
+            {
+                if (value.Equals(_hyperMutationSkillLevel)) return;
+                _hyperMutationSkillLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double AntiApoptosisSkillLevel
+        {
+            get => _antiApoptosisSkillLevel;
+            set
+            {
+                if (value.Equals(_antiApoptosisSkillLevel)) return;
+                _antiApoptosisSkillLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double RegenerationSkillLevel
+        {
+            get => _regenerationSkillLevel;
+            set
+            {
+                if (value.Equals(_regenerationSkillLevel)) return;
+                _regenerationSkillLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double BuddingSkillLevel
+        {
+            get => _buddingSkillLevel;
+            set
+            {
+                if (value.Equals(_buddingSkillLevel)) return;
+                _buddingSkillLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double MycotoxinsSkillLevel
+        {
+            get => _mycotoxinsSkillLevel;
+            set
+            {
+                if (value.Equals(_mycotoxinsSkillLevel)) return;
+                _mycotoxinsSkillLevel = value;
+                OnPropertyChanged();
+            }
+        }
 
         public int LiveCells
         {
@@ -140,27 +207,6 @@ namespace Logic
             }
         }
 
-
-        public BioCell MakeCell(int cellIndex)
-        {
-            return new BioCell(this, cellIndex, Color, _surroundingCellCalculator);
-        }
-
-        public BioCell RegrowCell(BioCell deadCell)
-        {
-            return MakeCell(deadCell.CellIndex);
-        }
-
-        public CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells)
-        {
-            return _cellGrowthCalculator.CalculateCellGrowth(cell, this, surroundingCells);
-        }
-
-        public bool GetsFreeMutation()
-        {
-            return RandomNumberGenerator.Random.Next(0, 99) < GrowthScorecard.MutationChancePercentage;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -175,7 +221,7 @@ namespace Logic
 
         public string AddRegrowthChanceMessage => MutationOptionGenerator.IncreaseRegrowthChanceMessage;
 
-        public void IncreaseMutationChance()
+        public void IncreaseHypermutation()
         {
             GrowthScorecard.MutationChancePercentage += MutationOptionGenerator.AdditionalMutationPercentageChancePerAttributePoint;
             AvailableMutationPoints--;
@@ -187,7 +233,7 @@ namespace Logic
             AvailableMutationPoints--;
         }
 
-        public void IncreaseCornerGrowth()
+        public void IncreaseBudding()
         {
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] +=
                 MutationOptionGenerator.AdditionalCornerGrowthChancePerAttributePoint;
@@ -206,12 +252,17 @@ namespace Logic
             OnPropertyChanged(nameof(BottomLeftGrowthChance));
         }
 
-        public void IncreaseRegrowthChance()
+        public void IncreaseRegeneration()
         {
-            GrowthScorecard.RegrowthChancePercentage +=
+            GrowthScorecard.RegenerationChancePercentage +=
                 MutationOptionGenerator.AdditionalRegrowthChancePerAttributePoint;
 
             AvailableMutationPoints--;
+        }
+
+        public bool IsCurrentPlayer(string userName)
+        {
+            return Name == userName;
         }
     }
 }

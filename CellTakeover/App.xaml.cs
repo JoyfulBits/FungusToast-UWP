@@ -5,7 +5,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace CellTakeover
+namespace FungusToast
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -18,7 +18,6 @@ namespace CellTakeover
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
 

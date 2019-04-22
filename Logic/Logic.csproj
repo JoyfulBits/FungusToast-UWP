@@ -122,14 +122,11 @@
   <ItemGroup>
     <Compile Include="AiType.cs" />
     <Compile Include="BioCell.cs" />
-    <Compile Include="CellGrowthCalculator.cs" />
     <Compile Include="CellGrowthResult.cs" />
-    <Compile Include="CellRegrowthCalculator.cs" />
     <Compile Include="CellRegrowthResult.cs" />
+    <Compile Include="Exceptions\InvalidGameStateException.cs" />
     <Compile Include="IAiPlayer.cs" />
-    <Compile Include="Players\AiPlayer.cs" />
     <Compile Include="RandomNumberGenerator.cs" />
-    <Compile Include="GenerationAdvancer.cs" />
     <Compile Include="GridCell.cs" />
     <Compile Include="GrowthScorecard.cs" />
     <Compile Include="ICellGrowthCalculator.cs" />

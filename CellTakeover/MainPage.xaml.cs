@@ -1,42 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
-using Windows.ApplicationModel.Store.Preview.InstallControl;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using Microsoft.Toolkit.Uwp.UI.Controls;
+using ApiClient;
+using ApiClient.Models;
+using ApiClient.Serialization;
 using Logic;
-using Logic.Players;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace CellTakeover
+namespace FungusToast
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public CellTakeoverViewModel ViewModel { get; set; }
+        public FungusToastViewModel ViewModel { get; set; }
+
+        //TODO this is hard-coded until we get authentication working
+        private readonly string _userName = MockDataBuilder.AppUserName;
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
             TintColor = Colors.White
         };
 
-        private readonly Dictionary<int, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<int, Dictionary<string, Button>>();
-        private readonly Dictionary<int, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<int, TextBlock>();
-        private readonly Dictionary<int, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<int, ContentDialog>();
-        private readonly Dictionary<int, Button> _playerNumberToSkillTreeButton = new Dictionary<int, Button>();
-        private readonly Dictionary<int, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<int, SolidColorBrush>();
+        private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<string, Dictionary<string, Button>>();
+        private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
+        private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
+        private readonly Dictionary<string, Button> _playerNumberToSkillTreeButton = new Dictionary<string, Button>();
+        private readonly Dictionary<string, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<string, SolidColorBrush>();
 
         private char _deadCellSymbol = '☠';
 
@@ -47,33 +50,51 @@ namespace CellTakeover
 
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
+        private IFungusToastApiClient _fungusToastApiClient;
 
-        //--TODO introduce dependency injection framework
-        private ICellGrowthCalculator _cellGrowthCalculator;
-        private ICellRegrowthCalculator _cellRegrowthCalculator;
-        private ISurroundingCellCalculator _surroundingCellCalculator;
-        private GenerationAdvancer _generationAdvancer;
+        private readonly ApplicationDataContainer _applicationDataContainer = ApplicationData.Current.LocalSettings;
+        private const string SettingsContainerName = "SettingsContainer";
+        private const string ActiveGameIdSetting = "ActiveGameId";
+        private readonly ApplicationDataContainer _settingsDataContainer;
 
+        private GameModel _gameModel;
+
+        private SkillExpenditureRequest _skillExpenditureRequest = new SkillExpenditureRequest();
+
+        private bool _mainGridLoaded = false;
+        private bool _playersListViewLoaded = false;
+        private bool _gameLoaded = false;
 
         public MainPage()
         {
             InitializeDependencies();
             InitializeComponent();
-            ViewModel = new CellTakeoverViewModel();
+            ViewModel = new FungusToastViewModel();
+            _settingsDataContainer =
+                _applicationDataContainer.CreateContainer(SettingsContainerName,
+                    ApplicationDataCreateDisposition.Always);
         }
 
         private void InitializeDependencies()
         {
-            _cellGrowthCalculator = new CellGrowthCalculator();
-            _surroundingCellCalculator = new SurroundingCellCalculator(GameSettings.NumberOfColumnsAndRows);
-            _cellRegrowthCalculator = new CellRegrowthCalculator(_surroundingCellCalculator);
-            _generationAdvancer = new GenerationAdvancer(_cellRegrowthCalculator);
+            _fungusToastApiClient = new FungusToastApiClient(GameSettings.BaseURL, new GamesApiClient(new Serializer()));
         }
 
 
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            await GameSettingsDialog.ShowAsync();
+            _mainGridLoaded = true;
+            //--if there is an active game then load that, otherwise prompt to start a new game
+            if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
+            {
+                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
+                _gameLoaded = true;
+                InitializeGame(_gameModel);
+            }
+            else
+            {
+                await GameSettingsDialog.ShowAsync();
+            }
         }
 
         private readonly List<Color> _availableColors = new List<Color>
@@ -85,51 +106,82 @@ namespace CellTakeover
             Colors.Gray
         };
 
-        private void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var players = new List<IPlayer>();
             var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
-            for (int i = 1; i <= numberOfHumanPlayers; i++)
-            {
-                players.Add(new Player($"Player {i}", _availableColors[i-1], i, _cellGrowthCalculator, _surroundingCellCalculator, true));
-            }
-
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
-            for (int i = 0; i < numberOfAiPlayers; i++)
+            var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
+            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
+            _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
+
+            InitializeGame(_gameModel);
+        }
+
+        private void InitializeGame(GameModel game)
+        {
+            var players = new List<IPlayer>();
+            for (var i = 1; i <= game.Players.Count; i++)
             {
-                players.Add(new AiPlayer($"AI Player {i + 1}", _availableColors[i + numberOfHumanPlayers], 
-                    i + 1 + numberOfHumanPlayers, 
-                    _cellGrowthCalculator, _surroundingCellCalculator, false));
+                var playerState = game.Players[i - 1];
+                var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
+                    playerState.Human)
+                {
+                    AvailableMutationPoints = playerState.MutationPoints
+                };
+                players.Add(player);
             }
 
             ViewModel.Players = players;
 
             foreach (var player in players)
             {
-                _playerNumberToColorBrushDictionary.Add(player.PlayerNumber, new SolidColorBrush(player.Color));
-                _playerNumberToMutationButtons.Add(player.PlayerNumber, new Dictionary<string, Button>());
+                _playerNumberToColorBrushDictionary.Add(player.PlayerId, new SolidColorBrush(player.Color));
+                _playerNumberToMutationButtons.Add(player.PlayerId, new Dictionary<string, Button>());
             }
 
-            InitializePetriDishWithPlayerCells();
+            InitializeToastWithPlayerCells(game);
         }
 
-        private void InitializePetriDishWithPlayerCells()
+        private void InitializeToastWithPlayerCells(GameModel game)
         {
-            PetriDish.Columns = GameSettings.NumberOfColumnsAndRows;
-            PetriDish.Rows = GameSettings.NumberOfColumnsAndRows;
+            Toast.Columns = _gameModel.GridSize;
+            Toast.Rows = _gameModel.GridSize;
+
             //--make the grid a square since it wasn't doing that for some reason
-            PetriDish.Width = PetriDish.ActualHeight;
+            Toast.Width = Toast.ActualHeight;
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
-            Thickness noPaddingOrMargin = new Thickness(0);
+            var noPaddingOrMargin = new Thickness(0);
+            var previousGameState = game.StartingGameState;
 
-            for (var i = 0; i < GameSettings.NumberOfCells; i++)
+            for (var i = 0; i < game.NumberOfCells; i++)
             {
-                PetriDish.Children.Add(new Button
+                Brush backgroundBrush;
+                char gridCellContent = ' ';
+                if (previousGameState.CellsDictionary.ContainsKey(i))
+                {
+                    var cell = previousGameState.CellsDictionary[i];
+                    if (!cell.Live)
+                    {
+                        backgroundBrush = _deadCellBrush;
+                        gridCellContent = _deadCellSymbol;
+                    }
+                    else
+                    {
+                        backgroundBrush = _playerNumberToColorBrushDictionary[cell.PlayerId];
+                    }
+                }
+                else
+                {
+                    backgroundBrush = _emptyCellBrush;
+                }
+
+                Toast.Children.Add(new Button
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
-                    Background = _emptyCellBrush,
+                    Background = backgroundBrush,
+                    Content = gridCellContent,
                     BorderBrush = blackSolidColorBrush,
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Stretch,
@@ -142,240 +194,140 @@ namespace CellTakeover
                     FontSize = 10
                 });
             }
-
-            var cellsPerPlayer = GameSettings.NumberOfCells / ViewModel.Players.Count;
-            for (int i = 0; i < ViewModel.Players.Count; i++)
-            {
-                var player = ViewModel.Players[i];
-                player.LiveCells++;
-                var firstCandidateStartCell = cellsPerPlayer * i;
-                //--make sure there is at least 2 rows between starting cells
-                var endCandidateStartCell = firstCandidateStartCell + cellsPerPlayer - GameSettings.NumberOfColumnsAndRows * 2;
-                var startCellIndex = RandomNumberGenerator.Random.Next(firstCandidateStartCell, endCandidateStartCell);
-                var button = PetriDish.Children[startCellIndex] as Button;
-                button.Background = new SolidColorBrush(ViewModel.Players[i].Color);
-                button.Content = "  ";
-                //button.Content = player.PlayerSymbol;
-                ViewModel.AddNewLiveCell(player.MakeCell(startCellIndex));
-            }
         }
 
-        private async void NextGenerationCycle()
+        private async Task RenderUpdates(GameModel game)
         {
-            for (int i = 0; i < ViewModel.NumberOfGenerationsBetweenFreeMutations; i++)
+            List<Task> tasks = new List<Task>();
+            foreach (var growthCycle in game.GrowthCycles)
             {
-                await NextGeneration();
-            }
-
-            foreach (var player in ViewModel.Players)
-            {
-                await IncreasePlayerMutationPoints(player);
-            }
-
-            //--only allow points to be spent every X rounds
-            PromptForMutationChoice();
-        }
-
-        private async Task NextGeneration()
-        {
-            GrowButton.IsEnabled = false;
-
-            List<IPlayer> players = ViewModel.Players;
-
-            var nextGenerationResult = await Task.Run(() => _generationAdvancer.NextGeneration(ViewModel.CurrentLiveCells, ViewModel.CurrentDeadCells,
-                players));
-
-            AddNewCells(nextGenerationResult.NewLiveCells);
-
-            KillCells(nextGenerationResult.NewDeadCells);
-
-            RegrowCells(nextGenerationResult.RegrownCells);
-
-            ViewModel.GenerationNumber++;
-
-            foreach (var player in players)
-            {
-                var playerGrowthSummary = nextGenerationResult.PlayerGrowthSummaries[player.PlayerNumber];
-
-                player.LiveCells += playerGrowthSummary.NewLiveCellCount;
-                player.LiveCells += nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
-                player.LiveCells -= playerGrowthSummary.NewDeadCellCount;
-
-                player.DeadCells += playerGrowthSummary.NewDeadCellCount;
-                player.DeadCells -= nextGenerationResult.PlayerNumberToNumberOfDeadCellsEliminated[player.PlayerNumber];
-
-                var numberOfRegrownCells = nextGenerationResult.PlayerNumberToNumberOfRegrownCells[player.PlayerNumber];
-                player.RegrownCells += numberOfRegrownCells;
-
-                if (player.GetsFreeMutation())
+                foreach (var toastChange in growthCycle.ToastChanges)
                 {
-                    await IncreasePlayerMutationPoints(player);
-                }
-            }
-
-            //--since it's not a spending round we can keep the grow button enabled
-            GrowButton.IsEnabled = true;
-
-            await CheckForGameEnd();
-        }
-
-        private void AddNewCells(List<BioCell> newLiveCells)
-        {
-            foreach (var newCell in newLiveCells)
-            {
-                //--its possible for two different cells to split to the same cell. For now, the first cell wins
-                if (!ViewModel.CurrentLiveCells.ContainsKey(newCell.CellIndex))
-                {
-                    var button = PetriDish.Children[newCell.CellIndex] as Button;
-                    button.Background = _playerNumberToColorBrushDictionary[newCell.Player.PlayerNumber];
-                    //button.Content = newCell.Player.PlayerSymbol;
-                    ViewModel.AddNewLiveCell(newCell);
-                }
-            }
-        }
-
-        private void KillCells(List<BioCell> newDeadCells)
-        {
-            foreach (var newDeadCell in newDeadCells)
-            {
-                if (!ViewModel.CurrentDeadCells.ContainsKey(newDeadCell.CellIndex))
-                {
-                    var button = PetriDish.Children[newDeadCell.CellIndex] as Button;
-                    button.Background = _deadCellBrush;
-                    button.Content = _deadCellSymbol;
-                    ViewModel.AddNewDeadCell(newDeadCell);
+                    tasks.Add(RenderToastChange(toastChange));
                 }
 
-                ViewModel.RemoveLiveCell(newDeadCell.CellIndex);
-            }
-        }
-
-        private void RegrowCells(List<BioCell> regrownCells)
-        {
-            foreach (var regrownCell in regrownCells)
-            {
-                ViewModel.RegrowCell(regrownCell);
-
-                var element = PetriDish.Children[regrownCell.CellIndex] as Button;
-                element.Background = _playerNumberToColorBrushDictionary[regrownCell.Player.PlayerNumber];
-                element.Content = string.Empty;
-            }
-        }
-
-        private async void Grow_OnClick(object sender, RoutedEventArgs e)
-        {
-            NextGenerationCycle();
-            var growButton = sender as Button;
-            growButton.Visibility = Visibility.Collapsed;
-        }
-
-        private async Task CheckForGameEnd()
-        {
-            if (ViewModel.TotalEmptyCells == 0)
-            {
-                if (ViewModel.GameEndCountDown == 0)
+                foreach (var mutationPointEarned in growthCycle.MutationPointsEarned)
                 {
-                    ViewModel.TriggerGameOverResultOnPropertyChanged();
-                    await GameEndContentDialog.ShowAsync();
+                    tasks.Add(RenderMutationPointEarned(mutationPointEarned));
                 }
-                else
+
+                foreach (var task in tasks)
                 {
-                    ViewModel.GameEndCountDown--;
+                    await task;
                 }
+
+                tasks = new List<Task>();
+
+                ViewModel.GenerationNumber = growthCycle.GenerationNumber;
             }
-        }
 
-        private bool MutationConsumptionRound()
-        {
-            return ViewModel.GenerationNumber % ViewModel.NumberOfGenerationsBetweenFreeMutations == 0;
-        }
+            ViewModel.RoundNumber = game.RoundNumber;
 
-        private async Task IncreasePlayerMutationPoints(IPlayer player)
-        {
-            player.AvailableMutationPoints++;
-            var mutationPointAnnouncementMessage =
-                _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber];
-
-            mutationPointAnnouncementMessage.Opacity = 1;
-            mutationPointAnnouncementMessage.Fade(0, 2500).StartAsync();
-        }
-
-        private void PromptForMutationChoice()
-        {
-            foreach (var player in ViewModel.Players)
+            foreach (var playerState in game.Players)
             {
-                if (player.IsHuman)
+                var matchingPlayer = ViewModel.Players.FirstOrDefault(x => x.PlayerId == playerState.Id);
+                if (matchingPlayer == null)
                 {
-                    var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
-                    skillTreeButton.BorderBrush = _activeBorderBrush;
-                    skillTreeButton.BorderThickness = _activeThickness;
-                    EnablePlayerMutationButtons(player);
+                    throw new InvalidOperationException($"Couldn't find a player in this game with id '{playerState.Id}'");
                 }
-                else
-                {
-                    MakeAiTurn(player as IAiPlayer);
-                }
-            }
-        }
 
-        private void MakeAiTurn(IAiPlayer aiPlayer)
-        {
-            switch (aiPlayer.AiType)
-            {
-                case AiType.ExtremeGrowth:
-                    while (aiPlayer.AvailableMutationPoints > 0)
+                matchingPlayer.AvailableMutationPoints = playerState.MutationPoints;
+                matchingPlayer.DeadCells = playerState.DeadCells;
+                matchingPlayer.LiveCells = playerState.LiveCells;
+                matchingPlayer.RegrownCells = playerState.RegeneratedCells;
+
+                matchingPlayer.HyperMutationSkillLevel = playerState.HyperMutationSkillLevel;
+                matchingPlayer.AntiApoptosisSkillLevel = playerState.AntiApoptosisSkillLevel;
+                matchingPlayer.RegenerationSkillLevel = playerState.RegenerationSkillLevel;
+                matchingPlayer.BuddingSkillLevel = playerState.BuddingSkillLevel;
+                matchingPlayer.MycotoxinsSkillLevel = playerState.MycotoxinsSkillLevel;
+
+                var updatedGrowthScorecard = new GrowthScorecard
+                {
+                    ApoptosisChancePercentage = playerState.ApoptosisChance,
+                    StarvedCellDeathChancePercentage = playerState.StarvedCellDeathChance,
+                    MutationChancePercentage = playerState.MutationChance,
+                    RegenerationChancePercentage = playerState.RegenerationChance,
+                    MycotoxinFungicideChancePercentage = playerState.MycotoxinFungicideChance,
+                    GrowthChanceDictionary = new Dictionary<RelativePosition, double>
                     {
-                        if (aiPlayer.TopLeftGrowthChance < 50)
-                        {
-                            aiPlayer.IncreaseCornerGrowth();
-                        }
-                        else if(aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
-                        {
-                            aiPlayer.DecreaseApoptosisChance();
-                        }
-                        else
-                        {
-                            aiPlayer.IncreaseRegrowthChance();
-                        }
+                        { RelativePosition.TopLeft, playerState.TopLeftGrowthChance },
+                        { RelativePosition.Top, playerState.TopGrowthChance },
+                        { RelativePosition.TopRight, playerState.TopRightGrowthChance },
+                        { RelativePosition.Right, playerState.RightGrowthChance },
+                        { RelativePosition.BottomRight, playerState.BottomRightGrowthChance },
+                        { RelativePosition.Bottom, playerState.BottomGrowthChance },
+                        { RelativePosition.BottomLeft, playerState.BottomLeftGrowthChance },
+                        { RelativePosition.Left, playerState.LeftGrowthChance },
                     }
+                };
 
-                    break;
+                matchingPlayer.GrowthScorecard = updatedGrowthScorecard;
+            }
 
-                case AiType.Random:
-                    while (aiPlayer.AvailableMutationPoints > 0)
-                    {
-                        var mutationChoiceIndex = RandomNumberGenerator.Random.Next(0, 3);
-                        switch (mutationChoiceIndex)
-                        {
-                            case 0:
-                                aiPlayer.IncreaseMutationChance();
-                                break;
-                            case 1:
-                                aiPlayer.IncreaseCornerGrowth();
-                                break;
-                            case 2:
-                                aiPlayer.IncreaseRegrowthChance();
-                                break;
-                            case 3:
-                                if (aiPlayer.GrowthScorecard.ApoptosisChancePercentage > 0)
-                                {
-                                    aiPlayer.DecreaseApoptosisChance();
-                                }
-                                else
-                                {
-                                    aiPlayer.IncreaseRegrowthChance();
-                                }
-                                break;
-                        }
-                    }
+            ViewModel.GenerationNumber = game.GenerationNumber;
+            ViewModel.RoundNumber = game.RoundNumber;
+            ViewModel.TotalDeadCells = game.TotalDeadCells;
+            ViewModel.TotalEmptyCells = game.TotalEmptyCells;
+            ViewModel.TotalLiveCells = game.TotalLiveCells;
+            ViewModel.TotalRegeneratedCells = game.TotalRegeneratedCells;
+        }
 
-                    break;
-                default:
-                    throw new Exception("Unexpected AiType: " + aiPlayer.AiType);
+        private async Task RenderToastChange(ToastChange toastChange)
+        {
+            var currentGridCell = Toast.Children[toastChange.Index] as Button;
+            currentGridCell.Opacity = 0;
+
+            if (toastChange.Live)
+            {
+                currentGridCell.Background = _playerNumberToColorBrushDictionary[toastChange.PlayerId];
+                currentGridCell.Content = string.Empty;
+            }
+            else
+            {
+                currentGridCell.Background = _deadCellBrush;
+                currentGridCell.Content = _deadCellSymbol;
+            }
+
+            await currentGridCell.Fade(1, 1500).StartAsync();
+        }
+
+        private async Task RenderMutationPointEarned(KeyValuePair<string, int> mutationPointEarned)
+        {
+            if (mutationPointEarned.Value > 0)
+            {
+                var mutationPointAnnouncementMessage =
+                    _playerNumberToMutationPointAnnouncementTextBlock[mutationPointEarned.Key];
+                mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
+
+                mutationPointAnnouncementMessage.Opacity = 1;
+                await mutationPointAnnouncementMessage.Fade(0, 1500).StartAsync();
             }
         }
 
-        private void CheckForRemainingMutationPoints(IPlayer player)
+        private void EnableMutationButtons(IPlayer player)
+        {
+            if (player.AvailableMutationPoints > 0)
+            {
+                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
+                skillTreeButton.BorderBrush = _activeBorderBrush;
+                skillTreeButton.BorderThickness = _activeThickness;
+                var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
+                foreach (var mutationButton in playerMutationButtons)
+                {
+                    if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
+                    {
+                        mutationButton.Value.IsEnabled = false;
+                    }
+                    else
+                    {
+                        mutationButton.Value.IsEnabled = true;
+                    }
+                }
+            }
+        }
+
+        private async Task CheckForRemainingMutationPoints(IPlayer player)
         {
             if (player.AvailableMutationPoints > 0)
             {
@@ -383,90 +335,80 @@ namespace CellTakeover
             }
 
             DisablePlayerMutationButtons(player);
+            
+            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, _skillExpenditureRequest);
 
-            foreach (var p in ViewModel.Players)
+            _skillExpenditureRequest = new SkillExpenditureRequest();
+
+            if (skillUpdateResult.NextRoundAvailable)
             {
-                if (p.AvailableMutationPoints > 0)
-                {
-                    return;
-                }
-            }
+                _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);
 
-            //--if no players have remaining mutation points then we can go back to growing
-            NextGenerationCycle();
+                await RenderUpdates(_gameModel);
+
+                EnableMutationButtons(player);
+            }
         }
 
-        private void IncreaseMutationChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseHypermutation_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
 
-            player.IncreaseMutationChance();
+            player.IncreaseHypermutation();
+            _skillExpenditureRequest.HypermutationPoints++;
 
-            CheckForRemainingMutationPoints(player);
+            await CheckForRemainingMutationPoints(player);
         }
 
-        private void AntiApoptosis_Click(object sender, RoutedEventArgs e)
+        private async void AntiApoptosis_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.DecreaseApoptosisChance();
+            _skillExpenditureRequest.AntiApoptosisPoints++;
             if (player.GrowthScorecard.ApoptosisChancePercentage <= 0)
             {
                 button.IsEnabled = false;
             }
 
-            CheckForRemainingMutationPoints(player);
+            await CheckForRemainingMutationPoints(player);
         }
 
-        private void IncreaseCornerGrowthChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseBudding_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            player.IncreaseCornerGrowth();
+            player.IncreaseBudding();
+            _skillExpenditureRequest.BuddingPoints++;
 
-            CheckForRemainingMutationPoints(player);
+            await CheckForRemainingMutationPoints(player);
         }
 
-        private void IncreaseRegrowthChance_Click(object sender, RoutedEventArgs e)
+        private async void IncreaseRegeneration_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            player.IncreaseRegrowthChance();
+            player.IncreaseRegeneration();
+            _skillExpenditureRequest.RegenerationPoints++;
 
-            CheckForRemainingMutationPoints(player);
-        }
-
-        private void EnablePlayerMutationButtons(IPlayer player)
-        {
-            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
-            foreach (var mutationButton in playerMutationButtons)
-            {
-                if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
-                {
-                    mutationButton.Value.IsEnabled = false;
-                }
-                else
-                {
-                    mutationButton.Value.IsEnabled = true;
-                }
-            }
+            await CheckForRemainingMutationPoints(player);
         }
 
         private void DisablePlayerMutationButtons(IPlayer player)
         {
-            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerNumber];
+            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
 
             foreach (var button in playerMutationButtons)
             {
                 button.Value.IsEnabled = false;
             }
 
-            var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerNumber];
+            var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
             skillTreeButton.BorderBrush = _normalBorderBrush;
             skillTreeButton.BorderThickness = _normalThickness;
 
-            var dialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
+            var dialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             dialog.Hide();
         }
         
@@ -474,8 +416,9 @@ namespace CellTakeover
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            var playerButtons = _playerNumberToMutationButtons[player.PlayerNumber];
-            if (player.AvailableMutationPoints > 0 && MutationConsumptionRound())
+            var playerButtons = _playerNumberToMutationButtons[player.PlayerId];
+
+            if (player.AvailableMutationPoints > 0 && player.IsCurrentPlayer(_userName))
             {
                 button.IsEnabled = true;
             }
@@ -485,28 +428,43 @@ namespace CellTakeover
             {
                 playerButtons.Add(button.Name, button);
             }
-
         }
 
-        private void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
+        private async void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
         {
             var mutationPointMessageTextBlock = sender as TextBlock;
             var player = mutationPointMessageTextBlock.DataContext as IPlayer;
-            _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerNumber] = mutationPointMessageTextBlock;
+            _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerId] = mutationPointMessageTextBlock;
+
+            if (_gameLoaded && _playerNumberToMutationPointAnnouncementTextBlock.Keys.Count == _gameModel.Players.Count)
+            {
+                await RenderUpdates(_gameModel);
+            }
         }
 
         private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
         {
             var skillTreeDialog = sender as ContentDialog;
             var player = skillTreeDialog.DataContext as IPlayer;
-            _playerNumberToSkillTreeDialog[player.PlayerNumber] = skillTreeDialog;
+            _playerNumberToSkillTreeDialog[player.PlayerId] = skillTreeDialog;
+        }
+
+        private void SkillTreeDialog_OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            var skillTreeDialog = sender as ContentDialog;
+            var player = skillTreeDialog.DataContext as IPlayer;
+
+            if (player.IsCurrentPlayer(_userName))
+            {
+                EnableMutationButtons(player);
+            }
         }
 
         private async void SkillTreeButton_OnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerNumber];
+            var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
 
@@ -514,7 +472,7 @@ namespace CellTakeover
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
-            _playerNumberToSkillTreeButton[player.PlayerNumber] = button;
+            _playerNumberToSkillTreeButton[player.PlayerId] = button;
         }
 
         private void Exit_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -524,6 +482,11 @@ namespace CellTakeover
 
         private async void PlayAgain_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            await RestartApp();
+        }
+
+        private static async Task RestartApp()
+        {
             var result =
                 await CoreApplication.RequestRestartAsync(string.Empty);
             if (result == AppRestartFailureReason.NotInForeground ||
@@ -532,6 +495,20 @@ namespace CellTakeover
             {
                 Debug.WriteLine("RequestRestartAsync failed: {0}", result);
             }
+        }
+
+        private async Task RenderUpdatesIfUiIsReady()
+        {
+            if (_gameLoaded && _mainGridLoaded && _playerNumberToMutationButtons.Count == _gameModel.Players.Count)
+            {
+                await RenderUpdates(_gameModel);
+            }
+        }
+
+        private async void ClearExistingGame_OnClick(object sender, RoutedEventArgs e)
+        {
+            _settingsDataContainer.Values.Remove(ActiveGameIdSetting);
+            await RestartApp();
         }
     }
 }

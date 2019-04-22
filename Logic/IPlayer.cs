@@ -10,27 +10,28 @@ namespace Logic
         string Name { get; set; }
         int AvailableMutationPoints { get; set; }
         Color Color { get; set; }
-        int PlayerNumber { get; set; }
+        string PlayerId { get; set; }
         int LiveCells { get; set; }
         int DeadCells { get; set; }
         int RegrownCells { get; set; }
         GrowthScorecard GrowthScorecard { get; set; }
-        int TopLeftGrowthChance { get; }
-        int TopGrowthChance { get; }
-        int TopRightGrowthChance { get; }
-        int RightGrowthChance { get; }
-        int BottomRightGrowthChance { get; }
-        int BottomGrowthChance { get; }
-        int BottomLeftGrowthChance { get; }
-        int LeftGrowthChance { get; }
-        bool IsHuman { get; }
-        BioCell MakeCell(int cellIndex);
-        CellGrowthResult CalculateCellGrowth(BioCell cell, SurroundingCells surroundingCells);
-        bool GetsFreeMutation();
-        void IncreaseMutationChance();
+        double TopLeftGrowthChance { get; }
+        double TopGrowthChance { get; }
+        double TopRightGrowthChance { get; }
+        double RightGrowthChance { get; }
+        double BottomRightGrowthChance { get; }
+        double BottomGrowthChance { get; }
+        double BottomLeftGrowthChance { get;  }
+        double LeftGrowthChance { get; }
+        double HyperMutationSkillLevel { get; set; }
+        double AntiApoptosisSkillLevel { get; set; }
+        double RegenerationSkillLevel { get; set; }
+        double BuddingSkillLevel { get; set; }
+        double MycotoxinsSkillLevel { get; set; }
+        void IncreaseHypermutation();
         void DecreaseApoptosisChance();
-        void IncreaseCornerGrowth();
-        void IncreaseRegrowthChance();
-        BioCell RegrowCell(BioCell deadCell);
+        void IncreaseBudding();
+        void IncreaseRegeneration();
+        bool IsCurrentPlayer(string userName);
     }
 }
