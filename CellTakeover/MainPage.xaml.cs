@@ -53,6 +53,9 @@ namespace FungusToast
         private IFungusToastApiClient _fungusToastApiClient;
 
         private readonly ApplicationDataContainer _applicationDataContainer = ApplicationData.Current.LocalSettings;
+        private const string SettingsContainerName = "SettingsContainer";
+        private const string ActiveGameIdSetting = "ActiveGameId";
+        private readonly ApplicationDataContainer _settingsDataContainer;
 
         private GameModel _gameModel;
 
@@ -67,6 +70,9 @@ namespace FungusToast
             InitializeDependencies();
             InitializeComponent();
             ViewModel = new FungusToastViewModel();
+            _settingsDataContainer =
+                _applicationDataContainer.CreateContainer(SettingsContainerName,
+                    ApplicationDataCreateDisposition.Always);
         }
 
         private void InitializeDependencies()
@@ -79,7 +85,7 @@ namespace FungusToast
         {
             _mainGridLoaded = true;
             //--if there is an active game then load that, otherwise prompt to start a new game
-            if (_applicationDataContainer.Values.TryGetValue("activeGameId", out var activeGameId))
+            if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
             {
                 _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
                 _gameLoaded = true;
@@ -107,7 +113,7 @@ namespace FungusToast
 
             var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
             _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
-            _applicationDataContainer.Values["activeGameId"] = _gameModel.Id;
+            _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
 
             InitializeGame(_gameModel);
         }
@@ -147,7 +153,7 @@ namespace FungusToast
 
             var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
             var noPaddingOrMargin = new Thickness(0);
-            var previousGameState = game.StartingGamingState;
+            var previousGameState = game.StartingGameState;
 
             for (var i = 0; i < game.NumberOfCells; i++)
             {
@@ -269,7 +275,7 @@ namespace FungusToast
 
         private async Task RenderToastChange(ToastChange toastChange)
         {
-            var currentGridCell = Toast.Children[toastChange.CellIndex] as Button;
+            var currentGridCell = Toast.Children[toastChange.Index] as Button;
             currentGridCell.Opacity = 0;
 
             if (toastChange.Dead)
@@ -301,19 +307,22 @@ namespace FungusToast
 
         private void EnableMutationButtons(IPlayer player)
         {
-            var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
-            skillTreeButton.BorderBrush = _activeBorderBrush;
-            skillTreeButton.BorderThickness = _activeThickness;
-            var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
-            foreach (var mutationButton in playerMutationButtons)
+            if (player.AvailableMutationPoints > 0)
             {
-                if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
+                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
+                skillTreeButton.BorderBrush = _activeBorderBrush;
+                skillTreeButton.BorderThickness = _activeThickness;
+                var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
+                foreach (var mutationButton in playerMutationButtons)
                 {
-                    mutationButton.Value.IsEnabled = false;
-                }
-                else
-                {
-                    mutationButton.Value.IsEnabled = true;
+                    if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
+                    {
+                        mutationButton.Value.IsEnabled = false;
+                    }
+                    else
+                    {
+                        mutationButton.Value.IsEnabled = true;
+                    }
                 }
             }
         }
@@ -433,7 +442,7 @@ namespace FungusToast
             }
         }
 
-        private async void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
+        private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
         {
             var skillTreeDialog = sender as ContentDialog;
             var player = skillTreeDialog.DataContext as IPlayer;
@@ -441,7 +450,7 @@ namespace FungusToast
 
             if (player.IsCurrentPlayer(_userName))
             {
-               await CheckForRemainingMutationPoints(player);
+                EnableMutationButtons(player);
             }
         }
 
@@ -467,6 +476,11 @@ namespace FungusToast
 
         private async void PlayAgain_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            await RestartApp();
+        }
+
+        private static async Task RestartApp()
+        {
             var result =
                 await CoreApplication.RequestRestartAsync(string.Empty);
             if (result == AppRestartFailureReason.NotInForeground ||
@@ -483,6 +497,12 @@ namespace FungusToast
             {
                 await RenderUpdates(_gameModel);
             }
+        }
+
+        private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            _applicationDataContainer.Values.Remove(ActiveGameIdSetting);
+            await RestartApp();
         }
     }
 }

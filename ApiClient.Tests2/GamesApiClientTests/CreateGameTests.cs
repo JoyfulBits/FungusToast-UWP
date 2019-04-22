@@ -35,7 +35,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.GrowthCycles.ShouldNotBeNull();
             //--there should be no growth cycles if the game hasn't started
             result.GrowthCycles.Count.ShouldBe(0);
-            result.StartingGamingState.FungalCells.Count.ShouldBe(0);
+            result.StartingGameState.FungalCells.Count.ShouldBe(0);
         }
 
         [Test]
@@ -64,8 +64,8 @@ namespace ApiClient.Tests.GamesApiClientTests
             result.TotalLiveCells.ShouldBe(totalNumberOfPlayers);
 
             //--there starting game state will be empty
-            result.StartingGamingState.ShouldNotBeNull();
-            result.StartingGamingState.FungalCells.Count.ShouldBe(0);
+            result.StartingGameState.ShouldNotBeNull();
+            result.StartingGameState.FungalCells.Count.ShouldBe(0);
             
             result.GrowthCycles.ShouldNotBeNull();
             //--there should be a single growth cycle that places each player's starting cell
@@ -83,6 +83,7 @@ namespace ApiClient.Tests.GamesApiClientTests
             var maxCellIndex = result.NumberOfCells - 1;
             AssertToastChangeIsCorrect(growthCycle.ToastChanges[0], maxCellIndex);
             AssertToastChangeIsCorrect(growthCycle.ToastChanges[1], maxCellIndex);
+            growthCycle.ToastChanges[0].Index.ShouldNotBe(growthCycle.ToastChanges[1].Index);
 
             result.Players.ShouldNotBeNull();
             result.Players.Count.ShouldBe(totalNumberOfPlayers);
@@ -136,7 +137,7 @@ namespace ApiClient.Tests.GamesApiClientTests
 
         private static void AssertToastChangeIsCorrect(ToastChange toastChange1, int maxCellIndex)
         {
-            toastChange1.CellIndex.ShouldBeInRange(0, maxCellIndex);
+            toastChange1.Index.ShouldBeInRange(0, maxCellIndex);
             toastChange1.Dead.ShouldBe(false);
             toastChange1.PlayerId.ShouldNotBeNullOrEmpty();
             //--this is only set if the cell is regenerated

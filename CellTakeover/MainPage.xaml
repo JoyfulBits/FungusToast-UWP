@@ -122,7 +122,10 @@
 
         <TextBlock Grid.Row="0" Grid.Column="1"
                 Style="{StaticResource HeaderTextBlockStyle}" 
-                Text="Fungus Toast" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
+                Text="Fungus Toast" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">
+        </TextBlock>
+
+        <Button Content="Clear Existing Game" Click="ButtonBase_OnClick"></Button>
 
         <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
             <ListView.ItemTemplate>
