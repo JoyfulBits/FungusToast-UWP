@@ -129,6 +129,7 @@ namespace FungusToast
                 {
                     AvailableMutationPoints = playerState.MutationPoints
                 };
+                UpdatePlayer(player, playerState);
                 players.Add(player);
             }
 
@@ -231,38 +232,7 @@ namespace FungusToast
                     throw new InvalidOperationException($"Couldn't find a player in this game with id '{playerState.Id}'");
                 }
 
-                matchingPlayer.AvailableMutationPoints = playerState.MutationPoints;
-                matchingPlayer.DeadCells = playerState.DeadCells;
-                matchingPlayer.LiveCells = playerState.LiveCells;
-                matchingPlayer.RegrownCells = playerState.RegeneratedCells;
-
-                matchingPlayer.HyperMutationSkillLevel = playerState.HyperMutationSkillLevel;
-                matchingPlayer.AntiApoptosisSkillLevel = playerState.AntiApoptosisSkillLevel;
-                matchingPlayer.RegenerationSkillLevel = playerState.RegenerationSkillLevel;
-                matchingPlayer.BuddingSkillLevel = playerState.BuddingSkillLevel;
-                matchingPlayer.MycotoxinsSkillLevel = playerState.MycotoxinsSkillLevel;
-
-                var updatedGrowthScorecard = new GrowthScorecard
-                {
-                    ApoptosisChancePercentage = playerState.ApoptosisChance,
-                    StarvedCellDeathChancePercentage = playerState.StarvedCellDeathChance,
-                    MutationChancePercentage = playerState.MutationChance,
-                    RegenerationChancePercentage = playerState.RegenerationChance,
-                    MycotoxinFungicideChancePercentage = playerState.MycotoxinFungicideChance,
-                    GrowthChanceDictionary = new Dictionary<RelativePosition, double>
-                    {
-                        { RelativePosition.TopLeft, playerState.TopLeftGrowthChance },
-                        { RelativePosition.Top, playerState.TopGrowthChance },
-                        { RelativePosition.TopRight, playerState.TopRightGrowthChance },
-                        { RelativePosition.Right, playerState.RightGrowthChance },
-                        { RelativePosition.BottomRight, playerState.BottomRightGrowthChance },
-                        { RelativePosition.Bottom, playerState.BottomGrowthChance },
-                        { RelativePosition.BottomLeft, playerState.BottomLeftGrowthChance },
-                        { RelativePosition.Left, playerState.LeftGrowthChance },
-                    }
-                };
-
-                matchingPlayer.GrowthScorecard = updatedGrowthScorecard;
+                UpdatePlayer(matchingPlayer, playerState);
             }
 
             ViewModel.GenerationNumber = game.GenerationNumber;
@@ -271,6 +241,42 @@ namespace FungusToast
             ViewModel.TotalEmptyCells = game.TotalEmptyCells;
             ViewModel.TotalLiveCells = game.TotalLiveCells;
             ViewModel.TotalRegeneratedCells = game.TotalRegeneratedCells;
+        }
+
+        private static void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
+        {
+            playerToUpdate.AvailableMutationPoints = playerStateValuesToCopy.MutationPoints;
+            playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
+            playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
+            playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
+
+            playerToUpdate.HyperMutationSkillLevel = playerStateValuesToCopy.HyperMutationSkillLevel;
+            playerToUpdate.AntiApoptosisSkillLevel = playerStateValuesToCopy.AntiApoptosisSkillLevel;
+            playerToUpdate.RegenerationSkillLevel = playerStateValuesToCopy.RegenerationSkillLevel;
+            playerToUpdate.BuddingSkillLevel = playerStateValuesToCopy.BuddingSkillLevel;
+            playerToUpdate.MycotoxinsSkillLevel = playerStateValuesToCopy.MycotoxinsSkillLevel;
+
+            var updatedGrowthScorecard = new GrowthScorecard
+            {
+                ApoptosisChancePercentage = playerStateValuesToCopy.ApoptosisChance,
+                StarvedCellDeathChancePercentage = playerStateValuesToCopy.StarvedCellDeathChance,
+                MutationChancePercentage = playerStateValuesToCopy.MutationChance,
+                RegenerationChancePercentage = playerStateValuesToCopy.RegenerationChance,
+                MycotoxinFungicideChancePercentage = playerStateValuesToCopy.MycotoxinFungicideChance,
+                GrowthChanceDictionary = new Dictionary<RelativePosition, double>
+                {
+                    {RelativePosition.TopLeft, playerStateValuesToCopy.TopLeftGrowthChance},
+                    {RelativePosition.Top, playerStateValuesToCopy.TopGrowthChance},
+                    {RelativePosition.TopRight, playerStateValuesToCopy.TopRightGrowthChance},
+                    {RelativePosition.Right, playerStateValuesToCopy.RightGrowthChance},
+                    {RelativePosition.BottomRight, playerStateValuesToCopy.BottomRightGrowthChance},
+                    {RelativePosition.Bottom, playerStateValuesToCopy.BottomGrowthChance},
+                    {RelativePosition.BottomLeft, playerStateValuesToCopy.BottomLeftGrowthChance},
+                    {RelativePosition.Left, playerStateValuesToCopy.LeftGrowthChance},
+                }
+            };
+
+            playerToUpdate.GrowthScorecard = updatedGrowthScorecard;
         }
 
         private async Task RenderToastChange(ToastChange toastChange)
