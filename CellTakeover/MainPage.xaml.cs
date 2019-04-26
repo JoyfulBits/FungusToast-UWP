@@ -238,6 +238,11 @@ namespace FungusToast
 
         private static void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
         {
+            //--zero out AI players' mutation points since they always spend them immediately
+            if (!playerToUpdate.IsHuman)
+            {
+                playerToUpdate.AvailableMutationPoints = 0;
+            }
             playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
             playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
             playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
