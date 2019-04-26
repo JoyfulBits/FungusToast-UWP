@@ -121,10 +121,7 @@ namespace FungusToast
             {
                 var playerState = game.Players[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
-                    playerState.Human)
-                {
-                    AvailableMutationPoints = playerState.MutationPoints
-                };
+                    playerState.Human);
                 UpdatePlayer(player, playerState);
                 players.Add(player);
             }
@@ -241,7 +238,6 @@ namespace FungusToast
 
         private static void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
         {
-            playerToUpdate.AvailableMutationPoints = playerStateValuesToCopy.MutationPoints;
             playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
             playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
             playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
@@ -301,6 +297,8 @@ namespace FungusToast
                 var mutationPointAnnouncementMessage =
                     _playerNumberToMutationPointAnnouncementTextBlock[mutationPointEarned.Key];
                 mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
+                ViewModel.Players.First(player => player.PlayerId == mutationPointEarned.Key).AvailableMutationPoints +=
+                    mutationPointEarned.Value;
 
                 mutationPointAnnouncementMessage.Opacity = 1;
                 await mutationPointAnnouncementMessage.Fade(0, 1500).StartAsync();
