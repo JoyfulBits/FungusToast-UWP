@@ -61,9 +61,7 @@ namespace FungusToast
 
         private SkillExpenditureRequest _skillExpenditureRequest = new SkillExpenditureRequest();
 
-        private bool _mainGridLoaded = false;
         private bool _playersListViewLoaded = false;
-        private bool _gameLoaded = false;
 
         public MainPage()
         {
@@ -83,12 +81,10 @@ namespace FungusToast
 
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            _mainGridLoaded = true;
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
             {
                 _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
-                _gameLoaded = true;
                 InitializeGame(_gameModel);
             }
             else
@@ -417,7 +413,7 @@ namespace FungusToast
             var dialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             dialog.Hide();
         }
-        
+
         private void MutationOptionButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -442,7 +438,7 @@ namespace FungusToast
             var player = mutationPointMessageTextBlock.DataContext as IPlayer;
             _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerId] = mutationPointMessageTextBlock;
 
-            if (_gameLoaded && _playerNumberToMutationPointAnnouncementTextBlock.Keys.Count == _gameModel.Players.Count)
+            if (_gameModel != null && _playerNumberToMutationPointAnnouncementTextBlock.Keys.Count == _gameModel.Players.Count)
             {
                 await RenderUpdates(_gameModel);
             }
@@ -500,14 +496,6 @@ namespace FungusToast
                 result == AppRestartFailureReason.Other)
             {
                 Debug.WriteLine("RequestRestartAsync failed: {0}", result);
-            }
-        }
-
-        private async Task RenderUpdatesIfUiIsReady()
-        {
-            if (_gameLoaded && _mainGridLoaded && _playerNumberToMutationButtons.Count == _gameModel.Players.Count)
-            {
-                await RenderUpdates(_gameModel);
             }
         }
 
