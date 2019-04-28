@@ -135,6 +135,9 @@ namespace FungusToast
             }
 
             InitializeToastWithPlayerCells(game);
+
+            SetGameStats(game);
+            CheckForGameEnd();
         }
 
         private void InitializeToastWithPlayerCells(GameModel game)
@@ -215,8 +218,6 @@ namespace FungusToast
                 ViewModel.GenerationNumber = growthCycle.GenerationNumber;
             }
 
-            ViewModel.RoundNumber = game.RoundNumber;
-
             foreach (var playerState in game.Players)
             {
                 var matchingPlayer = ViewModel.Players.FirstOrDefault(x => x.PlayerId == playerState.Id);
@@ -228,12 +229,24 @@ namespace FungusToast
                 UpdatePlayer(matchingPlayer, playerState);
             }
 
+            SetGameStats(game);
+        }
+
+        private void SetGameStats(GameModel game)
+        {
+            ViewModel.RoundNumber = game.RoundNumber;
             ViewModel.GenerationNumber = game.GenerationNumber;
             ViewModel.RoundNumber = game.RoundNumber;
             ViewModel.TotalDeadCells = game.TotalDeadCells;
             ViewModel.TotalEmptyCells = game.TotalEmptyCells;
             ViewModel.TotalLiveCells = game.TotalLiveCells;
             ViewModel.TotalRegeneratedCells = game.TotalRegeneratedCells;
+            if (game.EndOfGameCountDown.HasValue)
+            {
+                ViewModel.GameEndCountDown = game.EndOfGameCountDown.Value;
+                EndOfGameCountDownLabel.Visibility = Visibility.Visible;
+                EndOfGameCountDownTextBlock.Visibility = Visibility.Visible;
+            }
         }
 
         private static void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
@@ -348,6 +361,8 @@ namespace FungusToast
             if (skillUpdateResult.NextRoundAvailable)
             {
                 _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);
+
+                CheckForGameEnd();
 
                 await RenderUpdates(_gameModel);
 
@@ -478,6 +493,14 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             _playerNumberToSkillTreeButton[player.PlayerId] = button;
+        }
+
+        private async void CheckForGameEnd()
+        {
+            if (_gameModel.Status == GameStatus.Finished)
+            {
+                await GameEndContentDialog.ShowAsync();
+            }
         }
 
         private void Exit_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)

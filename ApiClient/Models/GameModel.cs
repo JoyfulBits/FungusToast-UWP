@@ -14,7 +14,7 @@ namespace ApiClient.Models
         [JsonIgnore]
         public int NumberOfCells => GridSize * GridSize;
         public List<PlayerState> Players { get; set; }
-        public GameState StartingGameState { get; set; } = new GameState();
+        public GameState StartingGameState { get; set; }
         public List<GrowthCycle> GrowthCycles { get; set; } = new List<GrowthCycle>();
         public int GenerationNumber { get; set; }
         public int RoundNumber { get; set; }
@@ -23,5 +23,6 @@ namespace ApiClient.Models
         public int TotalLiveCells { get; set; }
         public int TotalRegeneratedCells { get; set; }
         public string JoinGamePassword { get; set; }
+        public int? EndOfGameCountDown { get; set; }
     }
 }
