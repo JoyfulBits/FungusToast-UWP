@@ -530,10 +530,10 @@ namespace FungusToast
             }
         }
 
-        private async void ClearExistingGame_OnClick(object sender, RoutedEventArgs e)
+        private void ClearExistingGame_OnClick(object sender, RoutedEventArgs e)
         {
             ClearGame();
-            await RestartApp();
+            Application.Current.Exit();
         }
 
         private void ClearGame()
