@@ -24,7 +24,7 @@ namespace ApiClient
                 NumberOfAiPlayers = 1,
                 NumberOfHumanPlayers = 2,
                 GridSize = 50,
-                Status = "Not Started",
+                Status = GameStatus.NotStarted,
                 JoinGamePassword = "password",
                 Players = new List<PlayerState>
                 {
@@ -49,7 +49,7 @@ namespace ApiClient
         public static GameModel MakeMockGameModelForJustStartedGame()
         {
             var gameModel = MakeMockGameModelForNotStartedGame();
-            gameModel.Status = "Started";
+            gameModel.Status = GameStatus.Started;
             gameModel.TotalLiveCells = 3;
             gameModel.TotalEmptyCells = 2497;
             gameModel.RoundNumber = 1;
@@ -146,7 +146,7 @@ namespace ApiClient
         public static GameModel MakeMockGameModelForGameThatIsWellUnderWay()
         {
             var gameModel = MakeMockGameModelForNotStartedGame();
-            gameModel.Status = "Started";
+            gameModel.Status = GameStatus.Started;
             gameModel.TotalDeadCells = 123;
             gameModel.TotalRegeneratedCells = 77;
             gameModel.TotalLiveCells = 400;
