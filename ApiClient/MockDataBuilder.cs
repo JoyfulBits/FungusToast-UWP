@@ -62,16 +62,16 @@ namespace ApiClient
                     MutationPoints = 5,
                     Name = Player1Name,
                     ApoptosisChance = 5,
-                    RightGrowthChance = 7.5,
+                    RightGrowthChance = 7.5F,
                     StarvedCellDeathChance = 10,
                     Status = "Joined",
                     LiveCells = 1,
                     Human = true,
-                    BottomGrowthChance = 7.5,
+                    BottomGrowthChance = 7.5F,
                     MutationChance = 10,
                     AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
+                    LeftGrowthChance = 7.5F,
+                    TopGrowthChance = 7.5F
                 },
                 new PlayerState
                 {
@@ -79,16 +79,16 @@ namespace ApiClient
                     MutationPoints = 0,
                     Name = Player2Name,
                     ApoptosisChance = 5,
-                    RightGrowthChance = 7.5,
+                    RightGrowthChance = 7.5F,
                     StarvedCellDeathChance = 10,
                     Status = "Joined",
                     LiveCells = 1,
                     Human = true,
-                    BottomGrowthChance = 7.5,
+                    BottomGrowthChance = 7.5F,
                     MutationChance = 10,
                     AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
+                    LeftGrowthChance = 7.5F,
+                    TopGrowthChance = 7.5F
                 },
                 new PlayerState
                 {
@@ -98,14 +98,14 @@ namespace ApiClient
                     Human = false,
                     MutationPoints = 0,
                     ApoptosisChance = 5,
-                    RightGrowthChance = 7.5,
+                    RightGrowthChance = 7.5F,
                     StarvedCellDeathChance = 10,
                     LiveCells = 1,
-                    BottomGrowthChance = 7.5,
+                    BottomGrowthChance = 7.5F,
                     MutationChance = 10,
                     AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
+                    LeftGrowthChance = 7.5F,
+                    TopGrowthChance = 7.5F
                 }
             };
             gameModel.GrowthCycles = new List<GrowthCycle>
@@ -175,18 +175,18 @@ namespace ApiClient
                     MutationPoints = 12,
                     Name = Player1Name,
                     ApoptosisChance = 5,
-                    RightGrowthChance = 7.5,
+                    RightGrowthChance = 7.5F,
                     StarvedCellDeathChance = 10,
                     Status = "Joined",
                     LiveCells = 200,
                     DeadCells = 100,
                     RegeneratedCells = 20,
                     Human = true,
-                    BottomGrowthChance = 7.5,
+                    BottomGrowthChance = 7.5F,
                     MutationChance = 10,
                     AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
+                    LeftGrowthChance = 7.5F,
+                    TopGrowthChance = 7.5F
                 },
                 new PlayerState
                 {
@@ -194,18 +194,18 @@ namespace ApiClient
                     MutationPoints = 0,
                     Name = Player2Name,
                     ApoptosisChance = 5,
-                    RightGrowthChance = 7.5,
+                    RightGrowthChance = 7.5F,
                     StarvedCellDeathChance = 10,
                     Status = "Joined",
                     LiveCells = 200,
                     DeadCells = 23,
                     RegeneratedCells = 3,
                     Human = true,
-                    BottomGrowthChance = 7.5,
+                    BottomGrowthChance = 7.5F,
                     MutationChance = 10,
                     AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
+                    LeftGrowthChance = 7.5F,
+                    TopGrowthChance = 7.5F
                 },
                 new PlayerState
                 {
@@ -213,16 +213,16 @@ namespace ApiClient
                     MutationPoints = 0,
                     Name = Player3Name,
                     ApoptosisChance = 5,
-                    RightGrowthChance = 7.5,
+                    RightGrowthChance = 7.5F,
                     StarvedCellDeathChance = 10,
                     Status = "Joined",
                     LiveCells = 1,
                     Human = true,
-                    BottomGrowthChance = 7.5,
+                    BottomGrowthChance = 7.5F,
                     MutationChance = 10,
                     AntiApoptosisSkillLevel = 7,
-                    LeftGrowthChance = 7.5,
-                    TopGrowthChance = 7.5
+                    LeftGrowthChance = 7.5F,
+                    TopGrowthChance = 7.5F
                 }
             };
             gameModel.GrowthCycles = new List<GrowthCycle>

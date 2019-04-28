@@ -273,7 +273,7 @@ namespace FungusToast
                 MutationChancePercentage = playerStateValuesToCopy.MutationChance,
                 RegenerationChancePercentage = playerStateValuesToCopy.RegenerationChance,
                 MycotoxinFungicideChancePercentage = playerStateValuesToCopy.MycotoxinFungicideChance,
-                GrowthChanceDictionary = new Dictionary<RelativePosition, double>
+                GrowthChanceDictionary = new Dictionary<RelativePosition, float>
                 {
                     {RelativePosition.TopLeft, playerStateValuesToCopy.TopLeftGrowthChance},
                     {RelativePosition.Top, playerStateValuesToCopy.TopGrowthChance},
@@ -364,7 +364,7 @@ namespace FungusToast
 
                 await RenderUpdates(_gameModel);
 
-                if (!CheckForGameEnd().Result)
+                if (await CheckForGameEnd())
                 {
                     EnableMutationButtons(player);
                 }
@@ -530,7 +530,7 @@ namespace FungusToast
             }
         }
 
-        private async void ClearExistingGame_OnClick(object sender, RoutedEventArgs e)
+        private void ClearExistingGame_OnClick(object sender, RoutedEventArgs e)
         {
             ClearGame();
             Application.Current.Exit();

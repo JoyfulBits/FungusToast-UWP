@@ -17,11 +17,11 @@ namespace Logic
         private string _name;
         private int _regrownCells;
         private int _availableMutationPoints;
-        private double _hyperMutationSkillLevel;
-        private double _antiApoptosisSkillLevel;
-        private double _regenerationSkillLevel;
-        private double _buddingSkillLevel;
-        private double _mycotoxinsSkillLevel;
+        private float _hyperMutationSkillLevel;
+        private float _antiApoptosisSkillLevel;
+        private float _regenerationSkillLevel;
+        private float _buddingSkillLevel;
+        private float _mycotoxinsSkillLevel;
 
         public Player(string name, Color playerCellColor, string playerId,
             bool isHuman)
@@ -103,23 +103,23 @@ namespace Logic
             }
         }
 
-        public double ApoptosisChancePercentage => GrowthScorecard.ApoptosisChancePercentage;
-        public double StarvedCellDeathChancePercentage => GrowthScorecard.StarvedCellDeathChancePercentage;
-        public double RegenerationChancePercentage => GrowthScorecard.RegenerationChancePercentage;
-        public double MutationChancePercentage => GrowthScorecard.MutationChancePercentage;
-        public double MycotoxinFungicideChancePercentage => GrowthScorecard.MycotoxinFungicideChancePercentage;
+        public float ApoptosisChancePercentage => GrowthScorecard.ApoptosisChancePercentage;
+        public float StarvedCellDeathChancePercentage => GrowthScorecard.StarvedCellDeathChancePercentage;
+        public float RegenerationChancePercentage => GrowthScorecard.RegenerationChancePercentage;
+        public float MutationChancePercentage => GrowthScorecard.MutationChancePercentage;
+        public float MycotoxinFungicideChancePercentage => GrowthScorecard.MycotoxinFungicideChancePercentage;
 
 
-        public double TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
-        public double TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
-        public double TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
-        public double RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right];
-        public double BottomRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight];
-        public double BottomGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Bottom];
-        public double BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft];
-        public double LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left];
+        public float TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
+        public float TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
+        public float TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
+        public float RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right];
+        public float BottomRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight];
+        public float BottomGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Bottom];
+        public float BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft];
+        public float LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left];
 
-        public double HyperMutationSkillLevel
+        public float HyperMutationSkillLevel
         {
             get => _hyperMutationSkillLevel;
             set
@@ -130,7 +130,7 @@ namespace Logic
             }
         }
 
-        public double AntiApoptosisSkillLevel
+        public float AntiApoptosisSkillLevel
         {
             get => _antiApoptosisSkillLevel;
             set
@@ -141,7 +141,7 @@ namespace Logic
             }
         }
 
-        public double RegenerationSkillLevel
+        public float RegenerationSkillLevel
         {
             get => _regenerationSkillLevel;
             set
@@ -152,7 +152,7 @@ namespace Logic
             }
         }
 
-        public double BuddingSkillLevel
+        public float BuddingSkillLevel
         {
             get => _buddingSkillLevel;
             set
@@ -163,7 +163,7 @@ namespace Logic
             }
         }
 
-        public double MycotoxinsSkillLevel
+        public float MycotoxinsSkillLevel
         {
             get => _mycotoxinsSkillLevel;
             set
@@ -229,7 +229,7 @@ namespace Logic
 
         public void DecreaseApoptosisChance()
         {
-            GrowthScorecard.ApoptosisChancePercentage -= MutationOptionGenerator.ReducedCellDeathPercentagePerAttributePoint;
+            GrowthScorecard.ApoptosisChancePercentage -= MutationOptionGenerator.ReducedApoptosisPercentagePerAttributePoint;
             AvailableMutationPoints--;
         }
 
@@ -255,7 +255,7 @@ namespace Logic
         public void IncreaseRegeneration()
         {
             GrowthScorecard.RegenerationChancePercentage +=
-                MutationOptionGenerator.AdditionalRegrowthChancePerAttributePoint;
+                MutationOptionGenerator.AdditionalRegenerationChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }

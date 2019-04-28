@@ -8,33 +8,33 @@ namespace Logic
 {
     public class GrowthScorecard : INotifyPropertyChanged
     {
-        public const double BaseGrowthPercentage = 10;
-        public const double BaseCellDeathChanceForSurroundedCells = 5;
-        public const double BaseMutationChancePercentage = 10;
-        public const double BaseApoptosisChancePercentage = 5;
+        public const float BaseGrowthPercentage = 6;
+        public const float BaseCellDeathChanceForSurroundedCells = 10;
+        public const float BaseMutationChancePercentage = 10;
+        public const float BaseApoptosisChancePercentage = 5;
 
-        public Dictionary<RelativePosition, double> GrowthChanceDictionary = new Dictionary<RelativePosition, double>
+        public Dictionary<RelativePosition, float> GrowthChanceDictionary = new Dictionary<RelativePosition, float>
         {
-            { RelativePosition.TopLeft, 0 },
+            { RelativePosition.TopLeft, 0F },
             { RelativePosition.Top, BaseGrowthPercentage },
-            { RelativePosition.TopRight, 0 },
+            { RelativePosition.TopRight, 0F },
             { RelativePosition.Right, BaseGrowthPercentage },
-            { RelativePosition.BottomRight, 0 },
+            { RelativePosition.BottomRight, 0F },
             { RelativePosition.Bottom, BaseGrowthPercentage },
-            { RelativePosition.BottomLeft, 0 },
+            { RelativePosition.BottomLeft, 0F },
             { RelativePosition.Left, BaseGrowthPercentage }
         };
 
-        private double _starvedCellDeathChancePercentage = BaseCellDeathChanceForSurroundedCells;
-        private double _regenerationChancePercentage;
-        private double _mutationChancePercentage = BaseMutationChancePercentage;
-        private double _apoptosisChancePercentage = BaseApoptosisChancePercentage;
-        private double _mycotoxinFungicideChancePercentage;
+        private float _starvedCellDeathChancePercentage = BaseCellDeathChanceForSurroundedCells;
+        private float _regenerationChancePercentage;
+        private float _mutationChancePercentage = BaseMutationChancePercentage;
+        private float _apoptosisChancePercentage = BaseApoptosisChancePercentage;
+        private float _mycotoxinFungicideChancePercentage;
 
         /// <summary>
         /// Percentage chance that a surrounded/starved cell will die each generation
         /// </summary>
-        public double StarvedCellDeathChancePercentage
+        public float StarvedCellDeathChancePercentage
         {
             get => _starvedCellDeathChancePercentage;
             set
@@ -45,7 +45,7 @@ namespace Logic
             }
         }
 
-        public double MutationChancePercentage
+        public float MutationChancePercentage
         {
             get => _mutationChancePercentage;
             set
@@ -56,7 +56,7 @@ namespace Logic
             }
         }
 
-        public double ApoptosisChancePercentage
+        public float ApoptosisChancePercentage
         {
             get => _apoptosisChancePercentage;
             set
@@ -70,7 +70,7 @@ namespace Logic
         /// <summary>
         /// Percentage chance that an adjacent dead cell will regrow into a live cell
         /// </summary>
-        public double RegenerationChancePercentage
+        public float RegenerationChancePercentage
         {
             get => _regenerationChancePercentage;
             set
@@ -84,7 +84,7 @@ namespace Logic
         /// <summary>
         /// Percentage chance that an adjacent enemy live cell die due to mycotoxins
         /// </summary>
-        public double MycotoxinFungicideChancePercentage
+        public float MycotoxinFungicideChancePercentage
         {
             get => _mycotoxinFungicideChancePercentage;
             set
@@ -96,7 +96,7 @@ namespace Logic
         }
 
 
-        public double GetGrowthChance(RelativePosition position)
+        public float GetGrowthChance(RelativePosition position)
         {
             return GrowthChanceDictionary[position];
         }
