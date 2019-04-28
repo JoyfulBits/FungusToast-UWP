@@ -273,7 +273,7 @@ namespace FungusToast
                 MutationChancePercentage = playerStateValuesToCopy.MutationChance,
                 RegenerationChancePercentage = playerStateValuesToCopy.RegenerationChance,
                 MycotoxinFungicideChancePercentage = playerStateValuesToCopy.MycotoxinFungicideChance,
-                GrowthChanceDictionary = new Dictionary<RelativePosition, double>
+                GrowthChanceDictionary = new Dictionary<RelativePosition, float>
                 {
                     {RelativePosition.TopLeft, playerStateValuesToCopy.TopLeftGrowthChance},
                     {RelativePosition.Top, playerStateValuesToCopy.TopGrowthChance},

@@ -219,7 +219,7 @@
                                             <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Explosive Growth"  
+                                                   Text="Budding"  
                                                    Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
                                         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                                    Text="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}"
@@ -249,7 +249,7 @@
                                             <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Regrowth"  
+                                                   Text="Regeneration"  
                                                    Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
                                         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                                    Text="{x:Bind AddRegrowthChanceMessage, Mode=OneTime}"

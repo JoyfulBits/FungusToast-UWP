@@ -4,10 +4,10 @@ namespace Logic
 {
     public class MutationOptionGenerator
     {
-        public static int AdditionalMutationPercentageChancePerAttributePoint = 3;
-        public static int AdditionalCornerGrowthChancePerAttributePoint = 2;
-        public static double ReducedCellDeathPercentagePerAttributePoint = .5;
-        public static int AdditionalRegrowthChancePerAttributePoint = 1;
+        public static float AdditionalMutationPercentageChancePerAttributePoint = 3.0F;
+        public static float AdditionalCornerGrowthChancePerAttributePoint = .4F;
+        public static float ReducedApoptosisPercentagePerAttributePoint = .25F;
+        public static float AdditionalRegenerationChancePerAttributePoint = .25F;
 
         public static string IncreaseMutationChanceMessage =>
             $"Increase mutation chance by {AdditionalMutationPercentageChancePerAttributePoint}%.";
@@ -15,10 +15,10 @@ namespace Logic
             $"Increase of corner growth by {AdditionalCornerGrowthChancePerAttributePoint}%.";
 
         public static string DecreaseApoptosisChanceMessage =>
-            $"Decrease chance of random cell death (apoptosis) by {ReducedCellDeathPercentagePerAttributePoint}%.";
+            $"Decrease chance of random cell death (apoptosis) by {ReducedApoptosisPercentagePerAttributePoint}%.";
 
         public static string IncreaseRegrowthChanceMessage => 
-            $"Increase chance of reviving adjacent dead cell by {AdditionalRegrowthChancePerAttributePoint}%.";
+            $"Increase chance of reviving adjacent dead cell by {AdditionalRegenerationChancePerAttributePoint}%.";
 
     }
 }
