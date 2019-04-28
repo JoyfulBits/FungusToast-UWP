@@ -114,7 +114,7 @@ namespace FungusToast
             InitializeGame(_gameModel);
         }
 
-        private void InitializeGame(GameModel game)
+        private async void InitializeGame(GameModel game)
         {
             var players = new List<IPlayer>();
             for (var i = 1; i <= game.Players.Count; i++)
@@ -137,7 +137,7 @@ namespace FungusToast
             InitializeToastWithPlayerCells(game);
 
             SetGameStats(game);
-            CheckForGameEnd();
+            await CheckForGameEnd();
         }
 
         private void InitializeToastWithPlayerCells(GameModel game)
@@ -362,11 +362,12 @@ namespace FungusToast
             {
                 _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);
 
-                CheckForGameEnd();
-
                 await RenderUpdates(_gameModel);
 
-                EnableMutationButtons(player);
+                if (!CheckForGameEnd().Result)
+                {
+                    EnableMutationButtons(player);
+                }
             }
         }
 
@@ -495,12 +496,15 @@ namespace FungusToast
             _playerNumberToSkillTreeButton[player.PlayerId] = button;
         }
 
-        private async void CheckForGameEnd()
+        private async Task<bool> CheckForGameEnd()
         {
             if (_gameModel.Status == GameStatus.Finished)
             {
                 await GameEndContentDialog.ShowAsync();
+                return true;
             }
+
+            return false;
         }
 
         private void Exit_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -510,6 +514,7 @@ namespace FungusToast
 
         private async void PlayAgain_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            ClearGame();
             await RestartApp();
         }
 
@@ -527,8 +532,13 @@ namespace FungusToast
 
         private async void ClearExistingGame_OnClick(object sender, RoutedEventArgs e)
         {
-            _settingsDataContainer.Values.Remove(ActiveGameIdSetting);
+            ClearGame();
             await RestartApp();
+        }
+
+        private void ClearGame()
+        {
+            _settingsDataContainer.Values.Remove(ActiveGameIdSetting);
         }
     }
 }
