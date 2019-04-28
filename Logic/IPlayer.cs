@@ -8,6 +8,7 @@ namespace Logic
     public interface IPlayer : INotifyPropertyChanged
     {
         string Name { get; set; }
+        bool IsHuman { get; }
         int AvailableMutationPoints { get; set; }
         Color Color { get; set; }
         string PlayerId { get; set; }
