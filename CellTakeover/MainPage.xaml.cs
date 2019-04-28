@@ -364,7 +364,7 @@ namespace FungusToast
 
                 await RenderUpdates(_gameModel);
 
-                if (!CheckForGameEnd().Result)
+                if (await CheckForGameEnd())
                 {
                     EnableMutationButtons(player);
                 }
