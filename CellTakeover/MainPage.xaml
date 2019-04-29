@@ -187,7 +187,6 @@
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
                                                    Text="Hypermutation"  
@@ -214,7 +213,6 @@
                                             <ColumnDefinition></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
@@ -247,7 +245,6 @@
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
                                                    Text="Regeneration"  
@@ -260,7 +257,7 @@
                                     </Grid>
                                 </StackPanel>
 
-                                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
                                     <Button 
                                         Name="AntiApoptosisButton"
                                         Style="{StaticResource MutationChoiceButton}"
@@ -276,7 +273,6 @@
                                             <ColumnDefinition></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
@@ -300,7 +296,7 @@
                                         Click="MycotoxinFungicideButton_Click"
                                         Loaded="MutationOptionButton_Loaded">
 
-                                        <Image Source="Assets/Skill Icons/reduced_death.png"></Image>
+                                        <Image Source="Assets/Skill Icons/toxicity.png"></Image>
                                     </Button>
                                     <Grid Padding="5">
                                         <Grid.ColumnDefinitions>
@@ -308,7 +304,6 @@
                                             <ColumnDefinition></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>

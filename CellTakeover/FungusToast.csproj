@@ -138,6 +138,7 @@
     <Content Include="Assets\Skill Icons\mutation_chance.png" />
     <Content Include="Assets\Skill Icons\reduced_death.png" />
     <Content Include="Assets\Skill Icons\regrowth.png" />
+    <Content Include="Assets\Skill Icons\toxicity.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
