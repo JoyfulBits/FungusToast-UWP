@@ -416,6 +416,16 @@ namespace FungusToast
             await CheckForRemainingMutationPoints(player);
         }
 
+        private async void MycotoxinFungicideButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.IncreaseMycotoxicity();
+            _skillExpenditureRequest.MycotoxicityPoints++;
+
+            await CheckForRemainingMutationPoints(player);
+        }
+
         private void DisablePlayerMutationButtons(IPlayer player)
         {
             var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];

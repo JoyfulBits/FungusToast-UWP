@@ -33,6 +33,7 @@ namespace Logic
         void DecreaseApoptosisChance();
         void IncreaseBudding();
         void IncreaseRegeneration();
+        void IncreaseMycotoxicity();
         bool IsCurrentPlayer(string userName);
     }
 }

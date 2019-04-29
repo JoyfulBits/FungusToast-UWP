@@ -220,6 +220,7 @@ namespace Logic
         public string DecreaseApoptosisChanceMessage => MutationOptionGenerator.DecreaseApoptosisChanceMessage;
 
         public string AddRegrowthChanceMessage => MutationOptionGenerator.IncreaseRegrowthChanceMessage;
+        public string AddMycotoxicityChanceMessage => MutationOptionGenerator.IncreaseMycotoxinFungicideChanceMessage;
 
         public void IncreaseHypermutation()
         {
@@ -256,6 +257,14 @@ namespace Logic
         {
             GrowthScorecard.RegenerationChancePercentage +=
                 MutationOptionGenerator.AdditionalRegenerationChancePerAttributePoint;
+
+            AvailableMutationPoints--;
+        }
+
+        public void IncreaseMycotoxicity()
+        {
+            GrowthScorecard.MycotoxinFungicideChancePercentage +=
+                MutationOptionGenerator.AdditionalMycotoxinFungicideChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }
