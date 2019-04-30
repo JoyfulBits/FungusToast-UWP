@@ -99,7 +99,8 @@ namespace FungusToast
             Colors.PaleVioletRed,
             Colors.Blue,
             Colors.Orange,
-            Colors.Gray
+            Colors.Gray,
+            Colors.OliveDrab
         };
 
         private async void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -107,11 +108,18 @@ namespace FungusToast
             var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
-            var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
-            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
-            _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
+            if (numberOfHumanPlayers + numberOfAiPlayers < 7)
+            {
+                var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
+                _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
+                _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
 
-            InitializeGame(_gameModel);
+                InitializeGame(_gameModel);
+            }
+            else
+            {
+                //TODO provide message if adding too many players   
+            }
         }
 
         private async void InitializeGame(GameModel game)
