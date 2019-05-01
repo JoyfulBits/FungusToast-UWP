@@ -10,6 +10,7 @@ using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using ApiClient;
 using ApiClient.Models;
@@ -622,6 +623,11 @@ namespace FungusToast
             {
                 comboBox.SelectedItem = 0;
             }
+        }
+
+        private void MutationStackPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var stackPanel = sender as StackPanel;
         }
     }
 }
