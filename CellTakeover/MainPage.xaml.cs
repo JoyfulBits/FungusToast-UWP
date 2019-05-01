@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -557,6 +558,65 @@ namespace FungusToast
         private void ClearGame()
         {
             _settingsDataContainer.Values.Remove(ActiveGameIdSetting);
+        }
+
+        public const int MaxPlayers = 6;
+        public ObservableCollection<int> NumberOfHumanPlayersOptions = new ObservableCollection<int>
+        {
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        };
+
+        public ObservableCollection<int> NumberOfAiPlayersOptions = new ObservableCollection<int>
+        {
+            1,
+            2,
+            3,
+            4,
+            5
+        };
+
+        private void NumberOfHumanPlayersComboBox_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            (sender as ComboBox).SelectedItem = 1;
+        }
+
+        private void NumberOfHumanPlayersComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            var numberOfHumanPlayers = (int)comboBox.SelectedItem;
+           
+            var numberOfAiPlayersAllowed = MaxPlayers - numberOfHumanPlayers;
+
+            NumberOfAiPlayersOptions.Clear();
+            var previouslySelectedValue = (int) (NumberOfAiPlayersComboBox.SelectedItem ?? 0);
+
+            for (int i = 0; i <= numberOfAiPlayersAllowed; i++)
+            {
+                NumberOfAiPlayersOptions.Add(i);
+            }
+
+            if (numberOfAiPlayersAllowed >= previouslySelectedValue)
+            {
+                NumberOfAiPlayersComboBox.SelectedItem = previouslySelectedValue;
+            }
+            else
+            {
+                NumberOfAiPlayersComboBox.SelectedItem = NumberOfAiPlayersOptions.Last();
+            }
+        }
+
+        private void NumberOfAiPlayersComboBox_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            if (comboBox.SelectedItem == null)
+            {
+                comboBox.SelectedItem = 0;
+            }
         }
     }
 }
