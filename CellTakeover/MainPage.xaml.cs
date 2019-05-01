@@ -251,7 +251,6 @@ namespace FungusToast
         {
             ViewModel.RoundNumber = game.RoundNumber;
             ViewModel.GenerationNumber = game.GenerationNumber;
-            ViewModel.RoundNumber = game.RoundNumber;
             ViewModel.TotalDeadCells = game.TotalDeadCells;
             ViewModel.TotalEmptyCells = game.TotalEmptyCells;
             ViewModel.TotalLiveCells = game.TotalLiveCells;

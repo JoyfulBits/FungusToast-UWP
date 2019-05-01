@@ -483,10 +483,10 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0" 
                         Style="{StaticResource SubtitleTextBlockStyle}" 
-                        Text="Generation Number:"  TextWrapping="Wrap"></TextBlock>
+                        Text="Round Number:"  TextWrapping="Wrap"></TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
                         Style="{StaticResource SubtitleTextBlockStyle}" 
-                        Text="{x:Bind ViewModel.GenerationNumber, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
+                        Text="{x:Bind ViewModel.RoundNumber, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
 
             <TextBlock Grid.Row="2" Grid.Column="0"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
