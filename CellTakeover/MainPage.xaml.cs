@@ -126,9 +126,14 @@ namespace FungusToast
         private async void InitializeGame(GameModel game)
         {
             var players = new List<IPlayer>();
-            for (var i = 1; i <= game.Players.Count; i++)
+            var reorderedPlayers = game.Players
+                .OrderByDescending(player => player.Name == _userName)
+                .ThenBy(player => player.Human)
+                .ThenBy(player => player.Id)
+                .ToList();
+            for (var i = 1; i <= reorderedPlayers.Count; i++)
             {
-                var playerState = game.Players[i - 1];
+                var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
                     playerState.Human);
                 UpdatePlayer(player, playerState);
