@@ -22,6 +22,9 @@ namespace Logic
         private float _regenerationSkillLevel;
         private float _buddingSkillLevel;
         private float _mycotoxinsSkillLevel;
+        private int _grownCells;
+        private int _perishedCells;
+        private int _fungicidalKills;
 
         public Player(string name, Color playerCellColor, string playerId,
             bool isHuman)
@@ -206,6 +209,40 @@ namespace Logic
                 OnPropertyChanged();
             }
         }
+
+        public int GrownCells
+        {
+            get => _grownCells;
+            set
+            {
+                if (value == _grownCells) return;
+                _grownCells = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int PerishedCells
+        {
+            get => _perishedCells;
+            set
+            {
+                if (value == _perishedCells) return;
+                _perishedCells = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int FungicidalKills
+        {
+            get => _fungicidalKills;
+            set
+            {
+                if (value == _fungicidalKills) return;
+                _fungicidalKills = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

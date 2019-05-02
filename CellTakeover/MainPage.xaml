@@ -429,6 +429,9 @@
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -454,6 +457,21 @@
                                        ToolTipService.ToolTip="The number of friendly and enemy dead cells this fungus regenerated into it's mycelium"></TextBlock>
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="Regenerated Cells:"></TextBlock>
                             <TextBlock Grid.Row="2" Grid.Column="2" Text="{x:Bind RegrownCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="🍄" TextAlignment="Center"
+                                       ToolTipService.ToolTip="The total number of cells the player has grown over the course of the game"></TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="Grown Cells:"></TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="2" Text="{x:Bind GrownCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="⚰️" TextAlignment="Center"
+                                       ToolTipService.ToolTip="The total number of cells the player has lost over the course of the game"></TextBlock>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="Perished Cells:"></TextBlock>
+                            <TextBlock Grid.Row="4" Grid.Column="2" Text="{x:Bind PerishedCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="☣" TextAlignment="Center"
+                                       ToolTipService.ToolTip="The total number of enemy cells the player has killed with mycotoxins over the course of the game"></TextBlock>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="Fungicidal Kills:"></TextBlock>
+                            <TextBlock Grid.Row="5" Grid.Column="2" Text="{x:Bind FungicidalKills, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
                         </Grid>
                     </Grid>
 

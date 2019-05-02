@@ -17,6 +17,9 @@
         public int DeadCells { get; set; }
         public int LiveCells { get; set; }
         public int RegeneratedCells { get; set; }
+        public int PerishedCells { get; set; }
+        public int GrownCells { get; set; }
+        public int FungicidalKills { get; set; }
         public int HyperMutationSkillLevel { get; set; }
         public int AntiApoptosisSkillLevel { get; set; }
         public int RegenerationSkillLevel { get; set; }
