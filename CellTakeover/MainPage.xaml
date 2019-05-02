@@ -181,13 +181,14 @@
                                            Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
                                            Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
-                                <Button Grid.Row="1" Grid.Column="0" 
+                                <Button Grid.Row="1" Grid.Column="0"
+                                        Background="White"
                                         Name="HypermutationButton"
                                         IsEnabled="False" 
                                         Click="IncreaseHypermutation_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                     <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
-                                        <Image Source="Assets/Skill Icons/mutation_chance.png" Style="{StaticResource MutationImage}"></Image>
+                                        <Image Source="Assets/Skill Icons/hypermutation.png" Style="{StaticResource MutationImage}"></Image>
                                         <Grid Padding="5">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition></ColumnDefinition>
@@ -211,12 +212,13 @@
                                 </Button>
 
                                 <Button Grid.Row="2" Grid.Column="0" 
+                                        Background="White"
                                         Name="BuddingButton"
                                         IsEnabled="False" 
                                         Click="IncreaseBudding_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                     <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
-                                        <Image Source="Assets/Skill Icons/corner_growth.png" Style="{StaticResource MutationImage}"></Image>
+                                        <Image Source="Assets/Skill Icons/budding.png" Style="{StaticResource MutationImage}"></Image>
                                         <Grid Padding="5">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition></ColumnDefinition>
@@ -240,6 +242,7 @@
                                 </Button>
 
                                 <Button Grid.Row="3" Grid.Column="0"
+                                        Background="White"
                                         Name="RegrowthButton"
                                         IsEnabled="False" 
                                         Click="IncreaseRegeneration_Click"
@@ -269,6 +272,7 @@
                                 </Button>
 
                                 <Button Grid.Row="4" Grid.Column="0" 
+                                    Background="White"
                                     Name="AntiApoptosisButton"
                                     IsEnabled="False"
                                     Click="AntiApoptosis_Click"
@@ -298,6 +302,7 @@
                                 </Button>
 
                                 <Button Grid.Row="5" Grid.Column="0"
+                                    Background="White"
                                     Name="MycotoxicityButton"
                                     IsEnabled="False"
                                     Click="MycotoxinFungicideButton_Click"
