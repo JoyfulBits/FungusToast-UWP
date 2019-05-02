@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using ApiClient;
 using ApiClient.Models;
@@ -99,7 +101,8 @@ namespace FungusToast
             Colors.PaleVioletRed,
             Colors.Blue,
             Colors.Orange,
-            Colors.Gray
+            Colors.Gray,
+            Colors.OliveDrab
         };
 
         private async void GameStart_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -107,19 +110,31 @@ namespace FungusToast
             var numberOfHumanPlayers = int.Parse(NumberOfHumanPlayersComboBox.SelectedValue.ToString());
             var numberOfAiPlayers = int.Parse(NumberOfAiPlayersComboBox.SelectedValue.ToString());
 
-            var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
-            _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
-            _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
+            if (numberOfHumanPlayers + numberOfAiPlayers < 7)
+            {
+                var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
+                _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
+                _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
 
-            InitializeGame(_gameModel);
+                InitializeGame(_gameModel);
+            }
+            else
+            {
+                //TODO provide message if adding too many players   
+            }
         }
 
         private async void InitializeGame(GameModel game)
         {
             var players = new List<IPlayer>();
-            for (var i = 1; i <= game.Players.Count; i++)
+            var reorderedPlayers = game.Players
+                .OrderByDescending(player => player.Name == _userName)
+                .ThenBy(player => player.Human)
+                .ThenBy(player => player.Id)
+                .ToList();
+            for (var i = 1; i <= reorderedPlayers.Count; i++)
             {
-                var playerState = game.Players[i - 1];
+                var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
                     playerState.Human);
                 UpdatePlayer(player, playerState);
@@ -236,7 +251,6 @@ namespace FungusToast
         {
             ViewModel.RoundNumber = game.RoundNumber;
             ViewModel.GenerationNumber = game.GenerationNumber;
-            ViewModel.RoundNumber = game.RoundNumber;
             ViewModel.TotalDeadCells = game.TotalDeadCells;
             ViewModel.TotalEmptyCells = game.TotalEmptyCells;
             ViewModel.TotalLiveCells = game.TotalLiveCells;
@@ -549,6 +563,70 @@ namespace FungusToast
         private void ClearGame()
         {
             _settingsDataContainer.Values.Remove(ActiveGameIdSetting);
+        }
+
+        public const int MaxPlayers = 6;
+        public ObservableCollection<int> NumberOfHumanPlayersOptions = new ObservableCollection<int>
+        {
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        };
+
+        public ObservableCollection<int> NumberOfAiPlayersOptions = new ObservableCollection<int>
+        {
+            1,
+            2,
+            3,
+            4,
+            5
+        };
+
+        private void NumberOfHumanPlayersComboBox_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            (sender as ComboBox).SelectedItem = 1;
+        }
+
+        private void NumberOfHumanPlayersComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            var numberOfHumanPlayers = (int)comboBox.SelectedItem;
+           
+            var numberOfAiPlayersAllowed = MaxPlayers - numberOfHumanPlayers;
+
+            NumberOfAiPlayersOptions.Clear();
+            var previouslySelectedValue = (int) (NumberOfAiPlayersComboBox.SelectedItem ?? 0);
+
+            for (int i = 0; i <= numberOfAiPlayersAllowed; i++)
+            {
+                NumberOfAiPlayersOptions.Add(i);
+            }
+
+            if (numberOfAiPlayersAllowed >= previouslySelectedValue)
+            {
+                NumberOfAiPlayersComboBox.SelectedItem = previouslySelectedValue;
+            }
+            else
+            {
+                NumberOfAiPlayersComboBox.SelectedItem = NumberOfAiPlayersOptions.Last();
+            }
+        }
+
+        private void NumberOfAiPlayersComboBox_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            if (comboBox.SelectedItem == null)
+            {
+                comboBox.SelectedItem = 0;
+            }
+        }
+
+        private void MutationStackPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var stackPanel = sender as StackPanel;
         }
     }
 }

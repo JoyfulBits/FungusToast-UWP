@@ -134,8 +134,8 @@
     <None Include="CellTakeover_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Skill Icons\corner_growth.png" />
-    <Content Include="Assets\Skill Icons\mutation_chance.png" />
+    <Content Include="Assets\Skill Icons\budding.png" />
+    <Content Include="Assets\Skill Icons\hypermutation.png" />
     <Content Include="Assets\Skill Icons\reduced_death.png" />
     <Content Include="Assets\Skill Icons\regrowth.png" />
     <Content Include="Assets\Skill Icons\toxicity.png" />

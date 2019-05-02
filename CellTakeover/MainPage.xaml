@@ -47,19 +47,20 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Number of Human Players:" VerticalAlignment="Center"></TextBlock>
-                <ComboBox Name="NumberOfHumanPlayersComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="2" Margin="5 0 0 0" VerticalAlignment="Center">
-                    <x:Int32>1</x:Int32>
-                    <x:Int32>2</x:Int32>
-                    <x:Int32>3</x:Int32>
-                    <x:Int32>4</x:Int32>
+                <ComboBox Name="NumberOfHumanPlayersComboBox" Grid.Row="0" Grid.Column="1"
+                          Margin="5 0 0 0" 
+                          VerticalAlignment="Center"
+                          ItemsSource="{x:Bind NumberOfHumanPlayersOptions}"
+                          Loaded="NumberOfHumanPlayersComboBox_OnLoaded"
+                          SelectionChanged="NumberOfHumanPlayersComboBox_OnSelectionChanged">
                 </ComboBox>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Number of AI Players:" VerticalAlignment="Center"></TextBlock>
-                <ComboBox Name="NumberOfAiPlayersComboBox" Grid.Row="1" Grid.Column="1" SelectedIndex="0" Margin="5 0 0 0" VerticalAlignment="Center">
-                    <x:Int32>0</x:Int32>
-                    <x:Int32>1</x:Int32>
-                    <x:Int32>2</x:Int32>
-                    <x:Int32>3</x:Int32>
+                <ComboBox Name="NumberOfAiPlayersComboBox" Grid.Row="1" Grid.Column="1"
+                          Margin="5 0 0 0" 
+                          VerticalAlignment="Center"
+                          ItemsSource="{x:Bind NumberOfAiPlayersOptions}"
+                          Loaded="NumberOfAiPlayersComboBox_OnLoaded">
                 </ComboBox>
             </Grid>
         </ContentDialog>
@@ -89,7 +90,7 @@
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="Player" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="Live Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                         <TextBlock Grid.Row="0" Grid.Column="3" Text="Regrown Cells"  Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Live Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Dead Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                     </Grid>
                 </GridView.Header>
                 <GridView.ItemsPanel>
@@ -157,12 +158,22 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="600"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
                                 <Grid.Resources>
-                                    <Style TargetType="Button" x:Key="MutationChoiceButton">
+                                    <Style TargetType="Image" x:Key="MutationImage">
                                         <Setter Property="Width" Value="75"></Setter>
                                         <Setter Property="Height" Value="75"></Setter>
                                         <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
                                         <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                                    </Style>
+
+                                    <Style TargetType="StackPanel" x:Key="MutationChoiceStackPanel">
+                                        <Setter Property="Width" Value="600"></Setter>
+                                        <Setter Property="Orientation" Value="Horizontal"></Setter>
+                                        <Setter Property="BorderThickness" Value="0 0 0 1"></Setter>
+                                        <Setter Property="BorderBrush" Value="Black"></Setter>
                                     </Style>
                                 </Grid.Resources>
 
@@ -170,154 +181,155 @@
                                            Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
                                            Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
-                                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
-                                    <Button Style="{StaticResource MutationChoiceButton}"
-                                            Name="HypermutationButton"
-                                            IsEnabled="False" 
-                                            Click="IncreaseHypermutation_Click"
-                                            Loaded="MutationOptionButton_Loaded">
-                                        <Image Source="Assets/Skill Icons/mutation_chance.png"></Image>
-                                    </Button>
-                                    <Grid Padding="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Hypermutation"  
-                                                   Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="{x:Bind AddMutationChanceMessage, Mode=OneTime}"
-                                                   TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Mutation Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MutationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
-                                    </Grid>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
-                                    <Button Style="{StaticResource MutationChoiceButton}"
-                                            Name="BuddingButton"
-                                            IsEnabled="False" 
-                                            Click="IncreaseBudding_Click"
-                                            Loaded="MutationOptionButton_Loaded">
-                                        <Image Source="Assets/Skill Icons/corner_growth.png"></Image>
-                                    </Button>
-                                    <Grid Padding="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Budding"  
-                                                   Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}"
-                                                   TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Corner Growth Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=TopLeftGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
-                                    </Grid>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
-                                    <Button Style="{StaticResource MutationChoiceButton}"
-                                            Name="RegrowthButton"
-                                            IsEnabled="False" 
-                                            Click="IncreaseRegeneration_Click"
-                                            Loaded="MutationOptionButton_Loaded">
-                                        <Image Source="Assets/Skill Icons/regrowth.png"></Image>
-                                    </Button>
-                                    <Grid Padding="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Regeneration"  
-                                                   Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="{x:Bind AddRegrowthChanceMessage, Mode=OneTime}"
-                                                   TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Regrowth Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegenerationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
-                                    </Grid>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" BorderThickness="0 0 0 1" BorderBrush="Black">
-                                    <Button 
-                                        Name="AntiApoptosisButton"
-                                        Style="{StaticResource MutationChoiceButton}"
-                                        IsEnabled="False"
-                                        Click="AntiApoptosis_Click"
+                                <Button Grid.Row="1" Grid.Column="0"
+                                        Background="White"
+                                        Name="HypermutationButton"
+                                        IsEnabled="False" 
+                                        Click="IncreaseHypermutation_Click"
                                         Loaded="MutationOptionButton_Loaded">
+                                    <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                        <Image Source="Assets/Skill Icons/hypermutation.png" Style="{StaticResource MutationImage}"></Image>
+                                        <Grid Padding="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="Hypermutation"  
+                                                       Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="{x:Bind AddMutationChanceMessage, Mode=OneTime}"
+                                                       TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Mutation Chance:"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MutationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </Button>
 
-                                        <Image Source="Assets/Skill Icons/reduced_death.png"></Image>
-                                    </Button>
-                                    <Grid Padding="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Anti-Apoptosis"  
-                                                   Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="{x:Bind DecreaseApoptosisChanceMessage, Mode=OneTime}"
-                                                   TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Apoptosis Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.ApoptosisChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
-                                    </Grid>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal">
-                                    <Button 
-                                        Name="MycotoxicityButton"
-                                        Style="{StaticResource MutationChoiceButton}"
-                                        IsEnabled="False"
-                                        Click="MycotoxinFungicideButton_Click"
+                                <Button Grid.Row="2" Grid.Column="0" 
+                                        Background="White"
+                                        Name="BuddingButton"
+                                        IsEnabled="False" 
+                                        Click="IncreaseBudding_Click"
                                         Loaded="MutationOptionButton_Loaded">
+                                    <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                        <Image Source="Assets/Skill Icons/budding.png" Style="{StaticResource MutationImage}"></Image>
+                                        <Grid Padding="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="Budding"  
+                                                       Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}"
+                                                       TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Corner Growth Chance:"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=TopLeftGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </Button>
 
-                                        <Image Source="Assets/Skill Icons/toxicity.png"></Image>
-                                    </Button>
-                                    <Grid Padding="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="Mycotoxicity"  
-                                                   Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                   Text="{x:Bind AddMycotoxicityChanceMessage, Mode=OneTime}"
-                                                   TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Mycotoxin Fungicide Chance:"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MycotoxinFungicideChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
-                                    </Grid>
-                                </StackPanel>
+                                <Button Grid.Row="3" Grid.Column="0"
+                                        Background="White"
+                                        Name="RegrowthButton"
+                                        IsEnabled="False" 
+                                        Click="IncreaseRegeneration_Click"
+                                        Loaded="MutationOptionButton_Loaded">
+                                    <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                        <Image Source="Assets/Skill Icons/regrowth.png" Style="{StaticResource MutationImage}"></Image>
+                                        <Grid Padding="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="Regeneration"  
+                                                       Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="{x:Bind AddRegrowthChanceMessage, Mode=OneTime}"
+                                                       TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Regrowth Chance:"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.RegenerationChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Grid.Row="4" Grid.Column="0" 
+                                    Background="White"
+                                    Name="AntiApoptosisButton"
+                                    IsEnabled="False"
+                                    Click="AntiApoptosis_Click"
+                                    Loaded="MutationOptionButton_Loaded">
+                                    <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                        <Image Source="Assets/Skill Icons/reduced_death.png" Style="{StaticResource MutationImage}"></Image>
+                                        <Grid Padding="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="Anti-Apoptosis"  
+                                                       Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="{x:Bind DecreaseApoptosisChanceMessage, Mode=OneTime}"
+                                                       TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Apoptosis Chance:"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.ApoptosisChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Grid.Row="5" Grid.Column="0"
+                                    Background="White"
+                                    Name="MycotoxicityButton"
+                                    IsEnabled="False"
+                                    Click="MycotoxinFungicideButton_Click"
+                                    Loaded="MutationOptionButton_Loaded">
+                                    <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                        <Image Source="Assets/Skill Icons/toxicity.png" Style="{StaticResource MutationImage}"></Image>
+                                        <Grid Padding="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="Mycotoxicity"  
+                                                       Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="{x:Bind AddMycotoxicityChanceMessage, Mode=OneTime}"
+                                                       TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Mycotoxin Fungicide Chance:"></TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MycotoxinFungicideChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </Button>
                             </Grid>
                         </ContentDialog>
 
@@ -424,16 +436,23 @@
                                 <ColumnDefinition Width="2*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Σ" TextAlignment="Center"></TextBlock>
+                            <Rectangle Grid.Row="0" Grid.Column="0"
+                                Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                MaxHeight="15"
+                                MaxWidth="15"
+                                Stretch="Fill"
+                                ></Rectangle>
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="Live Cells:"></TextBlock>
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="{x:Bind LiveCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="☠" TextAlignment="Center"></TextBlock>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Live Cells:"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="☠" TextAlignment="Center"
+                                       ToolTipService.ToolTip="The number of dead cells this player currently has (excluding what was already regenerated)"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Dead Cells:"></TextBlock>
                             <TextBlock Grid.Row="1" Grid.Column="2" Text="{x:Bind DeadCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="🌲" TextAlignment="Center"></TextBlock>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="Regrown Cells:"></TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="🧟" TextAlignment="Center"
+                                       ToolTipService.ToolTip="The number of friendly and enemy dead cells this fungus regenerated into it's mycelium"></TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="Regenerated Cells:"></TextBlock>
                             <TextBlock Grid.Row="2" Grid.Column="2" Text="{x:Bind RegrownCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
                         </Grid>
                     </Grid>
@@ -469,10 +488,10 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0" 
                         Style="{StaticResource SubtitleTextBlockStyle}" 
-                        Text="Generation Number:"  TextWrapping="Wrap"></TextBlock>
+                        Text="Round Number:"  TextWrapping="Wrap"></TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
                         Style="{StaticResource SubtitleTextBlockStyle}" 
-                        Text="{x:Bind ViewModel.GenerationNumber, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
+                        Text="{x:Bind ViewModel.RoundNumber, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
 
             <TextBlock Grid.Row="2" Grid.Column="0"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
@@ -483,7 +502,7 @@
 
             <TextBlock Grid.Row="3" Grid.Column="0" 
                            Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="Total Live Cells:" ></TextBlock>
+                           Text="Total Dead Cells:" ></TextBlock>
             <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
                            Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
