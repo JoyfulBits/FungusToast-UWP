@@ -140,7 +140,7 @@
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*" MinWidth="150"></ColumnDefinition>
+                            <ColumnDefinition Width="10*" MinWidth="250"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                             <ColumnDefinition Width="10*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
@@ -424,8 +424,9 @@
 
                         </controls:UniformGrid>
 
-                        <Grid Grid.Row="3" Grid.Column="0">
+                        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
@@ -472,6 +473,11 @@
                                        ToolTipService.ToolTip="The total number of enemy cells the player has killed with mycotoxins over the course of the game"></TextBlock>
                             <TextBlock Grid.Row="5" Grid.Column="1" Text="Fungicidal Kills:"></TextBlock>
                             <TextBlock Grid.Row="5" Grid.Column="2" Text="{x:Bind FungicidalKills, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="λ" TextAlignment="Center"
+                                       ToolTipService.ToolTip="The total number mutation points spent over the course of the game"></TextBlock>
+                            <TextBlock Grid.Row="6" Grid.Column="1" Text="Spent Mutation Points:"></TextBlock>
+                            <TextBlock Grid.Row="6" Grid.Column="2" Text="{x:Bind SpentMutationPoints, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
                         </Grid>
                     </Grid>
 

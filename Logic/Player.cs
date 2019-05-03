@@ -25,6 +25,7 @@ namespace Logic
         private int _grownCells;
         private int _perishedCells;
         private int _fungicidalKills;
+        private int _spentMutationPoints;
 
         public Player(string name, Color playerCellColor, string playerId,
             bool isHuman)
@@ -239,6 +240,17 @@ namespace Logic
             {
                 if (value == _fungicidalKills) return;
                 _fungicidalKills = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int SpentMutationPoints
+        {
+            get => _spentMutationPoints;
+            set
+            {
+                if (value == _spentMutationPoints) return;
+                _spentMutationPoints = value;
                 OnPropertyChanged();
             }
         }

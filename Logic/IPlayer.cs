@@ -18,6 +18,7 @@ namespace Logic
         int GrownCells { get; set; }
         int PerishedCells { get; set; }
         int FungicidalKills { get; set; }
+        int SpentMutationPoints { get; set; }
         GrowthScorecard GrowthScorecard { get; set; }
         float TopLeftGrowthChance { get; }
         float TopGrowthChance { get; }

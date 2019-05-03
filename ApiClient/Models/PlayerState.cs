@@ -20,6 +20,7 @@
         public int PerishedCells { get; set; }
         public int GrownCells { get; set; }
         public int FungicidalKills { get; set; }
+        public int SpentMutationPoints { get; set; }
         public int HyperMutationSkillLevel { get; set; }
         public int AntiApoptosisSkillLevel { get; set; }
         public int RegenerationSkillLevel { get; set; }
