@@ -273,6 +273,10 @@ namespace FungusToast
             playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
             playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
             playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
+            playerToUpdate.GrownCells = playerStateValuesToCopy.GrownCells;
+            playerToUpdate.PerishedCells = playerStateValuesToCopy.PerishedCells;
+            playerToUpdate.FungicidalKills = playerStateValuesToCopy.FungicidalKills;
+            playerToUpdate.SpentMutationPoints = playerStateValuesToCopy.SpentMutationPoints;
 
             playerToUpdate.HyperMutationSkillLevel = playerStateValuesToCopy.HyperMutationSkillLevel;
             playerToUpdate.AntiApoptosisSkillLevel = playerStateValuesToCopy.AntiApoptosisSkillLevel;
