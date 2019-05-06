@@ -268,7 +268,7 @@ namespace FungusToast
             }
         }
 
-        private static void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
+        private void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
         {
             //--zero out AI players' mutation points since they always spend them immediately
             if (!playerToUpdate.IsHuman)
@@ -310,6 +310,13 @@ namespace FungusToast
             };
 
             playerToUpdate.GrowthScorecard = updatedGrowthScorecard;
+
+            if (playerToUpdate.IsCurrentPlayer(_userName) && playerToUpdate.AvailableMutationPoints > 0)
+            {
+                var skillTreeButton = _playerNumberToSkillTreeButton[playerToUpdate.PlayerId];
+                skillTreeButton.BorderBrush = _activeBorderBrush;
+                skillTreeButton.BorderThickness = _activeThickness;
+            }
         }
 
         private async Task RenderToastChange(ToastChange toastChange)
@@ -350,9 +357,6 @@ namespace FungusToast
         {
             if (player.AvailableMutationPoints > 0)
             {
-                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
-                skillTreeButton.BorderBrush = _activeBorderBrush;
-                skillTreeButton.BorderThickness = _activeThickness;
                 var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
                 foreach (var mutationButton in playerMutationButtons)
                 {
