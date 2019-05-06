@@ -142,8 +142,8 @@
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"></ColumnDefinition>
-                            <ColumnDefinition Width="220"></ColumnDefinition>
+                            <ColumnDefinition Width="160"></ColumnDefinition>
+                            <ColumnDefinition Width="230"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
@@ -248,7 +248,7 @@
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
+                                    <ColumnDefinition Width="22"></ColumnDefinition>
                                     <ColumnDefinition Width="90"></ColumnDefinition>
                                     <ColumnDefinition Width="30"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
@@ -282,9 +282,9 @@
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="6*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="22"></ColumnDefinition>
+                                    <ColumnDefinition Width="140"></ColumnDefinition>
+                                    <ColumnDefinition Width="35"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
@@ -313,7 +313,7 @@
 
                                 <TextBlock Grid.Row="5" Grid.Column="0" Text="λ" TextAlignment="Center"
                                            ToolTipService.ToolTip="The total number mutation points spent over the course of the game"></TextBlock>
-                                <TextBlock Grid.Row="5" Grid.Column="1" Text="Spent Mutation Points:"></TextBlock>
+                                <TextBlock Grid.Row="5" Grid.Column="1" Text="Spent Points:"></TextBlock>
                                 <TextBlock Grid.Row="5" Grid.Column="2" Text="{x:Bind SpentMutationPoints, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
                             </Grid>
 

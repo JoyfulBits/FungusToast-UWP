@@ -43,6 +43,11 @@ namespace FungusToast
         private readonly Dictionary<string, Button> _playerNumberToSkillTreeButton = new Dictionary<string, Button>();
         private readonly Dictionary<string, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<string, SolidColorBrush>();
 
+        /// <summary>
+        /// If the skill tree dialog is open then this will have a reference to it
+        /// </summary>
+        private ContentDialog _visibleDialog;
+
         private char _deadCellSymbol = '☠';
 
         private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
@@ -514,6 +519,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerId];
+            _visibleDialog = contentDialog;
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
 
@@ -528,6 +534,7 @@ namespace FungusToast
         {
             if (_gameModel.Status == GameStatus.Finished)
             {
+                
                 await GameEndContentDialog.ShowAsync();
                 return true;
             }
