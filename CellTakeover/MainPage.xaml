@@ -251,7 +251,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="22"></ColumnDefinition>
                                     <ColumnDefinition Width="90"></ColumnDefinition>
-                                    <ColumnDefinition Width="30"></ColumnDefinition>
+                                    <ColumnDefinition Width="35"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
