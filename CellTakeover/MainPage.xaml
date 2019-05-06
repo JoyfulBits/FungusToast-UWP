@@ -84,13 +84,14 @@
                             <ColumnDefinition Width="150"></ColumnDefinition>
                             <ColumnDefinition Width="90"></ColumnDefinition>
                             <ColumnDefinition Width="100"></ColumnDefinition>
-                            <ColumnDefinition Width="90"></ColumnDefinition>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="0"></TextBlock>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="Player" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="Live Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="3" Text="Regrown Cells"  Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Dead Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="3" Text="Dead Cells" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Regrown Cells"  Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        
                     </Grid>
                 </GridView.Header>
                 <GridView.ItemsPanel>
@@ -317,10 +318,11 @@
                                 <TextBlock Grid.Row="5" Grid.Column="2" Text="{x:Bind SpentMutationPoints, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
                             </Grid>
 
-                            <ContentDialog Title="{x:Bind Path=Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0} Skill Tree'}" 
+                            <ContentDialog Grid.Column="0" Grid.ColumnSpan="2" Title="{x:Bind Path=Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0} Skill Tree'}" 
                                        CloseButtonText="Close"
                                        Loaded="SkillTreeDialog_Loaded"
-                                       Opened="SkillTreeDialog_OnOpened">
+                                       Opened="SkillTreeDialog_OnOpened"
+                                       Closed="SkillTreeDialog_OnClosed">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition></RowDefinition>

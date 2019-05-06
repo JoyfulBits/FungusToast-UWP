@@ -513,6 +513,10 @@ namespace FungusToast
                 EnableMutationButtons(player);
             }
         }
+        private void SkillTreeDialog_OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            _visibleDialog = null;
+        }
 
         private async void SkillTreeButton_OnClick(object sender, RoutedEventArgs e)
         {
@@ -534,7 +538,7 @@ namespace FungusToast
         {
             if (_gameModel.Status == GameStatus.Finished)
             {
-                
+                _visibleDialog?.Hide();
                 await GameEndContentDialog.ShowAsync();
                 return true;
             }
@@ -633,11 +637,6 @@ namespace FungusToast
             {
                 comboBox.SelectedItem = 0;
             }
-        }
-
-        private void MutationStackPanel_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var stackPanel = sender as StackPanel;
         }
     }
 }
