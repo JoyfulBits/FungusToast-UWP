@@ -589,14 +589,14 @@
                 <RowDefinition Height="50"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="160"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Name="EndOfGameCountDownLabel"
                        Visibility="Collapsed"
                        Style="{StaticResource SubtitleTextBlockStyle}" 
-                       Text="Game Over Count Down:" TextWrapping="Wrap"></TextBlock>
+                       Text="Rounds Until End:" TextWrapping="Wrap"></TextBlock>
             <TextBlock Grid.Row="0" Grid.Column="1" Name="EndOfGameCountDownTextBlock"
                        Visibility="Collapsed"
                        HorizontalAlignment="Right"
@@ -610,26 +610,26 @@
                         Style="{StaticResource SubtitleTextBlockStyle}" 
                         Text="{x:Bind ViewModel.RoundNumber, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
 
-            <TextBlock Grid.Row="2" Grid.Column="0"
+            <TextBlock Grid.Row="2" Grid.Column="0" 
+                       Style="{StaticResource SubtitleTextBlockStyle}" 
+                       Text="Empty Cells:" ></TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right"
+                       Style="{StaticResource SubtitleTextBlockStyle}" 
+                       Text="{x:Bind ViewModel.TotalEmptyCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
+
+            <TextBlock Grid.Row="3" Grid.Column="0"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
                            Text="Total Live Cells:" ></TextBlock>
-            <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right"
+            <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
                            Text="{x:Bind ViewModel.TotalLiveCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
 
-            <TextBlock Grid.Row="3" Grid.Column="0" 
-                           Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="Total Dead Cells:" ></TextBlock>
-            <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"
-                           Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
-
             <TextBlock Grid.Row="4" Grid.Column="0" 
                            Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="Empty Cells:" ></TextBlock>
+                           Text="Total Dead Cells:" ></TextBlock>
             <TextBlock Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
-                           Text="{x:Bind ViewModel.TotalEmptyCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
+                           Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
         </Grid>
     </Grid>
 </Page>
