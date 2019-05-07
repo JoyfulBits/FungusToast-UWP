@@ -274,7 +274,7 @@
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="🡢" TextAlignment="Center"
                                            ToolTipService.ToolTip="The chance that a given cell will bud in a top, right, bottom, or left direction"></TextBlock>
                                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Base Growth:"></TextBlock>
-                                <TextBlock Grid.Row="3" Grid.Column="2"  Text="{x:Bind TopGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+                                <TextBlock Grid.Row="3" Grid.Column="2"  Text="{x:Bind TopGrowthChance, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
 
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="🡤" TextAlignment="Center"
                                            ToolTipService.ToolTip="The chance that a given cell will bud in a top-left, top-right, bottom-right, or bottom-left direction"></TextBlock>
