@@ -236,8 +236,8 @@
 
                         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="7*"></ColumnDefinition>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Grid Grid.Column="0">
                                 <Grid.RowDefinitions>
@@ -248,9 +248,9 @@
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="22"></ColumnDefinition>
-                                    <ColumnDefinition Width="90"></ColumnDefinition>
-                                    <ColumnDefinition Width="35"></ColumnDefinition>
+                                    <ColumnDefinition Width="24"></ColumnDefinition>
+                                    <ColumnDefinition Width="110"></ColumnDefinition>
+                                    <ColumnDefinition Width="55"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
@@ -270,6 +270,16 @@
                                            ToolTipService.ToolTip="The number of dead cells this player currently has (excluding what was already regenerated)"></TextBlock>
                                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Dead Cells:"></TextBlock>
                                 <TextBlock Grid.Row="2" Grid.Column="2" Text="{x:Bind DeadCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="🡢" TextAlignment="Center"
+                                           ToolTipService.ToolTip="The chance that a given cell will bud in a top, right, bottom, or left direction"></TextBlock>
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="Base Growth:"></TextBlock>
+                                <TextBlock Grid.Row="3" Grid.Column="2"  Text="{x:Bind TopGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="🡤" TextAlignment="Center"
+                                           ToolTipService.ToolTip="The chance that a given cell will bud in a top-left, top-right, bottom-right, or bottom-left direction"></TextBlock>
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="Corner Growth:"></TextBlock>
+                                <TextBlock Grid.Row="4" Grid.Column="2"  Text="{x:Bind TopLeftGrowthChance, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
                             </Grid>
 
                             <Grid Grid.Column="1">
@@ -282,7 +292,7 @@
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="22"></ColumnDefinition>
+                                    <ColumnDefinition Width="24"></ColumnDefinition>
                                     <ColumnDefinition Width="140"></ColumnDefinition>
                                     <ColumnDefinition Width="35"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
@@ -409,7 +419,7 @@
                                                        Text="{x:Bind AddCornerGrowthChanceMessage, Mode=OneTime}"
                                                        TextWrapping="Wrap"></TextBlock>
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Corner Growth Chance:"></TextBlock>
-                                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=TopLeftGrowthChance, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=TopLeftGrowthChance, Mode=OneWay}" ></TextBlock>
                                             </Grid>
                                         </StackPanel>
                                     </Button>

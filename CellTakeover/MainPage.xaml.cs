@@ -552,6 +552,7 @@ namespace FungusToast
 
         private void Exit_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            ClearGame();
             Application.Current.Exit();
         }
 

@@ -20,7 +20,7 @@ namespace Logic
         int FungicidalKills { get; set; }
         int SpentMutationPoints { get; set; }
         GrowthScorecard GrowthScorecard { get; set; }
-        float TopLeftGrowthChance { get; }
+        string TopLeftGrowthChance { get; }
         float TopGrowthChance { get; }
         float TopRightGrowthChance { get; }
         float RightGrowthChance { get; }

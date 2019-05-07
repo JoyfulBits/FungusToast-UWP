@@ -114,7 +114,8 @@ namespace Logic
         public float MycotoxinFungicideChancePercentage => GrowthScorecard.MycotoxinFungicideChancePercentage;
 
 
-        public float TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
+        public string TopLeftGrowthChance =>
+            GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft].ToString("0.00\\%");
         public float TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
         public float TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
         public float RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right];
