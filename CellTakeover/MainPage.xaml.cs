@@ -43,6 +43,11 @@ namespace FungusToast
         private readonly Dictionary<string, Button> _playerNumberToSkillTreeButton = new Dictionary<string, Button>();
         private readonly Dictionary<string, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<string, SolidColorBrush>();
 
+        /// <summary>
+        /// If the skill tree dialog is open then this will have a reference to it
+        /// </summary>
+        private ContentDialog _visibleDialog;
+
         private char _deadCellSymbol = '☠';
 
         private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
@@ -263,7 +268,7 @@ namespace FungusToast
             }
         }
 
-        private static void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
+        private void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
         {
             //--zero out AI players' mutation points since they always spend them immediately
             if (!playerToUpdate.IsHuman)
@@ -305,6 +310,13 @@ namespace FungusToast
             };
 
             playerToUpdate.GrowthScorecard = updatedGrowthScorecard;
+
+            if (playerToUpdate.IsCurrentPlayer(_userName) && playerToUpdate.AvailableMutationPoints > 0)
+            {
+                var skillTreeButton = _playerNumberToSkillTreeButton[playerToUpdate.PlayerId];
+                skillTreeButton.BorderBrush = _activeBorderBrush;
+                skillTreeButton.BorderThickness = _activeThickness;
+            }
         }
 
         private async Task RenderToastChange(ToastChange toastChange)
@@ -345,9 +357,6 @@ namespace FungusToast
         {
             if (player.AvailableMutationPoints > 0)
             {
-                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
-                skillTreeButton.BorderBrush = _activeBorderBrush;
-                skillTreeButton.BorderThickness = _activeThickness;
                 var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
                 foreach (var mutationButton in playerMutationButtons)
                 {
@@ -482,8 +491,8 @@ namespace FungusToast
         private async void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
         {
             var mutationPointMessageTextBlock = sender as TextBlock;
-            var player = mutationPointMessageTextBlock.DataContext as IPlayer;
-            _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerId] = mutationPointMessageTextBlock;
+            var playerId = mutationPointMessageTextBlock.Tag.ToString();
+            _playerNumberToMutationPointAnnouncementTextBlock[playerId] = mutationPointMessageTextBlock;
 
             if (_gameModel != null && _playerNumberToMutationPointAnnouncementTextBlock.Keys.Count == _gameModel.Players.Count)
             {
@@ -494,8 +503,8 @@ namespace FungusToast
         private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
         {
             var skillTreeDialog = sender as ContentDialog;
-            var player = skillTreeDialog.DataContext as IPlayer;
-            _playerNumberToSkillTreeDialog[player.PlayerId] = skillTreeDialog;
+            var playerId = skillTreeDialog.Tag.ToString();
+            _playerNumberToSkillTreeDialog[playerId] = skillTreeDialog;
         }
 
         private void SkillTreeDialog_OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -508,26 +517,33 @@ namespace FungusToast
                 EnableMutationButtons(player);
             }
         }
+        private void SkillTreeDialog_OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            _visibleDialog = null;
+        }
 
         private async void SkillTreeButton_OnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerId];
+            _visibleDialog = contentDialog;
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
 
         private void SkillTreeButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var player = button.DataContext as IPlayer;
-            _playerNumberToSkillTreeButton[player.PlayerId] = button;
+            var playerId = button.Tag.ToString();
+            //var player = button.DataContext as IPlayer;
+            _playerNumberToSkillTreeButton[playerId] = button;
         }
 
         private async Task<bool> CheckForGameEnd()
         {
             if (_gameModel.Status == GameStatus.Finished)
             {
+                _visibleDialog?.Hide();
                 await GameEndContentDialog.ShowAsync();
                 return true;
             }
@@ -537,6 +553,7 @@ namespace FungusToast
 
         private void Exit_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            ClearGame();
             Application.Current.Exit();
         }
 
@@ -626,11 +643,6 @@ namespace FungusToast
             {
                 comboBox.SelectedItem = 0;
             }
-        }
-
-        private void MutationStackPanel_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var stackPanel = sender as StackPanel;
         }
     }
 }

@@ -114,14 +114,15 @@ namespace Logic
         public float MycotoxinFungicideChancePercentage => GrowthScorecard.MycotoxinFungicideChancePercentage;
 
 
-        public float TopLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft];
-        public float TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top];
-        public float TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight];
-        public float RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right];
-        public float BottomRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight];
-        public float BottomGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Bottom];
-        public float BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft];
-        public float LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left];
+        public string TopLeftGrowthChance =>
+            GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft].ToString("0.00\\%");
+        public string TopGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Top].ToString("0.00\\%");
+        public string TopRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight].ToString("0.00\\%");
+        public string RightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Right].ToString("0.00\\%");
+        public string BottomRightGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight].ToString("0.00\\%");
+        public string BottomGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Bottom].ToString("0.00\\%");
+        public string BottomLeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft].ToString("0.00\\%");
+        public string LeftGrowthChance => GrowthScorecard.GrowthChanceDictionary[RelativePosition.Left].ToString("0.00\\%");
 
         public float HyperMutationSkillLevel
         {
