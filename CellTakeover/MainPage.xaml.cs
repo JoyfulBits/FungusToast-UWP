@@ -491,8 +491,8 @@ namespace FungusToast
         private async void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
         {
             var mutationPointMessageTextBlock = sender as TextBlock;
-            var player = mutationPointMessageTextBlock.DataContext as IPlayer;
-            _playerNumberToMutationPointAnnouncementTextBlock[player.PlayerId] = mutationPointMessageTextBlock;
+            var playerId = mutationPointMessageTextBlock.Tag.ToString();
+            _playerNumberToMutationPointAnnouncementTextBlock[playerId] = mutationPointMessageTextBlock;
 
             if (_gameModel != null && _playerNumberToMutationPointAnnouncementTextBlock.Keys.Count == _gameModel.Players.Count)
             {
@@ -503,8 +503,8 @@ namespace FungusToast
         private void SkillTreeDialog_Loaded(object sender, RoutedEventArgs e)
         {
             var skillTreeDialog = sender as ContentDialog;
-            var player = skillTreeDialog.DataContext as IPlayer;
-            _playerNumberToSkillTreeDialog[player.PlayerId] = skillTreeDialog;
+            var playerId = skillTreeDialog.Tag.ToString();
+            _playerNumberToSkillTreeDialog[playerId] = skillTreeDialog;
         }
 
         private void SkillTreeDialog_OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -534,8 +534,9 @@ namespace FungusToast
         private void SkillTreeButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var player = button.DataContext as IPlayer;
-            _playerNumberToSkillTreeButton[player.PlayerId] = button;
+            var playerId = button.Tag.ToString();
+            //var player = button.DataContext as IPlayer;
+            _playerNumberToSkillTreeButton[playerId] = button;
         }
 
         private async Task<bool> CheckForGameEnd()

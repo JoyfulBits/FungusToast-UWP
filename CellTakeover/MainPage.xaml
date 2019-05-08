@@ -130,7 +130,7 @@
         </TextBlock>
 
 
-        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None">
+        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" SelectionMode="None" IncrementalLoadingThreshold="50">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="PlayerDataTemplate" x:DataType="logic:Player">
                     <Grid Name="{x:Bind PlayerId}" Padding="10" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
@@ -156,7 +156,8 @@
                                            VerticalAlignment="Center"></TextBlock>
                         </StackPanel>
 
-                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                Tag="{x:Bind PlayerId}"
                                 ToolTipService.ToolTip="View this player's skill tree and use mutation points to improve your organism"
                                 Click="SkillTreeButton_OnClick"
                                 Loaded="SkillTreeButton_Loaded">
@@ -168,6 +169,7 @@
                         </Button>
 
                         <TextBlock Grid.Row="1" Grid.Column="1"
+                            Tag="{x:Bind PlayerId}"
                             Opacity="0"
                             Foreground="DarkGreen"
                             Text="+1 Mutation Point!" 
@@ -267,6 +269,7 @@
                             </Grid>
 
                             <ContentDialog Grid.Column="0" Grid.ColumnSpan="2" Title="{x:Bind Path=Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0} Skill Tree'}" 
+                                       Tag="{x:Bind PlayerId}"
                                        CloseButtonText="Close"
                                        Loaded="SkillTreeDialog_Loaded"
                                        Opened="SkillTreeDialog_OnOpened"
