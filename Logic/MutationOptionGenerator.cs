@@ -12,7 +12,7 @@ namespace Logic
         public static float AdditionalMycotoxinFungicideChancePerAttributePoint = .25F;
         
         public static string IncreaseMutationChanceMessage =>
-            $"Increase mutation chance by {AdditionalMutationPercentageChancePerAttributePoint}%.";
+            $"Increase chance of earning bonus mutation points by {AdditionalMutationPercentageChancePerAttributePoint}%.";
         public static string IncreaseCornerGrowthChanceMessage =>
             $"Increase of corner growth by {AdditionalCornerGrowthChancePerAttributePoint}%.";
 
