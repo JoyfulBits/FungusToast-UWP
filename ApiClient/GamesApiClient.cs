@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -118,6 +119,33 @@ namespace ApiClient
                         var requestDataJson = await stringifiedObject.ReadAsStringAsync();
                         throw new ApiException(uri, HttpMethod.Post, requestDataJson, response.StatusCode, data);
                     }
+                }
+            }
+        }
+
+        public virtual async Task<List<Skill>> GetSkills(string baseApiUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                var uri = new Uri(baseApiUrl + "/skills");
+                using (var response = await client.GetAsync(uri))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        using (var content = response.Content)
+                        {
+                            var data = await content.ReadAsStringAsync();
+                            Debug.WriteLine($"GET request sent to '{uri.AbsolutePath}'.");
+                            Debug.WriteLine($"Got response: '{data}'");
+
+                            if (data != null)
+                            {
+                                return _serialization.DeserializeObject<List<Skill>>(data);
+                            }
+                        }
+                    }
+
+                    throw new ApiException(uri, HttpMethod.Post, string.Empty, response.StatusCode, string.Empty);
                 }
             }
         }
