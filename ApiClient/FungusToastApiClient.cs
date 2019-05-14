@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ApiClient.Exceptions;
 using ApiClient.Models;
 
@@ -29,6 +30,11 @@ namespace ApiClient
             bool? mockNextRoundAvailable = null)
         {
             return await _gamesApiClient.PushSkillExpenditures(gameId, playerId, skillExpenditureRequest, _baseApiUrl, mockNextRoundAvailable);
+        }
+
+        public async Task<List<Skill>> GetSkills()
+        {
+            return await _gamesApiClient.GetSkills(_baseApiUrl);
         }
     }
 }
