@@ -57,7 +57,7 @@ namespace FungusToast
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
         private IFungusToastApiClient _fungusToastApiClient;
-        private MutationOptionGenerator _mutationOptionGenerator;
+        private SkillsData _skillsData;
 
         private readonly ApplicationDataContainer _applicationDataContainer = ApplicationData.Current.LocalSettings;
         private const string SettingsContainerName = "SettingsContainer";
@@ -85,7 +85,7 @@ namespace FungusToast
             _fungusToastApiClient = new FungusToastApiClient(GameSettings.BaseURL, new GamesApiClient(new Serializer()));
         }
 
-        private async Task<MutationOptionGenerator> InitializeSkills()
+        private async Task<SkillsData> InitializeSkills()
         {
             var skills = await _fungusToastApiClient.GetSkills();
 
@@ -128,7 +128,7 @@ namespace FungusToast
                     $"Expected that all '{totalExpectedSkills}' skills would be accounted for, but only '{skills.Count}' were set.");
             }
 
-            return new MutationOptionGenerator(
+            return new SkillsData(
                 mutationPercentageChancePerAttributePoint,
                 cornerGrowthChancePerAttributePoint,
                 reducedApoptosisPercentagePerAttributePoint,
@@ -139,7 +139,7 @@ namespace FungusToast
 
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            _mutationOptionGenerator = await InitializeSkills();
+            _skillsData = await InitializeSkills();
 
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
@@ -194,7 +194,7 @@ namespace FungusToast
             {
                 var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
-                    playerState.Human, _mutationOptionGenerator);
+                    playerState.Human, _skillsData);
                 UpdatePlayer(player, playerState);
                 players.Add(player);
             }

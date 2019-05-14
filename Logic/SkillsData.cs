@@ -1,8 +1,8 @@
 ﻿namespace Logic
 {
-    public class MutationOptionGenerator
+    public class SkillsData
     {
-        public MutationOptionGenerator(float mutationPercentageChancePerAttributePoint,
+        public SkillsData(float mutationPercentageChancePerAttributePoint,
             float cornerGrowthChancePerAttributePoint,
             float reducedApoptosisPercentagePerAttributePoint,
             float regenerationChancePerAttributePoint,

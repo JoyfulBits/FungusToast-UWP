@@ -8,7 +8,7 @@ namespace Logic
 {
     public class Player : IPlayer
     {
-        private readonly MutationOptionGenerator _mutationOptionGenerator;
+        private readonly SkillsData _skillsData;
         private Color _color;
         private string _playerId;
         private GrowthScorecard _growthScorecard;
@@ -29,9 +29,9 @@ namespace Logic
         private int _spentMutationPoints;
 
         public Player(string name, Color playerCellColor, string playerId,
-            bool isHuman, MutationOptionGenerator mutationOptionGenerator)
+            bool isHuman, SkillsData skillsData)
         {
-            _mutationOptionGenerator = mutationOptionGenerator;
+            _skillsData = skillsData;
             Name = name;
             Color = playerCellColor;
             PlayerId = playerId;
@@ -267,35 +267,35 @@ namespace Logic
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string AddMutationChanceMessage => _mutationOptionGenerator.IncreaseMutationChanceMessage;
-        public string AddCornerGrowthChanceMessage => _mutationOptionGenerator.IncreaseCornerGrowthChanceMessage;
-        public string DecreaseApoptosisChanceMessage => _mutationOptionGenerator.DecreaseApoptosisChanceMessage;
+        public string AddMutationChanceMessage => _skillsData.IncreaseMutationChanceMessage;
+        public string AddCornerGrowthChanceMessage => _skillsData.IncreaseCornerGrowthChanceMessage;
+        public string DecreaseApoptosisChanceMessage => _skillsData.DecreaseApoptosisChanceMessage;
 
-        public string AddRegrowthChanceMessage => _mutationOptionGenerator.IncreaseRegrowthChanceMessage;
-        public string AddMycotoxicityChanceMessage => _mutationOptionGenerator.IncreaseMycotoxinFungicideChanceMessage;
+        public string AddRegrowthChanceMessage => _skillsData.IncreaseRegrowthChanceMessage;
+        public string AddMycotoxicityChanceMessage => _skillsData.IncreaseMycotoxinFungicideChanceMessage;
 
         public void IncreaseHypermutation()
         {
-            GrowthScorecard.MutationChancePercentage += _mutationOptionGenerator.MutationPercentageChancePerAttributePoint;
+            GrowthScorecard.MutationChancePercentage += _skillsData.MutationPercentageChancePerAttributePoint;
             AvailableMutationPoints--;
         }
 
         public void DecreaseApoptosisChance()
         {
-            GrowthScorecard.ApoptosisChancePercentage -= _mutationOptionGenerator.ReducedApoptosisPercentagePerAttributePoint;
+            GrowthScorecard.ApoptosisChancePercentage -= _skillsData.ReducedApoptosisPercentagePerAttributePoint;
             AvailableMutationPoints--;
         }
 
         public void IncreaseBudding()
         {
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] +=
-                _mutationOptionGenerator.CornerGrowthChancePerAttributePoint;
+                _skillsData.CornerGrowthChancePerAttributePoint;
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight] +=
-                _mutationOptionGenerator.CornerGrowthChancePerAttributePoint;
+                _skillsData.CornerGrowthChancePerAttributePoint;
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight] +=
-                _mutationOptionGenerator.CornerGrowthChancePerAttributePoint;
+                _skillsData.CornerGrowthChancePerAttributePoint;
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft] +=
-                _mutationOptionGenerator.CornerGrowthChancePerAttributePoint;
+                _skillsData.CornerGrowthChancePerAttributePoint;
 
             AvailableMutationPoints--;
 
@@ -308,7 +308,7 @@ namespace Logic
         public void IncreaseRegeneration()
         {
             GrowthScorecard.RegenerationChancePercentage +=
-                _mutationOptionGenerator.RegenerationChancePerAttributePoint;
+                _skillsData.RegenerationChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }
@@ -316,7 +316,7 @@ namespace Logic
         public void IncreaseMycotoxicity()
         {
             GrowthScorecard.MycotoxinFungicideChancePercentage +=
-                _mutationOptionGenerator.MycotoxinFungicideChancePerAttributePoint;
+                _skillsData.MycotoxinFungicideChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }
