@@ -10,7 +10,6 @@ using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using ApiClient;
 using ApiClient.Models;
@@ -58,6 +57,7 @@ namespace FungusToast
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Black);
         private readonly Thickness _normalThickness = new Thickness(1);
         private IFungusToastApiClient _fungusToastApiClient;
+        private SkillsData _skillsData;
 
         private readonly ApplicationDataContainer _applicationDataContainer = ApplicationData.Current.LocalSettings;
         private const string SettingsContainerName = "SettingsContainer";
@@ -85,9 +85,62 @@ namespace FungusToast
             _fungusToastApiClient = new FungusToastApiClient(GameSettings.BaseURL, new GamesApiClient(new Serializer()));
         }
 
+        private async Task<SkillsData> InitializeSkills()
+        {
+            var skills = await _fungusToastApiClient.GetSkills();
+
+            float mutationPercentageChancePerAttributePoint = 0F;
+            float cornerGrowthChancePerAttributePoint = 0F;
+            float reducedApoptosisPercentagePerAttributePoint = 0F;
+            float regenerationChancePerAttributePoint = 0F;
+            float mycotoxinFungicideChancePerAttributePoint = 0F;
+
+            foreach (var skill in skills)
+            {
+                switch (skill.Id)
+                {
+                    case (int)Skills.AntiApoptosis:
+                        reducedApoptosisPercentagePerAttributePoint = skill.IncreasePerPoint;
+                        break;
+                    case (int)Skills.Budding:
+                        cornerGrowthChancePerAttributePoint = skill.IncreasePerPoint;
+                        break;
+                    case (int)Skills.Hypermutation:
+                        mutationPercentageChancePerAttributePoint = skill.IncreasePerPoint;
+                        break;
+                    case (int)Skills.Mycotoxicity:
+                        mycotoxinFungicideChancePerAttributePoint = skill.IncreasePerPoint;
+                        break;
+                    case (int)Skills.Regeneration:
+                        regenerationChancePerAttributePoint = skill.IncreasePerPoint;
+                        break;
+                    default:
+                        throw new Exception(
+                            $"There is a new skill in the API that is not accounted for in the UWP app. The skill id is '{skill.Id}' and the name is '{skill.Name}'");
+                }
+            }
+
+            const int totalExpectedSkills = 5;
+
+            if (totalExpectedSkills != skills.Count)
+            {
+                throw new Exception(
+                    $"Expected that all '{totalExpectedSkills}' skills would be accounted for, but only '{skills.Count}' were set.");
+            }
+
+            return new SkillsData(
+                mutationPercentageChancePerAttributePoint,
+                cornerGrowthChancePerAttributePoint,
+                reducedApoptosisPercentagePerAttributePoint,
+                regenerationChancePerAttributePoint,
+                mycotoxinFungicideChancePerAttributePoint);
+        }
+
 
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
+            _skillsData = await InitializeSkills();
+
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
             {
@@ -141,7 +194,7 @@ namespace FungusToast
             {
                 var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
-                    playerState.Human);
+                    playerState.Human, _skillsData);
                 UpdatePlayer(player, playerState);
                 players.Add(player);
             }
@@ -605,6 +658,7 @@ namespace FungusToast
             4,
             5
         };
+
 
         private void NumberOfHumanPlayersComboBox_OnLoaded(object sender, RoutedEventArgs e)
         {
