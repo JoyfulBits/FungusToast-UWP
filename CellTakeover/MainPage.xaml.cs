@@ -29,7 +29,12 @@ namespace FungusToast
         public FungusToastViewModel ViewModel { get; set; }
 
         //TODO this is hard-coded until we get authentication working
-        private readonly string _userName = MockDataBuilder.AppUserName;
+        private readonly string _userName = "jakejgordon";
+        private readonly string _userName2 = "player 2";
+        private readonly string _userName3 = "player 3";
+        private readonly string _userName4 = "player 4";
+        private readonly string _userName5 = "player 5";
+        private readonly string _userName6 = "player 6";
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
@@ -171,7 +176,7 @@ namespace FungusToast
             if (numberOfHumanPlayers + numberOfAiPlayers < 7)
             {
                 var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
-                _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest, false);
+                _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
                 _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
 
                 InitializeGame(_gameModel);

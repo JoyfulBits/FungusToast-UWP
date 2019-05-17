@@ -18,18 +18,8 @@ namespace ApiClient
             _serialization = serialization;
         }
 
-        public virtual async Task<GameModel> GetGameState(int gameId, string baseApiUrl, MockOption? mockOption = null)
+        public virtual async Task<GameModel> GetGameState(int gameId, string baseApiUrl)
         {
-            if (mockOption.HasValue)
-            {
-                if (mockOption.Value == MockOption.NewGame)
-                {
-                    return MockDataBuilder.MakeMockGameModelForJustStartedGame();
-                }
-
-                return MockDataBuilder.MakeMockGameModelForGameThatIsWellUnderWay();
-            }
-
             using (var client = new HttpClient())
             {
                 var uri = new Uri(baseApiUrl + "/games/" + gameId);
@@ -55,13 +45,8 @@ namespace ApiClient
             throw new GameNotFoundException(gameId);
         }
 
-        public virtual async Task<GameModel> CreateGame(NewGameRequest newGame, string baseApiUrl, bool returnMock = false)
+        public virtual async Task<GameModel> CreateGame(NewGameRequest newGame, string baseApiUrl)
         {
-            if (returnMock)
-            {
-                return MockDataBuilder.MakeMockGameModelForJustStartedGame();
-            }
-
             using (var client = new HttpClient())
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(newGame);
@@ -88,16 +73,8 @@ namespace ApiClient
         }
 
         public virtual async Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId,
-            SkillExpenditureRequest skillExpenditureRequest, string baseApiUrl, bool? mockNextRoundAvailable = null)
+            SkillExpenditureRequest skillExpenditureRequest, string baseApiUrl)
         {
-            if (mockNextRoundAvailable.HasValue)
-            {
-                return new SkillUpdateResult
-                {
-                    NextRoundAvailable = mockNextRoundAvailable.Value
-                };
-            }
-
             using (var client = new HttpClient())
             {
                 var stringifiedObject = _serialization.SerializeToHttpStringContent(skillExpenditureRequest);
