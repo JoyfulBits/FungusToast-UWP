@@ -126,5 +126,32 @@ namespace ApiClient
                 }
             }
         }
+
+        public async Task<JoinGameResult> JoinGame(JoinGameRequest joinGameRequest, string baseApiUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                var stringifiedObject = _serialization.SerializeToHttpStringContent(joinGameRequest);
+
+                var uri = new Uri(baseApiUrl + "/game-invitations");
+                using (var response = await client.PostAsync(uri, stringifiedObject))
+                {
+                    using (var content = response.Content)
+                    {
+                        var data = await content.ReadAsStringAsync();
+                        Debug.WriteLine($"POST request sent to '{uri.AbsolutePath}' with data: '{await stringifiedObject.ReadAsStringAsync()}'.");
+                        Debug.WriteLine($"Got response: '{data}'");
+
+                        if (data != null && response.IsSuccessStatusCode)
+                        {
+                            return _serialization.DeserializeObject<JoinGameResult>(data);
+                        }
+
+                        var requestDataJson = await stringifiedObject.ReadAsStringAsync();
+                        throw new ApiException(uri, HttpMethod.Post, requestDataJson, response.StatusCode, data);
+                    }
+                }
+            }
+        }
     }
 }

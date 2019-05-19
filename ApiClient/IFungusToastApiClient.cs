@@ -11,5 +11,6 @@ namespace ApiClient
         Task<GameModel> CreateGame(NewGameRequest newGame);
         Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId, SkillExpenditureRequest skillExpenditureRequest);
         Task<List<Skill>> GetSkills();
+        Task<JoinGameResult> JoinGame(JoinGameRequest joinGameRequest);
     }
 }

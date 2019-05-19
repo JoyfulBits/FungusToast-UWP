@@ -29,12 +29,19 @@ namespace FungusToast
         public FungusToastViewModel ViewModel { get; set; }
 
         //TODO this is hard-coded until we get authentication working
-        private readonly string _userName = "jakejgordon";
-        private readonly string _userName2 = "player 2";
-        private readonly string _userName3 = "player 3";
-        private readonly string _userName4 = "player 4";
-        private readonly string _userName5 = "player 5";
-        private readonly string _userName6 = "player 6";
+        private readonly List<string> _validUserNames = new List<string>
+        {
+
+            "jakejgordon",
+            "human 2",
+            "human 3",
+            "human 4",
+            "human 5",
+            "human 6"
+        };
+
+        private readonly List<string> _usersPlayingLocalGame = new List<string>();
+
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
@@ -175,9 +182,17 @@ namespace FungusToast
 
             if (numberOfHumanPlayers + numberOfAiPlayers < 7)
             {
-                var newGameRequest = new NewGameRequest(_userName, numberOfHumanPlayers, numberOfAiPlayers);
+                _usersPlayingLocalGame.Add(_validUserNames[0]);
+                var newGameRequest = new NewGameRequest(_validUserNames[0], numberOfHumanPlayers, numberOfAiPlayers);
                 _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
                 _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
+                
+                for (int i = 1; i < numberOfHumanPlayers; i++)
+                {
+                    _usersPlayingLocalGame.Add(_validUserNames[i]);
+                    var joinGameRequest = new JoinGameRequest(_gameModel.Id, _validUserNames[i]);
+                    await _fungusToastApiClient.JoinGame(joinGameRequest);
+                }
 
                 InitializeGame(_gameModel);
             }
@@ -191,8 +206,7 @@ namespace FungusToast
         {
             var players = new List<IPlayer>();
             var reorderedPlayers = game.Players
-                .OrderByDescending(player => player.Name == _userName)
-                .ThenBy(player => player.Human)
+                .OrderByDescending(player => player.Human)
                 .ThenBy(player => player.Id)
                 .ToList();
             for (var i = 1; i <= reorderedPlayers.Count; i++)
@@ -369,7 +383,7 @@ namespace FungusToast
 
             playerToUpdate.GrowthScorecard = updatedGrowthScorecard;
 
-            if (playerToUpdate.IsCurrentPlayer(_userName) && playerToUpdate.AvailableMutationPoints > 0)
+            if (playerToUpdate.IsLocalPlayer(_usersPlayingLocalGame) && playerToUpdate.AvailableMutationPoints > 0)
             {
                 var skillTreeButton = _playerNumberToSkillTreeButton[playerToUpdate.PlayerId];
                 skillTreeButton.BorderBrush = _activeBorderBrush;
@@ -534,7 +548,7 @@ namespace FungusToast
             var player = button.DataContext as IPlayer;
             var playerButtons = _playerNumberToMutationButtons[player.PlayerId];
 
-            if (player.AvailableMutationPoints > 0 && player.IsCurrentPlayer(_userName))
+            if (player.AvailableMutationPoints > 0 && player.IsLocalPlayer(_usersPlayingLocalGame))
             {
                 button.IsEnabled = true;
             }
@@ -570,7 +584,7 @@ namespace FungusToast
             var skillTreeDialog = sender as ContentDialog;
             var player = skillTreeDialog.DataContext as IPlayer;
 
-            if (player.IsCurrentPlayer(_userName))
+            if (player.IsLocalPlayer(_usersPlayingLocalGame))
             {
                 EnableMutationButtons(player);
             }

@@ -1,6 +1,4 @@
-﻿using ApiClient.Models;
-
-namespace ApiClient.Exceptions
+﻿namespace ApiClient.Models
 {
     public class SkillUpdateResult
     {

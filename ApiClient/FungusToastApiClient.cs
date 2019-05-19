@@ -35,5 +35,10 @@ namespace ApiClient
         {
             return await _gamesApiClient.GetSkills(_baseApiUrl);
         }
+
+        public async Task<JoinGameResult> JoinGame(JoinGameRequest joinGameRequest)
+        {
+            return await _gamesApiClient.JoinGame(joinGameRequest, _baseApiUrl);
+        }
     }
 }
