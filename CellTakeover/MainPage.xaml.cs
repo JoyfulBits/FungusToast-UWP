@@ -31,13 +31,12 @@ namespace FungusToast
         //TODO this is hard-coded until we get authentication working
         private readonly List<string> _validUserNames = new List<string>
         {
-
-            "jakejgordon",
-            "human 2",
-            "human 3",
-            "human 4",
-            "human 5",
-            "human 6"
+            "Human 1",
+            "Human 2",
+            "Human 3",
+            "Human 4",
+            "Human 5",
+            "Human 6"
         };
 
         private readonly List<string> _usersPlayingLocalGame = new List<string>();
@@ -186,15 +185,28 @@ namespace FungusToast
                 var newGameRequest = new NewGameRequest(_validUserNames[0], numberOfHumanPlayers, numberOfAiPlayers);
                 _gameModel = await _fungusToastApiClient.CreateGame(newGameRequest);
                 _settingsDataContainer.Values[ActiveGameIdSetting] = _gameModel.Id;
-                
+
+                JoinGameResult joinGameResult = null;
                 for (int i = 1; i < numberOfHumanPlayers; i++)
                 {
                     _usersPlayingLocalGame.Add(_validUserNames[i]);
                     var joinGameRequest = new JoinGameRequest(_gameModel.Id, _validUserNames[i]);
-                    await _fungusToastApiClient.JoinGame(joinGameRequest);
+                    joinGameResult = await _fungusToastApiClient.JoinGame(joinGameRequest);
                 }
 
-                InitializeGame(_gameModel);
+                var readyToPlay = _gameModel.Status == "Started" ||
+                                  (joinGameResult != null && joinGameResult.ResultTypeEnumValue ==
+                                   JoinGameResult.JoinGameResultType.JoinedStarted);
+
+                if (readyToPlay)
+                {
+                    _gameModel = await _fungusToastApiClient.GetGameState(_gameModel.Id);
+                   InitializeGame(_gameModel);
+                }
+                else
+                {
+                    //TODO will add support for creating a game and waiting for another player to join eventually
+                }
             }
             else
             {
