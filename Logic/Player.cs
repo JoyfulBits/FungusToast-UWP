@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.UI;
@@ -321,9 +322,9 @@ namespace Logic
             AvailableMutationPoints--;
         }
 
-        public bool IsCurrentPlayer(string userName)
+        public bool IsLocalPlayer(List<string> userNames)
         {
-            return Name == userName;
+            return userNames.Contains(Name);
         }
     }
 }

@@ -7,9 +7,10 @@ namespace ApiClient
 {
     public interface IFungusToastApiClient
     {
-        Task<GameModel> GetGameState(int gameId, MockOption? mockOption = null);
-        Task<GameModel> CreateGame(NewGameRequest newGame, bool returnMock = false);
-        Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId, SkillExpenditureRequest skillExpenditureRequest, bool? mockNextRoundAvailable = null);
+        Task<GameModel> GetGameState(int gameId);
+        Task<GameModel> CreateGame(NewGameRequest newGame);
+        Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId, SkillExpenditureRequest skillExpenditureRequest);
         Task<List<Skill>> GetSkills();
+        Task<JoinGameResult> JoinGame(JoinGameRequest joinGameRequest);
     }
 }

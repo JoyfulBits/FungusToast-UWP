@@ -38,6 +38,6 @@ namespace Logic
         void IncreaseBudding();
         void IncreaseRegeneration();
         void IncreaseMycotoxicity();
-        bool IsCurrentPlayer(string userName);
+        bool IsLocalPlayer(List<string> userName);
     }
 }

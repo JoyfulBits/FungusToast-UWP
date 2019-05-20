@@ -16,25 +16,29 @@ namespace ApiClient
             _gamesApiClient = gamesApiClient;
         }
 
-        public async Task<GameModel> GetGameState(int gameId, MockOption? mockOption = null)
+        public async Task<GameModel> GetGameState(int gameId)
         {
-            return await _gamesApiClient.GetGameState(gameId, _baseApiUrl, mockOption);
+            return await _gamesApiClient.GetGameState(gameId, _baseApiUrl);
         }
 
-        public async Task<GameModel> CreateGame(NewGameRequest newGame, bool returnMock = false)
+        public async Task<GameModel> CreateGame(NewGameRequest newGame)
         {
-            return await _gamesApiClient.CreateGame(newGame, _baseApiUrl, returnMock);
+            return await _gamesApiClient.CreateGame(newGame, _baseApiUrl);
         }
 
-        public async Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId, SkillExpenditureRequest skillExpenditureRequest,
-            bool? mockNextRoundAvailable = null)
+        public async Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId, SkillExpenditureRequest skillExpenditureRequest)
         {
-            return await _gamesApiClient.PushSkillExpenditures(gameId, playerId, skillExpenditureRequest, _baseApiUrl, mockNextRoundAvailable);
+            return await _gamesApiClient.PushSkillExpenditures(gameId, playerId, skillExpenditureRequest, _baseApiUrl);
         }
 
         public async Task<List<Skill>> GetSkills()
         {
             return await _gamesApiClient.GetSkills(_baseApiUrl);
+        }
+
+        public async Task<JoinGameResult> JoinGame(JoinGameRequest joinGameRequest)
+        {
+            return await _gamesApiClient.JoinGame(joinGameRequest, _baseApiUrl);
         }
     }
 }
