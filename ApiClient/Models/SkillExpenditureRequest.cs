@@ -5,6 +5,7 @@ namespace ApiClient.Models
 {
     public class SkillExpenditureRequest
     {
+        //--This is what will actually get serialized
         public List<SkillUpgrade> SkillUpgrades =>
             new List<SkillUpgrade>
             {
@@ -44,6 +45,8 @@ namespace ApiClient.Models
         [JsonIgnore]
         public int RegenerationPoints { get; set; }
         [JsonIgnore]
-        public int MycotoxicityPoints { get; set; } 
+        public int MycotoxicityPoints { get; set; }
+        [JsonIgnore]
+        public int HydrophiliaPoints { get; set; }
     }
 }

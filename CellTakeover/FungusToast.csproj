@@ -136,6 +136,7 @@
   <ItemGroup>
     <Content Include="Assets\Skill Icons\budding.png" />
     <Content Include="Assets\Skill Icons\hypermutation.png" />
+    <Content Include="Assets\Skill Icons\moisture_affinity.png" />
     <Content Include="Assets\Skill Icons\reduced_death.png" />
     <Content Include="Assets\Skill Icons\regrowth.png" />
     <Content Include="Assets\Skill Icons\toxicity.png" />

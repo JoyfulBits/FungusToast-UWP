@@ -274,6 +274,7 @@ namespace Logic
 
         public string AddRegrowthChanceMessage => _skillsData.IncreaseRegrowthChanceMessage;
         public string AddMycotoxicityChanceMessage => _skillsData.IncreaseMycotoxinFungicideChanceMessage;
+        public string AddMoistureGrowthBoostMessage => _skillsData.IncreaseMoistureGrowthBoostMessage;
 
         public void IncreaseHypermutation()
         {
@@ -318,6 +319,14 @@ namespace Logic
         {
             GrowthScorecard.MycotoxinFungicideChancePercentage +=
                 _skillsData.MycotoxinFungicideChancePerAttributePoint;
+
+            AvailableMutationPoints--;
+        }
+
+        public void IncreaseHydrophilia()
+        {
+            GrowthScorecard.MoistureGrowthBoost +=
+                _skillsData.MoistureGrowthBoostPerAttributePoint;
 
             AvailableMutationPoints--;
         }

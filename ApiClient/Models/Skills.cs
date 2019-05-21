@@ -6,6 +6,7 @@
         Budding = 2,
         AntiApoptosis = 3,
         Regeneration = 4,
-        Mycotoxicity = 5
+        Mycotoxicity = 5,
+        Hydrophilia = 6
     }
 }

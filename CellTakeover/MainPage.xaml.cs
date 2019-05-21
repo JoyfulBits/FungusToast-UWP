@@ -39,7 +39,7 @@ namespace FungusToast
             "Human 6"
         };
 
-        private readonly List<string> _usersPlayingLocalGame = new List<string>();
+        private List<string> _usersPlayingLocalGame = new List<string>();
 
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
@@ -79,8 +79,6 @@ namespace FungusToast
 
         private SkillExpenditureRequest _skillExpenditureRequest = new SkillExpenditureRequest();
 
-        private bool _playersListViewLoaded = false;
-
         public MainPage()
         {
             InitializeDependencies();
@@ -105,6 +103,7 @@ namespace FungusToast
             float reducedApoptosisPercentagePerAttributePoint = 0F;
             float regenerationChancePerAttributePoint = 0F;
             float mycotoxinFungicideChancePerAttributePoint = 0F;
+            float moistureGrowthBoostPerAttributePoint = 0F;
 
             foreach (var skill in skills)
             {
@@ -125,13 +124,16 @@ namespace FungusToast
                     case (int)Skills.Regeneration:
                         regenerationChancePerAttributePoint = skill.IncreasePerPoint;
                         break;
+                    case (int)Skills.Hydrophilia:
+                        moistureGrowthBoostPerAttributePoint = skill.IncreasePerPoint;
+                        break;
                     default:
                         throw new Exception(
                             $"There is a new skill in the API that is not accounted for in the UWP app. The skill id is '{skill.Id}' and the name is '{skill.Name}'");
                 }
             }
 
-            const int totalExpectedSkills = 5;
+            const int totalExpectedSkills = 6;
 
             if (totalExpectedSkills != skills.Count)
             {
@@ -144,7 +146,8 @@ namespace FungusToast
                 cornerGrowthChancePerAttributePoint,
                 reducedApoptosisPercentagePerAttributePoint,
                 regenerationChancePerAttributePoint,
-                mycotoxinFungicideChancePerAttributePoint);
+                mycotoxinFungicideChancePerAttributePoint,
+                moistureGrowthBoostPerAttributePoint);
         }
 
 
@@ -156,6 +159,9 @@ namespace FungusToast
             if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
             {
                 _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
+                _usersPlayingLocalGame = _gameModel.Players.Where(player => _validUserNames.Contains(player.Name))
+                    .Select(player => player.Name).ToList();
+
                 InitializeGame(_gameModel);
             }
             else
@@ -535,6 +541,17 @@ namespace FungusToast
             _skillExpenditureRequest.MycotoxicityPoints++;
 
             await CheckForRemainingMutationPoints(player);
+        }
+
+        private void Hydrophilia_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.IncreaseHydrophilia();
+            _skillExpenditureRequest.HydrophiliaPoints++;
+
+            //TODO have to wait until all moisture drops are placed before triggering the next round
+            //await CheckForRemainingMutationPoints(player);
         }
 
         private void DisablePlayerMutationButtons(IPlayer player)

@@ -6,13 +6,15 @@
             float cornerGrowthChancePerAttributePoint,
             float reducedApoptosisPercentagePerAttributePoint,
             float regenerationChancePerAttributePoint,
-            float mycotoxinFungicideChancePerAttributePoint)
+            float mycotoxinFungicideChancePerAttributePoint, 
+            float moistureGrowthBoostPerAttributePoint)
         {
             MutationPercentageChancePerAttributePoint = mutationPercentageChancePerAttributePoint;
             CornerGrowthChancePerAttributePoint = cornerGrowthChancePerAttributePoint;
             ReducedApoptosisPercentagePerAttributePoint = reducedApoptosisPercentagePerAttributePoint;
             RegenerationChancePerAttributePoint = regenerationChancePerAttributePoint;
             MycotoxinFungicideChancePerAttributePoint = mycotoxinFungicideChancePerAttributePoint;
+            MoistureGrowthBoostPerAttributePoint = moistureGrowthBoostPerAttributePoint;
         }
        
         public float MutationPercentageChancePerAttributePoint { get; }
@@ -20,6 +22,8 @@
         public float ReducedApoptosisPercentagePerAttributePoint { get; }
         public float RegenerationChancePerAttributePoint { get; }
         public float MycotoxinFungicideChancePerAttributePoint { get; }
+        public float MoistureGrowthBoostPerAttributePoint { get; }
+
 
         public string IncreaseMutationChanceMessage =>
             $"Increase chance of earning bonus mutation points by {MutationPercentageChancePerAttributePoint}%.";
@@ -35,5 +39,7 @@
         public string IncreaseMycotoxinFungicideChanceMessage =>
             $"Increase chance of killing an adjacent enemy cell by {MycotoxinFungicideChancePerAttributePoint}%.";
 
+        public string IncreaseMoistureGrowthBoostMessage =>
+            $"Place 3 drops of moisture and increase chance of growing into moist regions by {MoistureGrowthBoostPerAttributePoint}%.";
     }
 }

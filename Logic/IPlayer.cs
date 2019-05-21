@@ -38,6 +38,7 @@ namespace Logic
         void IncreaseBudding();
         void IncreaseRegeneration();
         void IncreaseMycotoxicity();
+        void IncreaseHydrophilia();
         bool IsLocalPlayer(List<string> userName);
     }
 }
