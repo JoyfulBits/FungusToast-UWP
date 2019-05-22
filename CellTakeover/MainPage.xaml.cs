@@ -380,7 +380,6 @@ namespace FungusToast
             playerToUpdate.MycotoxinsSkillLevel = playerStateValuesToCopy.MycotoxinsSkillLevel;
             playerToUpdate.HydrophiliaSkillLevel = playerStateValuesToCopy.HydrophiliaSkillLevel;
 
-
             var updatedGrowthScorecard = new GrowthScorecard
             {
                 ApoptosisChancePercentage = playerStateValuesToCopy.ApoptosisChance,
@@ -388,6 +387,7 @@ namespace FungusToast
                 MutationChancePercentage = playerStateValuesToCopy.MutationChance,
                 RegenerationChancePercentage = playerStateValuesToCopy.RegenerationChance,
                 MycotoxinFungicideChancePercentage = playerStateValuesToCopy.MycotoxinFungicideChance,
+                MoistureGrowthBoost = playerStateValuesToCopy.MoistureGrowthBoost,
                 GrowthChanceDictionary = new Dictionary<RelativePosition, float>
                 {
                     {RelativePosition.TopLeft, playerStateValuesToCopy.TopLeftGrowthChance},
