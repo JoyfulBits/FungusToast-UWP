@@ -33,6 +33,11 @@ namespace ApiClient.Models
                 {
                     Id = Skills.Mycotoxicity,
                     PointsSpent = MycotoxicityPoints
+                },
+                new SkillUpgrade
+                {
+                    Id = Skills.Hydrophilia,
+                    PointsSpent = HydrophiliaPoints
                 }
             };
 

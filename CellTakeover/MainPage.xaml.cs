@@ -378,6 +378,8 @@ namespace FungusToast
             playerToUpdate.RegenerationSkillLevel = playerStateValuesToCopy.RegenerationSkillLevel;
             playerToUpdate.BuddingSkillLevel = playerStateValuesToCopy.BuddingSkillLevel;
             playerToUpdate.MycotoxinsSkillLevel = playerStateValuesToCopy.MycotoxinsSkillLevel;
+            playerToUpdate.HydrophiliaSkillLevel = playerStateValuesToCopy.HydrophiliaSkillLevel;
+
 
             var updatedGrowthScorecard = new GrowthScorecard
             {
