@@ -585,7 +585,14 @@ namespace FungusToast
             foreach (var player in ViewModel.Players)
             {
                 EnableMutationButtons(player);
-                _playerNumberToSkillTreeButton[player.PlayerId].IsEnabled = true;
+                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
+                if (player.IsLocalPlayer(_usersPlayingLocalGame) && player.AvailableMutationPoints > 0)
+                {
+                    skillTreeButton.BorderBrush = _activeBorderBrush;
+                    skillTreeButton.BorderThickness = _activeThickness;
+                }
+                
+                skillTreeButton.IsEnabled = true;
             }
         }
 
