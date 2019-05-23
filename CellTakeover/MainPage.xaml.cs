@@ -48,6 +48,11 @@ namespace FungusToast
             TintColor = Colors.White
         };
 
+        private readonly AcrylicBrush _moistCellBrush = new AcrylicBrush
+        {
+            TintColor = Colors.LightGray
+        }; 
+
         private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<string, Dictionary<string, Button>>();
         private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
         private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
@@ -556,8 +561,7 @@ namespace FungusToast
             var player = button.DataContext as IPlayer;
             player.IncreaseHydrophilia();
             _skillExpenditureRequest.HydrophiliaPoints++;
-
-            //TODO have to wait until all moisture drops are placed before triggering the next round
+            
             EnableWaterDropper(player);
         }
 
@@ -606,6 +610,12 @@ namespace FungusToast
 
             _skillExpenditureRequest.AddMoistureDroplet(ViewModel.ActivePlayerId, gridCellIndex);
             ViewModel.ActiveCellChangesRemaining--;
+            button.Background = _moistCellBrush;
+            var toolTip = new ToolTip
+            {
+                Content = "This cell is moist. See the Hydrophilia skill."
+            };
+            ToolTipService.SetToolTip(button, toolTip);
             if (ViewModel.ActiveCellChangesRemaining == 0)
             {
                 EnableSkillTrees();
