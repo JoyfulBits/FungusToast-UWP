@@ -275,7 +275,12 @@ namespace FungusToast
                 if (previousGameState.CellsDictionary.ContainsKey(i))
                 {
                     var cell = previousGameState.CellsDictionary[i];
-                    if (!cell.Live)
+
+                    if (cell.Moist)
+                    {
+                        backgroundBrush = _moistCellBrush;
+                    }
+                    else if (!cell.Live)
                     {
                         backgroundBrush = _deadCellBrush;
                         gridCellContent = _deadCellSymbol;
@@ -289,6 +294,7 @@ namespace FungusToast
                 {
                     backgroundBrush = _emptyCellBrush;
                 }
+
                 var cellButton = new Button
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
