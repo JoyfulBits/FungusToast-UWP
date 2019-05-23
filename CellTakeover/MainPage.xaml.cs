@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -298,7 +299,8 @@ namespace FungusToast
                     Padding = noPaddingOrMargin,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
-                    FontSize = 10
+                    FontSize = 10,
+                    Tag = i //--set the tag to the grid cell number
                 });
             }
         }
@@ -553,7 +555,71 @@ namespace FungusToast
             _skillExpenditureRequest.HydrophiliaPoints++;
 
             //TODO have to wait until all moisture drops are placed before triggering the next round
-            //await CheckForRemainingMutationPoints(player);
+            EnableWaterDropper(player);
+        }
+
+        private void EnableWaterDropper(IPlayer activePlayer)
+        {
+            DisableSkillTrees();
+
+            ViewModel.ActivePlayerId = activePlayer.PlayerId;
+            ViewModel.ActiveCellChangesRemaining = SkillsData.WaterDropletsPerHydrophiliaPoint;
+
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Person, 1);
+
+            AddClickEventsToEmptyCells();
+        }
+
+        private void DisableSkillTrees()
+        {
+            foreach (var player in ViewModel.Players)
+            {
+                DisablePlayerMutationButtons(player);
+                _playerNumberToSkillTreeButton[player.PlayerId].IsEnabled = false;
+            }
+        }
+
+        private void EnableSkillTrees()
+        {
+            foreach (var player in ViewModel.Players)
+            {
+                EnableMutationButtons(player);
+                _playerNumberToSkillTreeButton[player.PlayerId].IsEnabled = true;
+            }
+        }
+
+        private void AddClickEventsToEmptyCells()
+        {
+            var emptyCells = Toast.Children.Where(x => ((Button) x).Background == _emptyCellBrush).Select(x => (Button)x);
+            foreach (var gridCell in emptyCells)
+            {
+                gridCell.Click += GridCellOnClick;
+            }
+        }
+
+        private void RemoveClickEventsFromEmptyCells()
+        {
+            var emptyCells = Toast.Children.Where(x => ((Button)x).Background == _emptyCellBrush).Select(x => (Button)x);
+            foreach (var gridCell in emptyCells)
+            {
+                gridCell.Click -= GridCellOnClick;
+            }
+        }
+
+        private async void GridCellOnClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var gridCellIndex = int.Parse(button.Tag.ToString());
+            _skillExpenditureRequest.AddMoistureDroplet(ViewModel.ActivePlayerId, gridCellIndex);
+            ViewModel.ActiveCellChangesRemaining--;
+            if (ViewModel.ActiveCellChangesRemaining == 0)
+            {
+                EnableSkillTrees();
+                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 2);
+                RemoveClickEventsFromEmptyCells();
+                await CheckForRemainingMutationPoints(ViewModel.ActivePlayer);
+                ViewModel.ActivePlayerId = null;
+            }
         }
 
         private void DisablePlayerMutationButtons(IPlayer player)
@@ -638,7 +704,6 @@ namespace FungusToast
         {
             var button = sender as Button;
             var playerId = button.Tag.ToString();
-            //var player = button.DataContext as IPlayer;
             _playerNumberToSkillTreeButton[playerId] = button;
         }
 

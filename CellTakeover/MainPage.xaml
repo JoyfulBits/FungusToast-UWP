@@ -10,7 +10,7 @@
     xmlns:fungusToast="using:FungusToast"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
-
+    
     <UserControl.Resources>
         <fungusToast:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>

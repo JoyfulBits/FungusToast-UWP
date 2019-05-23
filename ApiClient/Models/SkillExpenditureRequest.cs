@@ -5,6 +5,8 @@ namespace ApiClient.Models
 {
     public class SkillExpenditureRequest
     {
+        private List<ActiveCellChange> _activeCellChanges = new List<ActiveCellChange>();
+
         //--This is what will actually get serialized
         public List<SkillUpgrade> SkillUpgrades =>
             new List<SkillUpgrade>
@@ -41,6 +43,12 @@ namespace ApiClient.Models
                 }
             };
 
+        public List<ActiveCellChange> ActiveCellChanges
+        {
+            get => _activeCellChanges;
+            set => _activeCellChanges = value;
+        }
+
         [JsonIgnore]
         public int HypermutationPoints { get; set; }
         [JsonIgnore]
@@ -53,5 +61,10 @@ namespace ApiClient.Models
         public int MycotoxicityPoints { get; set; }
         [JsonIgnore]
         public int HydrophiliaPoints { get; set; }
+
+        public void AddMoistureDroplet(string activePlayerId, int gridCellIndex)
+        {
+            _activeCellChanges.Add(new ActiveCellChange(activePlayerId, gridCellIndex, ActiveCellChangeType.MoistureDroplet));
+        }
     }
 }
