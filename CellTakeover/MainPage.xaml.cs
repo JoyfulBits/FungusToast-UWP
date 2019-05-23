@@ -284,8 +284,7 @@ namespace FungusToast
                 {
                     backgroundBrush = _emptyCellBrush;
                 }
-
-                Toast.Children.Add(new Button
+                var cellButton = new Button
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
                     Background = backgroundBrush,
@@ -301,7 +300,11 @@ namespace FungusToast
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                     FontSize = 10,
                     Tag = i //--set the tag to the grid cell number
-                });
+                };
+
+                cellButton.Click += GridCellOnClick;
+
+                Toast.Children.Add(cellButton);
             }
         }
 
@@ -566,8 +569,6 @@ namespace FungusToast
             ViewModel.ActiveCellChangesRemaining = SkillsData.WaterDropletsPerHydrophiliaPoint;
 
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Person, 1);
-
-            AddClickEventsToEmptyCells();
         }
 
         private void DisableSkillTrees()
@@ -588,35 +589,20 @@ namespace FungusToast
             }
         }
 
-        private void AddClickEventsToEmptyCells()
-        {
-            var emptyCells = Toast.Children.Where(x => ((Button) x).Background == _emptyCellBrush).Select(x => (Button)x);
-            foreach (var gridCell in emptyCells)
-            {
-                gridCell.Click += GridCellOnClick;
-            }
-        }
-
-        private void RemoveClickEventsFromEmptyCells()
-        {
-            var emptyCells = Toast.Children.Where(x => ((Button)x).Background == _emptyCellBrush).Select(x => (Button)x);
-            foreach (var gridCell in emptyCells)
-            {
-                gridCell.Click -= GridCellOnClick;
-            }
-        }
-
         private async void GridCellOnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var gridCellIndex = int.Parse(button.Tag.ToString());
+
+            //--as of 2019-05-23, the only active skill is Hydrophilia, so we can assume they are adding a water droplet. Will need to make this more scalable at some point.
+            if (ViewModel.ActivePlayerId == null || button.Background != _emptyCellBrush) return;
+
             _skillExpenditureRequest.AddMoistureDroplet(ViewModel.ActivePlayerId, gridCellIndex);
             ViewModel.ActiveCellChangesRemaining--;
             if (ViewModel.ActiveCellChangesRemaining == 0)
             {
                 EnableSkillTrees();
                 Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 2);
-                RemoveClickEventsFromEmptyCells();
                 await CheckForRemainingMutationPoints(ViewModel.ActivePlayer);
                 ViewModel.ActivePlayerId = null;
             }
