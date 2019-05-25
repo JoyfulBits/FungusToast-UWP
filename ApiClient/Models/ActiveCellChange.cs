@@ -2,15 +2,15 @@
 {
     public class ActiveCellChange
     {
-        public int GridCellIndex { get; }
-        public ActiveCellChangeType MoistureDroplet { get; }
-        public string ActivePlayerId { get; }
+        public int Index { get; }
+        public int SkillId { get; }
+        public string PlayerId { get; }
 
-        public ActiveCellChange(string activePlayerId, int gridCellIndex, ActiveCellChangeType moistureDroplet)
+        public ActiveCellChange(string playerId, int index, int skillId)
         {
-            ActivePlayerId = activePlayerId;
-            GridCellIndex = gridCellIndex;
-            MoistureDroplet = moistureDroplet;
+            PlayerId = playerId;
+            Index = index;
+            SkillId = skillId;
         }
     }
 }

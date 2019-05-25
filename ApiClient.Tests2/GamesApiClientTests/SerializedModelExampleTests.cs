@@ -93,14 +93,17 @@ namespace ApiClient.Tests.GamesApiClientTests
         public void Example_SkillExpenditure()
         {
             //--arrange
-            var request = new SkillExpenditureRequest
-            {
-                AntiApoptosisPoints = 1,
-                BuddingPoints = 2,
-                HypermutationPoints = 3,
-                RegenerationPoints = 4,
-                MycotoxicityPoints = 5
-            };
+            var request = new SkillExpenditureRequest("31");
+            request.IncreaseRegeneration();
+            request.IncreaseBudding();
+            request.IncreaseBudding();
+            request.IncreaseAntiApoptosis();
+            request.IncreaseHypermutation();
+            request.IncreaseMycotoxicity();
+            request.IncreaseHydrophilia();
+            request.AddMoistureDroplet(1);
+            request.AddMoistureDroplet(351);
+            request.AddMoistureDroplet(591);
 
             //--act
             var jsonString = JsonConvert.SerializeObject(request, new JsonSerializerSettings

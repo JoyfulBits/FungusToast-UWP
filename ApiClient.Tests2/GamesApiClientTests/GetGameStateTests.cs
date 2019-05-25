@@ -47,7 +47,7 @@ namespace ApiClient.Tests.GamesApiClientTests
 
         //    SkillExpenditure skillExpenditure = new SkillExpenditure
         //    {
-        //        HypermutationPoints = firstPlayer.MutationPoints
+        //        IncreaseHypermutation = firstPlayer.MutationPoints
         //    };
         //    SkillExpenditureRequest skillExpenditureRequest =
         //        new SkillExpenditureRequest(newGame.Id, firstPlayer.Id, skillExpenditure);
