@@ -85,6 +85,7 @@ namespace ApiClient.Models
             {
                 var skillUpgrade = new SkillUpgrade();
                 skillUpgrade.ActiveCellChanges.Add(gridCellIndex);
+                Upgrades.Add(skillId, skillUpgrade);
             }
         }
     }
