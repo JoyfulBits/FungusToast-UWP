@@ -454,6 +454,11 @@ namespace FungusToast
                 currentGridCell.Background = _playerNumberToColorBrushDictionary[toastChange.PlayerId];
                 currentGridCell.Content = string.Empty;
             }
+            else if(toastChange.Moist)
+            {
+                currentGridCell.Background = _moistCellBrush;
+                currentGridCell.Content = string.Empty;
+            }
             else
             {
                 currentGridCell.Background = _deadCellBrush;
@@ -629,7 +634,7 @@ namespace FungusToast
             var gridCellIndex = int.Parse(button.Tag.ToString());
 
             //--as of 2019-05-23, the only active skill is Hydrophilia, so we can assume they are adding a water droplet. Will need to make this more scalable at some point.
-            if (ViewModel.ActivePlayerId == null || button.Background != _emptyCellBrush) return;
+            if (ViewModel.ActivePlayerId == null || button.Background != _emptyCellBrush || button.Background == _moistCellBrush) return;
 
             GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddMoistureDroplet(gridCellIndex);
             ViewModel.ActiveCellChangesRemaining--;
