@@ -281,7 +281,7 @@ namespace FungusToast
             //--make the grid a square since it wasn't doing that for some reason
             Toast.Width = Toast.ActualHeight;
 
-            var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
+            var gridLinesColorBrush = new SolidColorBrush(Colors.Gray);
             var noPaddingOrMargin = new Thickness(0);
             var previousGameState = game.StartingGameState;
 
@@ -317,7 +317,7 @@ namespace FungusToast
                     Style = Resources["ButtonRevealStyle"] as Style,
                     Background = backgroundBrush,
                     Content = gridCellContent,
-                    BorderBrush = blackSolidColorBrush,
+                    BorderBrush = gridLinesColorBrush,
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Stretch,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
