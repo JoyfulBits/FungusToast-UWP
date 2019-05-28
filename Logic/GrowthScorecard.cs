@@ -30,6 +30,7 @@ namespace Logic
         private float _mutationChancePercentage = BaseMutationChancePercentage;
         private float _apoptosisChancePercentage = BaseApoptosisChancePercentage;
         private float _mycotoxinFungicideChancePercentage;
+        private float _moistureGrowthBoost;
 
         /// <summary>
         /// Percentage chance that a surrounded/starved cell will die each generation
@@ -39,7 +40,7 @@ namespace Logic
             get => _starvedCellDeathChancePercentage;
             set
             {
-                if (value == _starvedCellDeathChancePercentage) return;
+                if (value.Equals(_starvedCellDeathChancePercentage)) return;
                 _starvedCellDeathChancePercentage = value;
                 OnPropertyChanged();
             }
@@ -50,7 +51,7 @@ namespace Logic
             get => _mutationChancePercentage;
             set
             {
-                if (value == _mutationChancePercentage) return;
+                if (value.Equals(_mutationChancePercentage)) return;
                 _mutationChancePercentage = value;
                 OnPropertyChanged();
             }
@@ -61,7 +62,7 @@ namespace Logic
             get => _apoptosisChancePercentage;
             set
             {
-                if (Math.Abs(value - _apoptosisChancePercentage) < .0001) return;
+                if (value.Equals(_apoptosisChancePercentage)) return;
                 _apoptosisChancePercentage = value;
                 OnPropertyChanged();
             }
@@ -75,7 +76,7 @@ namespace Logic
             get => _regenerationChancePercentage;
             set
             {
-                if (value == _regenerationChancePercentage) return;
+                if (value.Equals(_regenerationChancePercentage)) return;
                 _regenerationChancePercentage = value;
                 OnPropertyChanged();
             }
@@ -89,8 +90,19 @@ namespace Logic
             get => _mycotoxinFungicideChancePercentage;
             set
             {
-                if (value == _mycotoxinFungicideChancePercentage) return;
+                if (value.Equals(_mycotoxinFungicideChancePercentage)) return;
                 _mycotoxinFungicideChancePercentage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public float MoistureGrowthBoost
+        {
+            get => _moistureGrowthBoost;
+            set
+            {
+                if (value.Equals(_moistureGrowthBoost)) return;
+                _moistureGrowthBoost = value;
                 OnPropertyChanged();
             }
         }

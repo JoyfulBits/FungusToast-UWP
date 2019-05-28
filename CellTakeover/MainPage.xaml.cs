@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -39,13 +40,18 @@ namespace FungusToast
             "Human 6"
         };
 
-        private readonly List<string> _usersPlayingLocalGame = new List<string>();
+        private List<string> _usersPlayingLocalGame = new List<string>();
 
 
         private readonly AcrylicBrush _deadCellBrush = new AcrylicBrush
         {
             TintColor = Colors.White
         };
+
+        private readonly AcrylicBrush _moistCellBrush = new AcrylicBrush
+        {
+            TintColor = Colors.LightGray
+        }; 
 
         private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<string, Dictionary<string, Button>>();
         private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
@@ -77,9 +83,7 @@ namespace FungusToast
 
         private GameModel _gameModel;
 
-        private SkillExpenditureRequest _skillExpenditureRequest = new SkillExpenditureRequest();
-
-        private bool _playersListViewLoaded = false;
+        private readonly Dictionary<string, SkillExpenditureRequest> _playerToSkillExpenditureRequest = new Dictionary<string, SkillExpenditureRequest>();
 
         public MainPage()
         {
@@ -105,6 +109,7 @@ namespace FungusToast
             float reducedApoptosisPercentagePerAttributePoint = 0F;
             float regenerationChancePerAttributePoint = 0F;
             float mycotoxinFungicideChancePerAttributePoint = 0F;
+            float moistureGrowthBoostPerAttributePoint = 0F;
 
             foreach (var skill in skills)
             {
@@ -125,13 +130,16 @@ namespace FungusToast
                     case (int)Skills.Regeneration:
                         regenerationChancePerAttributePoint = skill.IncreasePerPoint;
                         break;
+                    case (int)Skills.Hydrophilia:
+                        moistureGrowthBoostPerAttributePoint = skill.IncreasePerPoint;
+                        break;
                     default:
                         throw new Exception(
                             $"There is a new skill in the API that is not accounted for in the UWP app. The skill id is '{skill.Id}' and the name is '{skill.Name}'");
                 }
             }
 
-            const int totalExpectedSkills = 5;
+            const int totalExpectedSkills = 6;
 
             if (totalExpectedSkills != skills.Count)
             {
@@ -144,7 +152,25 @@ namespace FungusToast
                 cornerGrowthChancePerAttributePoint,
                 reducedApoptosisPercentagePerAttributePoint,
                 regenerationChancePerAttributePoint,
-                mycotoxinFungicideChancePerAttributePoint);
+                mycotoxinFungicideChancePerAttributePoint,
+                moistureGrowthBoostPerAttributePoint);
+        }
+
+        private SkillExpenditureRequest GetSkillExpenditureRequest(string playerId)
+        {
+            if (_playerToSkillExpenditureRequest.ContainsKey(playerId))
+            {
+                return _playerToSkillExpenditureRequest[playerId];
+            }
+
+            var newSkillExpenditureRequest = new SkillExpenditureRequest(playerId);
+            _playerToSkillExpenditureRequest.Add(playerId, newSkillExpenditureRequest);
+            return newSkillExpenditureRequest;
+        }
+
+        private void ResetSkillExpenditureRequest(string playerId)
+        {
+            _playerToSkillExpenditureRequest[playerId] = new SkillExpenditureRequest(playerId);
         }
 
 
@@ -156,6 +182,9 @@ namespace FungusToast
             if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
             {
                 _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
+                _usersPlayingLocalGame = _gameModel.Players.Where(player => _validUserNames.Contains(player.Name))
+                    .Select(player => player.Name).ToList();
+
                 InitializeGame(_gameModel);
             }
             else
@@ -263,7 +292,12 @@ namespace FungusToast
                 if (previousGameState.CellsDictionary.ContainsKey(i))
                 {
                     var cell = previousGameState.CellsDictionary[i];
-                    if (!cell.Live)
+
+                    if (cell.Moist)
+                    {
+                        backgroundBrush = _moistCellBrush;
+                    }
+                    else if (!cell.Live)
                     {
                         backgroundBrush = _deadCellBrush;
                         gridCellContent = _deadCellSymbol;
@@ -278,7 +312,7 @@ namespace FungusToast
                     backgroundBrush = _emptyCellBrush;
                 }
 
-                Toast.Children.Add(new Button
+                var cellButton = new Button
                 {
                     Style = Resources["ButtonRevealStyle"] as Style,
                     Background = backgroundBrush,
@@ -292,8 +326,13 @@ namespace FungusToast
                     Padding = noPaddingOrMargin,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
-                    FontSize = 10
-                });
+                    FontSize = 10,
+                    Tag = i //--set the tag to the grid cell number
+                };
+
+                cellButton.Click += GridCellOnClick;
+
+                Toast.Children.Add(cellButton);
             }
         }
 
@@ -372,6 +411,7 @@ namespace FungusToast
             playerToUpdate.RegenerationSkillLevel = playerStateValuesToCopy.RegenerationSkillLevel;
             playerToUpdate.BuddingSkillLevel = playerStateValuesToCopy.BuddingSkillLevel;
             playerToUpdate.MycotoxinsSkillLevel = playerStateValuesToCopy.MycotoxinsSkillLevel;
+            playerToUpdate.HydrophiliaSkillLevel = playerStateValuesToCopy.HydrophiliaSkillLevel;
 
             var updatedGrowthScorecard = new GrowthScorecard
             {
@@ -380,6 +420,7 @@ namespace FungusToast
                 MutationChancePercentage = playerStateValuesToCopy.MutationChance,
                 RegenerationChancePercentage = playerStateValuesToCopy.RegenerationChance,
                 MycotoxinFungicideChancePercentage = playerStateValuesToCopy.MycotoxinFungicideChance,
+                MoistureGrowthBoost = playerStateValuesToCopy.MoistureGrowthBoost,
                 GrowthChanceDictionary = new Dictionary<RelativePosition, float>
                 {
                     {RelativePosition.TopLeft, playerStateValuesToCopy.TopLeftGrowthChance},
@@ -413,6 +454,11 @@ namespace FungusToast
                 currentGridCell.Background = _playerNumberToColorBrushDictionary[toastChange.PlayerId];
                 currentGridCell.Content = string.Empty;
             }
+            else if(toastChange.Moist)
+            {
+                currentGridCell.Background = _moistCellBrush;
+                currentGridCell.Content = string.Empty;
+            }
             else
             {
                 currentGridCell.Background = _deadCellBrush;
@@ -444,15 +490,24 @@ namespace FungusToast
                 var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
                 foreach (var mutationButton in playerMutationButtons)
                 {
-                    if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
-                    {
-                        mutationButton.Value.IsEnabled = false;
-                    }
-                    else
-                    {
-                        mutationButton.Value.IsEnabled = true;
-                    }
+                    EnableMutationButtonIfAppropriate(player, mutationButton.Value);
                 }
+            }
+        }
+
+        private void EnableMutationButtonIfAppropriate(IPlayer player, Button mutationButton)
+        {
+            if (mutationButton.Name == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
+            {
+                mutationButton.IsEnabled = false;
+            }
+            else if (mutationButton.Name == "HydrophiliaButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerHydrophiliaPoint)
+            {
+                mutationButton.IsEnabled = false;
+            }
+            else
+            {
+                mutationButton.IsEnabled = true;
             }
         }
 
@@ -465,9 +520,9 @@ namespace FungusToast
 
             DisablePlayerMutationButtons(player);
             
-            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, _skillExpenditureRequest);
+            var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, GetSkillExpenditureRequest(player.PlayerId));
 
-            _skillExpenditureRequest = new SkillExpenditureRequest();
+            ResetSkillExpenditureRequest(player.PlayerId);
 
             if (skillUpdateResult.NextRoundAvailable)
             {
@@ -488,7 +543,7 @@ namespace FungusToast
             var player = button.DataContext as IPlayer;
 
             player.IncreaseHypermutation();
-            _skillExpenditureRequest.HypermutationPoints++;
+            GetSkillExpenditureRequest(player.PlayerId).IncreaseHypermutation();
 
             await CheckForRemainingMutationPoints(player);
         }
@@ -498,7 +553,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.DecreaseApoptosisChance();
-            _skillExpenditureRequest.AntiApoptosisPoints++;
+            GetSkillExpenditureRequest(player.PlayerId).IncreaseAntiApoptosis();
             if (player.GrowthScorecard.ApoptosisChancePercentage <= 0)
             {
                 button.IsEnabled = false;
@@ -512,7 +567,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseBudding();
-            _skillExpenditureRequest.BuddingPoints++;
+            GetSkillExpenditureRequest(player.PlayerId).IncreaseBudding();
 
             await CheckForRemainingMutationPoints(player);
         }
@@ -522,7 +577,7 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseRegeneration();
-            _skillExpenditureRequest.RegenerationPoints++;
+            GetSkillExpenditureRequest(player.PlayerId).IncreaseRegeneration();
 
             await CheckForRemainingMutationPoints(player);
         }
@@ -532,9 +587,79 @@ namespace FungusToast
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseMycotoxicity();
-            _skillExpenditureRequest.MycotoxicityPoints++;
+            GetSkillExpenditureRequest(player.PlayerId).IncreaseMycotoxicity();
 
             await CheckForRemainingMutationPoints(player);
+        }
+
+        private void Hydrophilia_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.IncreaseHydrophilia();
+            GetSkillExpenditureRequest(player.PlayerId).IncreaseHydrophilia();
+            
+            EnableWaterDropper(player);
+        }
+
+        private void EnableWaterDropper(IPlayer activePlayer)
+        {
+            DisableSkillTrees();
+
+            ViewModel.ActivePlayerId = activePlayer.PlayerId;
+            ViewModel.ActiveCellChangesRemaining = SkillsData.WaterDropletsPerHydrophiliaPoint;
+
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Person, 1);
+        }
+
+        private void DisableSkillTrees()
+        {
+            foreach (var player in ViewModel.Players)
+            {
+                DisablePlayerMutationButtons(player);
+                _playerNumberToSkillTreeButton[player.PlayerId].IsEnabled = false;
+            }
+        }
+
+        private void EnableSkillTrees()
+        {
+            foreach (var player in ViewModel.Players)
+            {
+                EnableMutationButtons(player);
+                var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
+                if (player.IsLocalPlayer(_usersPlayingLocalGame) && player.AvailableMutationPoints > 0)
+                {
+                    skillTreeButton.BorderBrush = _activeBorderBrush;
+                    skillTreeButton.BorderThickness = _activeThickness;
+                }
+                
+                skillTreeButton.IsEnabled = true;
+            }
+        }
+
+        private async void GridCellOnClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var gridCellIndex = int.Parse(button.Tag.ToString());
+
+            //--as of 2019-05-23, the only active skill is Hydrophilia, so we can assume they are adding a water droplet. Will need to make this more scalable at some point.
+            if (ViewModel.ActivePlayerId == null || button.Background != _emptyCellBrush || button.Background == _moistCellBrush) return;
+
+            GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddMoistureDroplet(gridCellIndex);
+            ViewModel.ActiveCellChangesRemaining--;
+            button.Background = _moistCellBrush;
+            var toolTip = new ToolTip
+            {
+                Content = "This cell is moist. See the Hydrophilia skill."
+            };
+            ToolTipService.SetToolTip(button, toolTip);
+            if (ViewModel.ActiveCellChangesRemaining == 0)
+            {
+                EnableSkillTrees();
+                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 2);
+                await CheckForRemainingMutationPoints(ViewModel.ActivePlayer);
+                ViewModel.ActivePlayerId = null;
+            }
         }
 
         private void DisablePlayerMutationButtons(IPlayer player)
@@ -562,7 +687,7 @@ namespace FungusToast
 
             if (player.AvailableMutationPoints > 0 && player.IsLocalPlayer(_usersPlayingLocalGame))
             {
-                button.IsEnabled = true;
+                EnableMutationButtonIfAppropriate(player, button);
             }
 
             //--make sure the buttons are only added to the dictionary once
@@ -619,7 +744,6 @@ namespace FungusToast
         {
             var button = sender as Button;
             var playerId = button.Tag.ToString();
-            //var player = button.DataContext as IPlayer;
             _playerNumberToSkillTreeButton[playerId] = button;
         }
 

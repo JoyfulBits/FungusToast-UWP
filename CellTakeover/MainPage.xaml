@@ -10,7 +10,7 @@
     xmlns:fungusToast="using:FungusToast"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
-
+    
     <UserControl.Resources>
         <fungusToast:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>
@@ -282,6 +282,7 @@
                                         <RowDefinition></RowDefinition>
                                         <RowDefinition></RowDefinition>
                                         <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="600"></ColumnDefinition>
@@ -397,11 +398,11 @@
                                     </Button>
 
                                     <Button Grid.Row="4" Grid.Column="0" 
-                                    Background="White"
-                                    Name="AntiApoptosisButton"
-                                    IsEnabled="False"
-                                    Click="AntiApoptosis_Click"
-                                    Loaded="MutationOptionButton_Loaded">
+                                        Background="White"
+                                        Name="AntiApoptosisButton"
+                                        IsEnabled="False"
+                                        Click="AntiApoptosis_Click"
+                                        Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
                                             <Image Source="Assets/Skill Icons/reduced_death.png" Style="{StaticResource MutationImage}"></Image>
                                             <Grid Padding="5">
@@ -427,11 +428,11 @@
                                     </Button>
 
                                     <Button Grid.Row="5" Grid.Column="0"
-                                    Background="White"
-                                    Name="MycotoxicityButton"
-                                    IsEnabled="False"
-                                    Click="MycotoxinFungicideButton_Click"
-                                    Loaded="MutationOptionButton_Loaded">
+                                        Background="White"
+                                        Name="MycotoxicityButton"
+                                        IsEnabled="False"
+                                        Click="MycotoxinFungicideButton_Click"
+                                        Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
                                             <Image Source="Assets/Skill Icons/toxicity.png" Style="{StaticResource MutationImage}"></Image>
                                             <Grid Padding="5">
@@ -452,6 +453,36 @@
                                                        TextWrapping="Wrap"></TextBlock>
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Mycotoxin Fungicide Chance:"></TextBlock>
                                                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MycotoxinFungicideChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <Button Grid.Row="6" Grid.Column="0"
+                                        Background="White"
+                                        Name="HydrophiliaButton"
+                                        IsEnabled="False"
+                                        Click="Hydrophilia_Click"
+                                        Loaded="MutationOptionButton_Loaded">
+                                        <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                            <Image Source="Assets/Skill Icons/moisture_affinity.png" Style="{StaticResource MutationImage}"></Image>
+                                            <Grid Padding="5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="Hydrophilia"  
+                                                       Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                       Text="{x:Bind AddMoistureGrowthBoostMessage, Mode=OneTime}"
+                                                       TextWrapping="Wrap"></TextBlock>
+                                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Increased Growth Chance:"></TextBlock>
+                                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MoistureGrowthBoost, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
                                             </Grid>
                                         </StackPanel>
                                     </Button>

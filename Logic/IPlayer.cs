@@ -28,16 +28,19 @@ namespace Logic
         string BottomGrowthChance { get; }
         string BottomLeftGrowthChance { get;  }
         string LeftGrowthChance { get; }
+        //TODO These skill level fields aren't actually used yet, and don't actually come back from the API. Probably delete?
         float HyperMutationSkillLevel { get; set; }
         float AntiApoptosisSkillLevel { get; set; }
         float RegenerationSkillLevel { get; set; }
         float BuddingSkillLevel { get; set; }
         float MycotoxinsSkillLevel { get; set; }
+        float HydrophiliaSkillLevel { get; set; }
         void IncreaseHypermutation();
         void DecreaseApoptosisChance();
         void IncreaseBudding();
         void IncreaseRegeneration();
         void IncreaseMycotoxicity();
+        void IncreaseHydrophilia();
         bool IsLocalPlayer(List<string> userName);
     }
 }

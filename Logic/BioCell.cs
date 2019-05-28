@@ -14,7 +14,7 @@ namespace Logic
         /// </summary>
         public IPlayer PreviousPlayer { get; set; } = null;
 
-        public BioCell(IPlayer player, int cellIndex, Color cellColor) : base(cellIndex, false, false, true, false)
+        public BioCell(IPlayer player, int cellIndex, Color cellColor) : base(cellIndex, false, false, true, false, false)
         {
             Player = player;
             CellColor = cellColor;

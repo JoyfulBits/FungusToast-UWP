@@ -136,5 +136,10 @@ namespace FungusToast
                 OnPropertyChanged();
             }
         }
+
+        public string ActivePlayerId { get; set; }
+        public int ActiveCellChangesRemaining { get; set; }
+
+        public IPlayer ActivePlayer => Players.FirstOrDefault(player => player.PlayerId == ActivePlayerId);
     }
 }

@@ -28,6 +28,7 @@ namespace Logic
         private int _perishedCells;
         private int _fungicidalKills;
         private int _spentMutationPoints;
+        private float _hydrophiliaSkillLevel;
 
         public Player(string name, Color playerCellColor, string playerId,
             bool isHuman, SkillsData skillsData)
@@ -182,6 +183,17 @@ namespace Logic
             }
         }
 
+        public float HydrophiliaSkillLevel
+        {
+            get => _hydrophiliaSkillLevel;
+            set
+            {
+                if (value.Equals(_hydrophiliaSkillLevel)) return;
+                _hydrophiliaSkillLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int LiveCells
         {
             get => _liveCells;
@@ -274,6 +286,7 @@ namespace Logic
 
         public string AddRegrowthChanceMessage => _skillsData.IncreaseRegrowthChanceMessage;
         public string AddMycotoxicityChanceMessage => _skillsData.IncreaseMycotoxinFungicideChanceMessage;
+        public string AddMoistureGrowthBoostMessage => _skillsData.IncreaseMoistureGrowthBoostMessage;
 
         public void IncreaseHypermutation()
         {
@@ -318,6 +331,14 @@ namespace Logic
         {
             GrowthScorecard.MycotoxinFungicideChancePercentage +=
                 _skillsData.MycotoxinFungicideChancePerAttributePoint;
+
+            AvailableMutationPoints--;
+        }
+
+        public void IncreaseHydrophilia()
+        {
+            GrowthScorecard.MoistureGrowthBoost +=
+                _skillsData.MoistureGrowthBoostPerAttributePoint;
 
             AvailableMutationPoints--;
         }
