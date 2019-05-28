@@ -310,7 +310,8 @@
                                     <Button Grid.Row="1" Grid.Column="0"
                                         Background="White"
                                         Name="HypermutationButton"
-                                        IsEnabled="False" 
+                                        IsEnabled="False"
+                                        ToolTipService.ToolTip="Hypermutation increases the chance of earning an additional bonus mutation point on each of the 5 growth cycles that occur every round. A 100% mutation chance means you'll earn an extra 5 mutation points every single round."
                                         Click="IncreaseHypermutation_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
@@ -340,7 +341,8 @@
                                     <Button Grid.Row="2" Grid.Column="0" 
                                         Background="White"
                                         Name="BuddingButton"
-                                        IsEnabled="False" 
+                                        IsEnabled="False"
+                                        ToolTipService.ToolTip="Budding will enable your mold to grow more rapidly by allowing it to grow to the top-left, top-right, bottom-left, or bottom-right."
                                         Click="IncreaseBudding_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
@@ -370,7 +372,8 @@
                                     <Button Grid.Row="3" Grid.Column="0"
                                         Background="White"
                                         Name="RegrowthButton"
-                                        IsEnabled="False" 
+                                        IsEnabled="False"
+                                        ToolTipService.ToolTip="Regeneration allows your mold to revive adjacent dead cells from any player. This skills is particularly important in the late game as the toast fills up and growth opportunities are limited."
                                         Click="IncreaseRegeneration_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
@@ -401,6 +404,7 @@
                                         Background="White"
                                         Name="AntiApoptosisButton"
                                         IsEnabled="False"
+                                        ToolTipService.ToolTip="Anti-Apoptosis reduces the chance that each of your live cells will die on each growth cycle."
                                         Click="AntiApoptosis_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
@@ -431,6 +435,7 @@
                                         Background="White"
                                         Name="MycotoxicityButton"
                                         IsEnabled="False"
+                                        ToolTipService.ToolTip="Mycotoxicity allows your mold to release toxins that kill enemy cells that are growing next to you. Dead cells can be reclaimed with Regeneration."
                                         Click="MycotoxinFungicideButton_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
@@ -461,6 +466,7 @@
                                         Background="White"
                                         Name="HydrophiliaButton"
                                         IsEnabled="False"
+                                        ToolTipService.ToolTip="Hydrophilia increases the chances that your mold will grow into adjacent moist cells. Each point of Hydrophilia also allows you to place 3 water droplets on the toast. Use this to guide your mold into strategic positions!"
                                         Click="Hydrophilia_Click"
                                         Loaded="MutationOptionButton_Loaded">
                                         <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
