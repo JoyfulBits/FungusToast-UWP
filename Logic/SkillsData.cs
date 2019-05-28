@@ -40,7 +40,7 @@
             $"Increase chance of killing an adjacent enemy cell by {MycotoxinFungicideChancePerAttributePoint}%.";
 
         public string IncreaseMoistureGrowthBoostMessage =>
-            $"Place {WaterDropletsPerHydrophiliaPoint} drops of moisture and increase chance of growing into moist regions by {MoistureGrowthBoostPerAttributePoint}%.";
+            $"Place {WaterDropletsPerHydrophiliaPoint} drops of water and increase moist region growth by {MoistureGrowthBoostPerAttributePoint}%.";
 
         //TODO make this come from the API
         public static int WaterDropletsPerHydrophiliaPoint = 3;
