@@ -490,15 +490,24 @@ namespace FungusToast
                 var playerMutationButtons = _playerNumberToMutationButtons[player.PlayerId];
                 foreach (var mutationButton in playerMutationButtons)
                 {
-                    if (mutationButton.Key == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
-                    {
-                        mutationButton.Value.IsEnabled = false;
-                    }
-                    else
-                    {
-                        mutationButton.Value.IsEnabled = true;
-                    }
+                    EnableMutationButtonIfAppropriate(player, mutationButton.Value);
                 }
+            }
+        }
+
+        private void EnableMutationButtonIfAppropriate(IPlayer player, Button mutationButton)
+        {
+            if (mutationButton.Name == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
+            {
+                mutationButton.IsEnabled = false;
+            }
+            else if (mutationButton.Name == "HydrophiliaButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerHydrophiliaPoint)
+            {
+                mutationButton.IsEnabled = false;
+            }
+            else
+            {
+                mutationButton.IsEnabled = true;
             }
         }
 
@@ -678,7 +687,7 @@ namespace FungusToast
 
             if (player.AvailableMutationPoints > 0 && player.IsLocalPlayer(_usersPlayingLocalGame))
             {
-                button.IsEnabled = true;
+                EnableMutationButtonIfAppropriate(player, button);
             }
 
             //--make sure the buttons are only added to the dictionary once

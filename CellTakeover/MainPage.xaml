@@ -459,7 +459,7 @@
 
                                     <Button Grid.Row="6" Grid.Column="0"
                                         Background="White"
-                                        Name="Hydrophilia"
+                                        Name="HydrophiliaButton"
                                         IsEnabled="False"
                                         Click="Hydrophilia_Click"
                                         Loaded="MutationOptionButton_Loaded">
