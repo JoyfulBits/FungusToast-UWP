@@ -114,8 +114,8 @@
                                        VerticalAlignment="Center"></Rectangle>
                             <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind LiveCells, Mode=OneWay}"/>
-                            <TextBlock Grid.Column="3" Text="{x:Bind RegrownCells, Mode=OneWay}"/>
-                            <TextBlock Grid.Column="4" Text="{x:Bind DeadCells, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind DeadCells, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="4" Text="{x:Bind RegrownCells, Mode=OneWay}"/>
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
