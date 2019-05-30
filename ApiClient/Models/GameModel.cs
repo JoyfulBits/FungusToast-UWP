@@ -15,6 +15,7 @@ namespace ApiClient.Models
         public int NumberOfCells => GridSize * GridSize;
         public List<PlayerState> Players { get; set; }
         public GameState StartingGameState { get; set; }
+        public Dictionary<string, PlayerStats> StartingPlayerStats { get; set; }
         public List<GrowthCycle> GrowthCycles { get; set; } = new List<GrowthCycle>();
         public int GenerationNumber { get; set; }
         public int RoundNumber { get; set; }

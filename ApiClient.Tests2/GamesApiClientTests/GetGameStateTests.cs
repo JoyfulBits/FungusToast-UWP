@@ -27,7 +27,7 @@ namespace ApiClient.Tests.GamesApiClientTests
         public async Task It_Returns_The_Specified_Game()
         {
             //--arrange
-            var newGame = await CreateValidGameForTesting(TestUserName);
+            var newGame = await CreateValidGameForTesting(TestUserName, numberOfHumanPlayers: 1);
 
             //--act
             var gameState = await GamesClient.GetGameState(newGame.Id, TestEnvironmentSettings.BaseApiUrl);

@@ -39,6 +39,9 @@ namespace ApiClient.Tests.GamesApiClientTests
         {
             //--arrange
             var newGame = await CreateValidGameForTesting(TestUserName, 2, 0);
+            var joinGameRequest = new JoinGameRequest(newGame.Id, TestUserName2);
+            //--have another player join so that the game is started
+            await GamesClient.JoinGame(joinGameRequest, TestEnvironmentSettings.BaseApiUrl);
             var firstPlayer = newGame.Players[0];
 
             var skillExpenditureRequest = new SkillExpenditureRequest(firstPlayer.Id);
@@ -56,6 +59,9 @@ namespace ApiClient.Tests.GamesApiClientTests
         {
             //--arrange
             var newGame = await CreateValidGameForTesting(TestUserName, 2, 0);
+            var joinGameRequest = new JoinGameRequest(newGame.Id, TestUserName2);
+            //--have another player join so that the game is started
+            await GamesClient.JoinGame(joinGameRequest, TestEnvironmentSettings.BaseApiUrl);
             var firstPlayer = newGame.Players[0];
 
             var skillExpenditureRequest = new SkillExpenditureRequest(firstPlayer.Id);

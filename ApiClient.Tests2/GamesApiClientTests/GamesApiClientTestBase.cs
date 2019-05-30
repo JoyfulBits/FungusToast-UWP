@@ -8,7 +8,8 @@ namespace ApiClient.Tests.GamesApiClientTests
     public class GamesApiClientTestBase
     {
         protected GamesApiClient GamesClient;
-        protected string TestUserName = "Fungus Amungus";
+        protected string TestUserName = "Human 1";
+        protected string TestUserName2 = "Human 2";
 
         [SetUp]
         public void SetUp()

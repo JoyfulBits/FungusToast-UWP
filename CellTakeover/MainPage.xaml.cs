@@ -255,7 +255,7 @@ namespace FungusToast
                 var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
                     playerState.Human, _skillsData);
-                UpdatePlayer(player, playerState);
+                UpdatePlayer(player, playerState, game.StartingPlayerStats);
                 players.Add(player);
             }
 
@@ -281,7 +281,7 @@ namespace FungusToast
             //--make the grid a square since it wasn't doing that for some reason
             Toast.Width = Toast.ActualHeight;
 
-            var blackSolidColorBrush = new SolidColorBrush(Colors.Black);
+            var gridLinesColorBrush = new SolidColorBrush(Colors.Gray);
             var noPaddingOrMargin = new Thickness(0);
             var previousGameState = game.StartingGameState;
 
@@ -317,7 +317,7 @@ namespace FungusToast
                     Style = Resources["ButtonRevealStyle"] as Style,
                     Background = backgroundBrush,
                     Content = gridCellContent,
-                    BorderBrush = blackSolidColorBrush,
+                    BorderBrush = gridLinesColorBrush,
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Stretch,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -351,6 +351,9 @@ namespace FungusToast
                     tasks.Add(RenderMutationPointEarned(mutationPointEarned));
                 }
 
+                //--attempt to render this prior to the next await so the UI catches the change
+                RenderPlayerStatsChanges(growthCycle.PlayerStatsChanges);
+
                 foreach (var task in tasks)
                 {
                     await task;
@@ -375,6 +378,65 @@ namespace FungusToast
             SetGameStats(game);
         }
 
+        private async Task RenderToastChange(ToastChange toastChange)
+        {
+            var currentGridCell = Toast.Children[toastChange.Index] as Button;
+            currentGridCell.Opacity = 0;
+
+            if (toastChange.Live)
+            {
+                currentGridCell.Background = _playerNumberToColorBrushDictionary[toastChange.PlayerId];
+                currentGridCell.Content = string.Empty;
+            }
+            else if (toastChange.Moist)
+            {
+                currentGridCell.Background = _moistCellBrush;
+                currentGridCell.Content = string.Empty;
+            }
+            else
+            {
+                currentGridCell.Background = _deadCellBrush;
+                currentGridCell.Content = _deadCellSymbol;
+            }
+
+            await currentGridCell.Fade(1, 1500).StartAsync();
+        }
+
+        private async Task RenderMutationPointEarned(KeyValuePair<string, int> mutationPointEarned)
+        {
+            if (mutationPointEarned.Value > 0)
+            {
+                var mutationPointAnnouncementMessage =
+                    _playerNumberToMutationPointAnnouncementTextBlock[mutationPointEarned.Key];
+                mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
+                ViewModel.Players.First(player => player.PlayerId == mutationPointEarned.Key).AvailableMutationPoints +=
+                    mutationPointEarned.Value;
+
+                mutationPointAnnouncementMessage.Opacity = 1;
+                await mutationPointAnnouncementMessage.Fade(0, 1500).StartAsync();
+            }
+        }
+
+        private void RenderPlayerStatsChanges(Dictionary<string, PlayerStatsChanges> playerStatsChanges)
+        {
+            var playerIdToPlayer = ViewModel.Players.ToDictionary(p => p.PlayerId);
+            foreach (var keyValuePair in playerStatsChanges)
+            {
+                var playerId = keyValuePair.Key;
+                var playerStatsChange = keyValuePair.Value;
+
+                var player = playerIdToPlayer[playerId];
+                player.PerishedCells += playerStatsChange.PerishedCells;
+                player.GrownCells += playerStatsChange.GrownCells;
+                player.RegrownCells += playerStatsChange.RegeneratedCells;
+                player.FungicidalKills += playerStatsChange.FungicidalKills;
+
+                player.LiveCells = player.LiveCells + playerStatsChange.GrownCells + playerStatsChange.RegeneratedCells - playerStatsChange.PerishedCells;
+                //TODO this logic is fragile since total dead cells could change as other players regenerate this player's dead cells
+                player.DeadCells += playerStatsChange.PerishedCells;
+            }
+        }
+
         private void SetGameStats(GameModel game)
         {
             ViewModel.RoundNumber = game.RoundNumber;
@@ -386,24 +448,40 @@ namespace FungusToast
             if (game.EndOfGameCountDown.HasValue)
             {
                 ViewModel.GameEndCountDown = game.EndOfGameCountDown.Value;
-                EndOfGameCountDownLabel.Visibility = Visibility.Visible;
+                GameEndNotKnownTextBlock.Visibility = Visibility.Collapsed;
                 EndOfGameCountDownTextBlock.Visibility = Visibility.Visible;
             }
         }
 
-        private void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
+        private void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy,
+            Dictionary<string, PlayerStats> startingPlayerStats = null)
         {
             //--zero out AI players' mutation points since they always spend them immediately
             if (!playerToUpdate.IsHuman)
             {
                 playerToUpdate.AvailableMutationPoints = 0;
             }
-            playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
-            playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
-            playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
-            playerToUpdate.GrownCells = playerStateValuesToCopy.GrownCells;
-            playerToUpdate.PerishedCells = playerStateValuesToCopy.PerishedCells;
-            playerToUpdate.FungicidalKills = playerStateValuesToCopy.FungicidalKills;
+
+            if (startingPlayerStats == null || startingPlayerStats.Count == 0)
+            {
+                playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
+                playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
+                playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
+                playerToUpdate.GrownCells = playerStateValuesToCopy.GrownCells;
+                playerToUpdate.PerishedCells = playerStateValuesToCopy.PerishedCells;
+                playerToUpdate.FungicidalKills = playerStateValuesToCopy.FungicidalKills;
+            }
+            else
+            {
+                var playerStats = startingPlayerStats[playerToUpdate.PlayerId];
+                playerToUpdate.DeadCells = playerStats.DeadCells;
+                playerToUpdate.LiveCells = playerStats.LiveCells;
+                playerToUpdate.RegrownCells = playerStats.RegeneratedCells;
+                playerToUpdate.GrownCells = playerStats.GrownCells;
+                playerToUpdate.PerishedCells = playerStats.PerishedCells;
+                playerToUpdate.FungicidalKills = playerStats.FungicidalKills;
+            }
+
             playerToUpdate.SpentMutationPoints = playerStateValuesToCopy.SpentMutationPoints;
 
             playerToUpdate.HyperMutationSkillLevel = playerStateValuesToCopy.HyperMutationSkillLevel;
@@ -441,45 +519,6 @@ namespace FungusToast
                 var skillTreeButton = _playerNumberToSkillTreeButton[playerToUpdate.PlayerId];
                 skillTreeButton.BorderBrush = _activeBorderBrush;
                 skillTreeButton.BorderThickness = _activeThickness;
-            }
-        }
-
-        private async Task RenderToastChange(ToastChange toastChange)
-        {
-            var currentGridCell = Toast.Children[toastChange.Index] as Button;
-            currentGridCell.Opacity = 0;
-
-            if (toastChange.Live)
-            {
-                currentGridCell.Background = _playerNumberToColorBrushDictionary[toastChange.PlayerId];
-                currentGridCell.Content = string.Empty;
-            }
-            else if(toastChange.Moist)
-            {
-                currentGridCell.Background = _moistCellBrush;
-                currentGridCell.Content = string.Empty;
-            }
-            else
-            {
-                currentGridCell.Background = _deadCellBrush;
-                currentGridCell.Content = _deadCellSymbol;
-            }
-
-            await currentGridCell.Fade(1, 1500).StartAsync();
-        }
-
-        private async Task RenderMutationPointEarned(KeyValuePair<string, int> mutationPointEarned)
-        {
-            if (mutationPointEarned.Value > 0)
-            {
-                var mutationPointAnnouncementMessage =
-                    _playerNumberToMutationPointAnnouncementTextBlock[mutationPointEarned.Key];
-                mutationPointAnnouncementMessage.Text = $"+{mutationPointEarned.Value} Mutation Point!";
-                ViewModel.Players.First(player => player.PlayerId == mutationPointEarned.Key).AvailableMutationPoints +=
-                    mutationPointEarned.Value;
-
-                mutationPointAnnouncementMessage.Opacity = 1;
-                await mutationPointAnnouncementMessage.Fade(0, 1500).StartAsync();
             }
         }
 
