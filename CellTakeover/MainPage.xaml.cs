@@ -255,7 +255,7 @@ namespace FungusToast
                 var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
                     playerState.Human, _skillsData);
-                UpdatePlayer(player, playerState);
+                UpdatePlayer(player, playerState, game.StartingPlayerStats);
                 players.Add(player);
             }
 
@@ -351,12 +351,13 @@ namespace FungusToast
                     tasks.Add(RenderMutationPointEarned(mutationPointEarned));
                 }
 
+                //--attempt to render this prior to the next await so the UI catches the change
+                RenderPlayerStatsChanges(growthCycle.PlayerStatsChanges);
+
                 foreach (var task in tasks)
                 {
                     await task;
                 }
-
-                RenderPlayerStatsChanges(growthCycle.PlayerStatsChanges);
 
                 tasks = new List<Task>();
 
@@ -452,19 +453,35 @@ namespace FungusToast
             }
         }
 
-        private void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy)
+        private void UpdatePlayer(IPlayer playerToUpdate, PlayerState playerStateValuesToCopy,
+            Dictionary<string, PlayerStats> startingPlayerStats = null)
         {
             //--zero out AI players' mutation points since they always spend them immediately
             if (!playerToUpdate.IsHuman)
             {
                 playerToUpdate.AvailableMutationPoints = 0;
             }
-            playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
-            playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
-            playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
-            playerToUpdate.GrownCells = playerStateValuesToCopy.GrownCells;
-            playerToUpdate.PerishedCells = playerStateValuesToCopy.PerishedCells;
-            playerToUpdate.FungicidalKills = playerStateValuesToCopy.FungicidalKills;
+
+            if (startingPlayerStats == null || startingPlayerStats.Count == 0)
+            {
+                playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
+                playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
+                playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
+                playerToUpdate.GrownCells = playerStateValuesToCopy.GrownCells;
+                playerToUpdate.PerishedCells = playerStateValuesToCopy.PerishedCells;
+                playerToUpdate.FungicidalKills = playerStateValuesToCopy.FungicidalKills;
+            }
+            else
+            {
+                var playerStats = startingPlayerStats[playerToUpdate.PlayerId];
+                playerToUpdate.DeadCells = playerStats.DeadCells;
+                playerToUpdate.LiveCells = playerStats.LiveCells;
+                playerToUpdate.RegrownCells = playerStats.RegeneratedCells;
+                playerToUpdate.GrownCells = playerStats.GrownCells;
+                playerToUpdate.PerishedCells = playerStats.PerishedCells;
+                playerToUpdate.FungicidalKills = playerStats.FungicidalKills;
+            }
+
             playerToUpdate.SpentMutationPoints = playerStateValuesToCopy.SpentMutationPoints;
 
             playerToUpdate.HyperMutationSkillLevel = playerStateValuesToCopy.HyperMutationSkillLevel;
