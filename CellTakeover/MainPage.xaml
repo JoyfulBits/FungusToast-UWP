@@ -635,7 +635,6 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Name="EndOfGameCountDownLabel"
-                       Visibility="Collapsed"
                        Style="{StaticResource SubtitleTextBlockStyle}" 
                        Text="Rounds Until End:" TextWrapping="Wrap"></TextBlock>
             <TextBlock Grid.Row="0" Grid.Column="1" Name="EndOfGameCountDownTextBlock"
@@ -643,6 +642,12 @@
                        HorizontalAlignment="Right"
                        Style="{StaticResource SubtitleTextBlockStyle}" 
                        Text="{x:Bind ViewModel.GameEndCountDown, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" Name="GameEndNotKnownTextBlock"
+                       Visibility="Visible"
+                       HorizontalAlignment="Right"
+                       Style="{StaticResource SubtitleTextBlockStyle}" 
+                       ToolTipService.ToolTip="A 5-turn game end countdown will start once the number of empty spaces reaches 0."
+                       Text="???" TextWrapping="Wrap"></TextBlock>
 
             <TextBlock Grid.Row="1" Grid.Column="0" 
                         Style="{StaticResource SubtitleTextBlockStyle}" 

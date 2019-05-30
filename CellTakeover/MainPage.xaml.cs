@@ -448,7 +448,7 @@ namespace FungusToast
             if (game.EndOfGameCountDown.HasValue)
             {
                 ViewModel.GameEndCountDown = game.EndOfGameCountDown.Value;
-                EndOfGameCountDownLabel.Visibility = Visibility.Visible;
+                GameEndNotKnownTextBlock.Visibility = Visibility.Collapsed;
                 EndOfGameCountDownTextBlock.Visibility = Visibility.Visible;
             }
         }
