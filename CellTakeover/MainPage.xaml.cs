@@ -433,7 +433,7 @@ namespace FungusToast
 
                 player.LiveCells = player.LiveCells + playerStatsChange.GrownCells + playerStatsChange.RegeneratedCells - playerStatsChange.PerishedCells;
                 //TODO this logic is fragile since total dead cells could change as other players regenerate this player's dead cells
-                player.DeadCells += playerStatsChange.PerishedCells;
+                player.DeadCells += playerStatsChange.PerishedCells - playerStatsChange.RegeneratedCells;
             }
         }
 
@@ -464,6 +464,35 @@ namespace FungusToast
 
             if (startingPlayerStats == null || startingPlayerStats.Count == 0)
             {
+                if (playerToUpdate.DeadCells != playerStateValuesToCopy.DeadCells)
+                {
+                    Debug.WriteLine($"DeadCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.DeadCells}, right side is {playerStateValuesToCopy.DeadCells}");
+                }
+
+                if (playerToUpdate.LiveCells != playerStateValuesToCopy.LiveCells)
+                {
+                    Debug.WriteLine($"LiveCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.LiveCells}, right side is {playerStateValuesToCopy.LiveCells}");
+                }
+
+                if (playerToUpdate.RegrownCells != playerStateValuesToCopy.RegeneratedCells)
+                {
+                    Debug.WriteLine($"RegrownCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.RegrownCells}, right side is {playerStateValuesToCopy.RegeneratedCells}");
+                }
+
+                if (playerToUpdate.GrownCells != playerStateValuesToCopy.GrownCells)
+                {
+                    Debug.WriteLine($"GrownCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.GrownCells}, right side is {playerStateValuesToCopy.GrownCells}");
+                }
+
+                if (playerToUpdate.PerishedCells != playerStateValuesToCopy.PerishedCells)
+                {
+                    Debug.WriteLine($"PerishedCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.PerishedCells}, right side is {playerStateValuesToCopy.PerishedCells}");
+                }
+
+                if(playerToUpdate.FungicidalKills != playerStateValuesToCopy.FungicidalKills)
+                {
+                    Debug.WriteLine($"FungicidalKills Player stats got out of sync with toast changes! Left side is {playerToUpdate.FungicidalKills}, right side is {playerStateValuesToCopy.FungicidalKills}");
+                }
                 playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
                 playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
                 playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
