@@ -8,5 +8,7 @@
         public int PerishedCells { get; set; }
         public int RegeneratedCells { get; set; }
         public int FungicidalKills { get; set; }
+        public int LostDeadCells { get; set; }
+        public int StolenDeadCells { get; set; }
     }
 }

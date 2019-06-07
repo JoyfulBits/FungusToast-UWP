@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.UI;
 
@@ -15,6 +14,8 @@ namespace Logic
         int LiveCells { get; set; }
         int DeadCells { get; set; }
         int RegrownCells { get; set; }
+        int LostDeadCells { get; set; }
+        int StolenDeadCells { get; set; }
         int GrownCells { get; set; }
         int PerishedCells { get; set; }
         int FungicidalKills { get; set; }

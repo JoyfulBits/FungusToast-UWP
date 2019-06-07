@@ -29,6 +29,8 @@ namespace Logic
         private int _fungicidalKills;
         private int _spentMutationPoints;
         private float _hydrophiliaSkillLevel;
+        private int _lostDeadCells;
+        private int _stolenDeadCells;
 
         public Player(string name, Color playerCellColor, string playerId,
             bool isHuman, SkillsData skillsData)
@@ -223,6 +225,28 @@ namespace Logic
             {
                 if (value == _regrownCells) return;
                 _regrownCells = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int LostDeadCells
+        {
+            get => _lostDeadCells;
+            set
+            {
+                if (value == _lostDeadCells) return;
+                _lostDeadCells = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int StolenDeadCells
+        {
+            get => _stolenDeadCells;
+            set
+            {
+                if (value == _stolenDeadCells) return;
+                _stolenDeadCells = value;
                 OnPropertyChanged();
             }
         }
