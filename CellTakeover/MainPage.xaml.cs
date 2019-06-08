@@ -428,7 +428,7 @@ namespace FungusToast
                 var player = playerIdToPlayer[playerId];
                 player.PerishedCells += playerStatsChange.PerishedCells;
                 player.GrownCells += playerStatsChange.GrownCells;
-                player.RegrownCells += playerStatsChange.RegeneratedCells;
+                player.RegeneratedCells += playerStatsChange.RegeneratedCells;
                 player.LostDeadCells += playerStatsChange.LostDeadCells;
                 player.StolenDeadCells += playerStatsChange.StolenDeadCells;
                 player.FungicidalKills += playerStatsChange.FungicidalKills;
@@ -479,9 +479,9 @@ namespace FungusToast
                     Debug.WriteLine($"LiveCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.LiveCells}, right side is {playerStateValuesToCopy.LiveCells}");
                 }
 
-                if (playerToUpdate.RegrownCells != playerStateValuesToCopy.RegeneratedCells)
+                if (playerToUpdate.RegeneratedCells != playerStateValuesToCopy.RegeneratedCells)
                 {
-                    Debug.WriteLine($"RegrownCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.RegrownCells}, right side is {playerStateValuesToCopy.RegeneratedCells}");
+                    Debug.WriteLine($"RegeneratedCells Player stats got out of sync with toast changes! Left side is {playerToUpdate.RegeneratedCells}, right side is {playerStateValuesToCopy.RegeneratedCells}");
                 }
 
                 if (playerToUpdate.LostDeadCells != playerStateValuesToCopy.LostDeadCells)
@@ -510,7 +510,7 @@ namespace FungusToast
                 }
                 playerToUpdate.DeadCells = playerStateValuesToCopy.DeadCells;
                 playerToUpdate.LiveCells = playerStateValuesToCopy.LiveCells;
-                playerToUpdate.RegrownCells = playerStateValuesToCopy.RegeneratedCells;
+                playerToUpdate.RegeneratedCells = playerStateValuesToCopy.RegeneratedCells;
                 playerToUpdate.LostDeadCells = playerStateValuesToCopy.LostDeadCells;
                 playerToUpdate.StolenDeadCells = playerStateValuesToCopy.StolenDeadCells;
                 playerToUpdate.GrownCells = playerStateValuesToCopy.GrownCells;
@@ -522,7 +522,7 @@ namespace FungusToast
                 var playerStats = startingPlayerStats[playerToUpdate.PlayerId];
                 playerToUpdate.DeadCells = playerStats.DeadCells;
                 playerToUpdate.LiveCells = playerStats.LiveCells;
-                playerToUpdate.RegrownCells = playerStats.RegeneratedCells;
+                playerToUpdate.RegeneratedCells = playerStats.RegeneratedCells;
                 playerToUpdate.LostDeadCells = playerStats.LostDeadCells;
                 playerToUpdate.StolenDeadCells = playerStats.StolenDeadCells;
                 playerToUpdate.GrownCells = playerStats.GrownCells;

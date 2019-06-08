@@ -13,9 +13,10 @@ namespace Logic
         string PlayerId { get; set; }
         int LiveCells { get; set; }
         int DeadCells { get; set; }
-        int RegrownCells { get; set; }
+        int RegeneratedCells { get; set; }
         int LostDeadCells { get; set; }
         int StolenDeadCells { get; set; }
+        int TotalRegrownCells { get; }
         int GrownCells { get; set; }
         int PerishedCells { get; set; }
         int FungicidalKills { get; set; }

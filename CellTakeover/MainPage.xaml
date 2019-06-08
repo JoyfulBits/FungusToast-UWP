@@ -115,7 +115,7 @@
                             <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind LiveCells, Mode=OneWay}"/>
                             <TextBlock Grid.Column="3" Text="{x:Bind DeadCells, Mode=OneWay}"/>
-                            <TextBlock Grid.Column="4" Text="{x:Bind RegrownCells, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="4" Text="{x:Bind TotalRegrownCells, Mode=OneWay}"/>
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
@@ -245,7 +245,7 @@
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="🧟" TextAlignment="Center"
                                        ToolTipService.ToolTip="The number of friendly and enemy dead cells this fungus regenerated into it's mycelium"></TextBlock>
                                 <TextBlock Grid.Row="1" Grid.Column="1" Text="Regenerated Cells:"></TextBlock>
-                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{x:Bind RegrownCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{x:Bind TotalRegrownCells, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" ></TextBlock>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="🍄" TextAlignment="Center"
                                        ToolTipService.ToolTip="The total number of cells the player has grown over the course of the game"></TextBlock>
