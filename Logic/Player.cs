@@ -17,7 +17,7 @@ namespace Logic
         private int _deadCells;
 
         private string _name;
-        private int _regrownCells;
+        private int _regeneratedCells;
         private int _availableMutationPoints;
         private float _hyperMutationSkillLevel;
         private float _antiApoptosisSkillLevel;
@@ -29,6 +29,8 @@ namespace Logic
         private int _fungicidalKills;
         private int _spentMutationPoints;
         private float _hydrophiliaSkillLevel;
+        private int _lostDeadCells;
+        private int _stolenDeadCells;
 
         public Player(string name, Color playerCellColor, string playerId,
             bool isHuman, SkillsData skillsData)
@@ -216,14 +218,45 @@ namespace Logic
             }
         }
 
-        public int RegrownCells
+
+        /// <summary>
+        /// Represents the number of regenerated and stolen dead cells (which are really just other player's dead cells that were regenerated)
+        /// </summary>
+        public int TotalRegrownCells => _regeneratedCells + _stolenDeadCells;
+
+        public int RegeneratedCells
         {
-            get => _regrownCells;
+            get => _regeneratedCells;
             set
             {
-                if (value == _regrownCells) return;
-                _regrownCells = value;
+                if (value == _regeneratedCells) return;
+                _regeneratedCells = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TotalRegrownCells));
+            }
+        }
+
+        public int LostDeadCells
+        {
+            get => _lostDeadCells;
+            set
+            {
+                if (value == _lostDeadCells) return;
+                _lostDeadCells = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(DeadCells));
+            }
+        }
+
+        public int StolenDeadCells
+        {
+            get => _stolenDeadCells;
+            set
+            {
+                if (value == _stolenDeadCells) return;
+                _stolenDeadCells = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(TotalRegrownCells));
             }
         }
 
