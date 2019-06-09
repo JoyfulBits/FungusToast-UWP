@@ -37,12 +37,14 @@ namespace Logic
         float BuddingSkillLevel { get; set; }
         float MycotoxinsSkillLevel { get; set; }
         float HydrophiliaSkillLevel { get; set; }
+        float SporesSkillLevel { get; set; }
         void IncreaseHypermutation();
         void DecreaseApoptosisChance();
         void IncreaseBudding();
         void IncreaseRegeneration();
         void IncreaseMycotoxicity();
         void IncreaseHydrophilia();
+        void IncreaseSpores();
         bool IsLocalPlayer(List<string> userName);
     }
 }

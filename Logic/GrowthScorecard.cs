@@ -31,6 +31,7 @@ namespace Logic
         private float _apoptosisChancePercentage = BaseApoptosisChancePercentage;
         private float _mycotoxinFungicideChancePercentage;
         private float _moistureGrowthBoost;
+        private float _sporesChancePercentage;
 
         /// <summary>
         /// Percentage chance that a surrounded/starved cell will die each generation
@@ -103,6 +104,17 @@ namespace Logic
             {
                 if (value.Equals(_moistureGrowthBoost)) return;
                 _moistureGrowthBoost = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public float SporesChancePercentage
+        {
+            get => _sporesChancePercentage;
+            set
+            {
+                if (value.Equals(_sporesChancePercentage)) return;
+                _sporesChancePercentage = value;
                 OnPropertyChanged();
             }
         }

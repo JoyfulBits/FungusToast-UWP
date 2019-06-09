@@ -6,8 +6,9 @@
             float cornerGrowthChancePerAttributePoint,
             float reducedApoptosisPercentagePerAttributePoint,
             float regenerationChancePerAttributePoint,
-            float mycotoxinFungicideChancePerAttributePoint, 
-            float moistureGrowthBoostPerAttributePoint)
+            float mycotoxinFungicideChancePerAttributePoint,
+            float moistureGrowthBoostPerAttributePoint, 
+            float sporesChancePerAttributePoint)
         {
             MutationPercentageChancePerAttributePoint = mutationPercentageChancePerAttributePoint;
             CornerGrowthChancePerAttributePoint = cornerGrowthChancePerAttributePoint;
@@ -15,6 +16,7 @@
             RegenerationChancePerAttributePoint = regenerationChancePerAttributePoint;
             MycotoxinFungicideChancePerAttributePoint = mycotoxinFungicideChancePerAttributePoint;
             MoistureGrowthBoostPerAttributePoint = moistureGrowthBoostPerAttributePoint;
+            SporesChancePerAttributePoint = sporesChancePerAttributePoint;
         }
        
         public float MutationPercentageChancePerAttributePoint { get; }
@@ -23,6 +25,7 @@
         public float RegenerationChancePerAttributePoint { get; }
         public float MycotoxinFungicideChancePerAttributePoint { get; }
         public float MoistureGrowthBoostPerAttributePoint { get; }
+        public float SporesChancePerAttributePoint { get; }
 
 
         public string IncreaseMutationChanceMessage =>
@@ -40,7 +43,10 @@
             $"Increase chance of killing an adjacent enemy cell by {MycotoxinFungicideChancePerAttributePoint}%.";
 
         public string IncreaseMoistureGrowthBoostMessage =>
-            $"Place {WaterDropletsPerHydrophiliaPoint} drops of water and increase moist region growth by {MoistureGrowthBoostPerAttributePoint}%.";
+            $"Place {WaterDropletsPerHydrophiliaPoint} water drops and increase moist growth by {MoistureGrowthBoostPerAttributePoint}%.";
+
+        public string IncreaseSporesChanceMessage =>
+            $"Increase chance of cells growing into a random empty space by {SporesChancePerAttributePoint}%.";
 
         //TODO make this come from the API
         public static int WaterDropletsPerHydrophiliaPoint = 3;

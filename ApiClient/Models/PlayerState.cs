@@ -29,12 +29,14 @@
         public int BuddingSkillLevel { get; set; }
         public int MycotoxinsSkillLevel { get; set; }
         public int HydrophiliaSkillLevel { get; set; }
+        public int SporesSkillLevel { get; set; }
         public float ApoptosisChance { get; set; }
         public float StarvedCellDeathChance { get; set; }
         public float MutationChance { get; set; }
         public float RegenerationChance { get; set; }
         public float MycotoxinFungicideChance { get; set; }
         public float MoistureGrowthBoost { get; set; }
+        public float SporesChance { get; set; }
         public string Status { get; set; }
     }
 }

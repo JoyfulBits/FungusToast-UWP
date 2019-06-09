@@ -139,6 +139,7 @@
     <Content Include="Assets\Skill Icons\moisture_affinity.png" />
     <Content Include="Assets\Skill Icons\reduced_death.png" />
     <Content Include="Assets\Skill Icons\regrowth.png" />
+    <Content Include="Assets\Skill Icons\spores.png" />
     <Content Include="Assets\Skill Icons\toxicity.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

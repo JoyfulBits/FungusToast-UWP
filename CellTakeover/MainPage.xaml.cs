@@ -110,6 +110,7 @@ namespace FungusToast
             float regenerationChancePerAttributePoint = 0F;
             float mycotoxinFungicideChancePerAttributePoint = 0F;
             float moistureGrowthBoostPerAttributePoint = 0F;
+            float sporesChancePerAttributePoint = 0F;
 
             foreach (var skill in skills)
             {
@@ -133,18 +134,21 @@ namespace FungusToast
                     case (int)Skills.Hydrophilia:
                         moistureGrowthBoostPerAttributePoint = skill.IncreasePerPoint;
                         break;
+                    case (int)Skills.Spores:
+                        sporesChancePerAttributePoint = skill.IncreasePerPoint;
+                        break;
                     default:
                         throw new Exception(
                             $"There is a new skill in the API that is not accounted for in the UWP app. The skill id is '{skill.Id}' and the name is '{skill.Name}'");
                 }
             }
 
-            const int totalExpectedSkills = 6;
+            var totalExpectedSkills = Enum.GetNames(typeof(Skills)).Length;
 
             if (totalExpectedSkills != skills.Count)
             {
                 throw new Exception(
-                    $"Expected that all '{totalExpectedSkills}' skills would be accounted for, but only '{skills.Count}' were set.");
+                    $"Expected that '{totalExpectedSkills}' skills would be accounted for, but '{skills.Count}' were set.");
             }
 
             return new SkillsData(
@@ -153,7 +157,8 @@ namespace FungusToast
                 reducedApoptosisPercentagePerAttributePoint,
                 regenerationChancePerAttributePoint,
                 mycotoxinFungicideChancePerAttributePoint,
-                moistureGrowthBoostPerAttributePoint);
+                moistureGrowthBoostPerAttributePoint,
+                sporesChancePerAttributePoint);
         }
 
         private SkillExpenditureRequest GetSkillExpenditureRequest(string playerId)
@@ -538,6 +543,7 @@ namespace FungusToast
             playerToUpdate.BuddingSkillLevel = playerStateValuesToCopy.BuddingSkillLevel;
             playerToUpdate.MycotoxinsSkillLevel = playerStateValuesToCopy.MycotoxinsSkillLevel;
             playerToUpdate.HydrophiliaSkillLevel = playerStateValuesToCopy.HydrophiliaSkillLevel;
+            playerToUpdate.SporesSkillLevel = playerStateValuesToCopy.SporesSkillLevel;
 
             var updatedGrowthScorecard = new GrowthScorecard
             {
@@ -547,6 +553,7 @@ namespace FungusToast
                 RegenerationChancePercentage = playerStateValuesToCopy.RegenerationChance,
                 MycotoxinFungicideChancePercentage = playerStateValuesToCopy.MycotoxinFungicideChance,
                 MoistureGrowthBoost = playerStateValuesToCopy.MoistureGrowthBoost,
+                SporesChancePercentage = playerStateValuesToCopy.SporesChance,
                 GrowthChanceDictionary = new Dictionary<RelativePosition, float>
                 {
                     {RelativePosition.TopLeft, playerStateValuesToCopy.TopLeftGrowthChance},
@@ -675,6 +682,15 @@ namespace FungusToast
             var player = button.DataContext as IPlayer;
             player.IncreaseMycotoxicity();
             GetSkillExpenditureRequest(player.PlayerId).IncreaseMycotoxicity();
+
+            await CheckForRemainingMutationPoints(player);
+        }
+        private async void SporesButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.IncreaseSpores();
+            GetSkillExpenditureRequest(player.PlayerId).IncreaseSpores();
 
             await CheckForRemainingMutationPoints(player);
         }

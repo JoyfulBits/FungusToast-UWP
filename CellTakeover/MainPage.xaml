@@ -400,6 +400,7 @@
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="600"></ColumnDefinition>
@@ -606,6 +607,37 @@
                                                            TextWrapping="Wrap"></TextBlock>
                                                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Increased Growth Chance:"></TextBlock>
                                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.MoistureGrowthBoost, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button Grid.Row="7" Grid.Column="0"
+                                            Background="White"
+                                            Name="SporesButton"
+                                            IsEnabled="False"
+                                            ToolTipService.ToolTip="Spores allow a cell that fails to grow into an adjacent cell to release spores and populate a random empty space on the toast."
+                                            Click="SporesButton_OnClick"
+                                            Loaded="MutationOptionButton_Loaded">
+                                            <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                                <Image Source="Assets/Skill Icons/spores.png" Style="{StaticResource MutationImage}"></Image>
+                                                <Grid Padding="5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                           Text="Spores"  
+                                                           Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                           Text="{x:Bind IncreaseSporesChanceMessage, Mode=OneTime}"
+                                                           TextWrapping="Wrap"></TextBlock>
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Increased Spore Chance:"></TextBlock>
+                                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.SporesChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
                                                 </Grid>
                                             </StackPanel>
                                         </Button>

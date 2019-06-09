@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.UI;
@@ -31,6 +30,7 @@ namespace Logic
         private float _hydrophiliaSkillLevel;
         private int _lostDeadCells;
         private int _stolenDeadCells;
+        private float _sporesSkillLevel;
 
         public Player(string name, Color playerCellColor, string playerId,
             bool isHuman, SkillsData skillsData)
@@ -196,6 +196,17 @@ namespace Logic
             }
         }
 
+        public float SporesSkillLevel
+        {
+            get => _sporesSkillLevel;
+            set
+            {
+                if (value.Equals(_sporesSkillLevel)) return;
+                _sporesSkillLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int LiveCells
         {
             get => _liveCells;
@@ -316,10 +327,10 @@ namespace Logic
         public string AddMutationChanceMessage => _skillsData.IncreaseMutationChanceMessage;
         public string AddCornerGrowthChanceMessage => _skillsData.IncreaseCornerGrowthChanceMessage;
         public string DecreaseApoptosisChanceMessage => _skillsData.DecreaseApoptosisChanceMessage;
-
         public string AddRegrowthChanceMessage => _skillsData.IncreaseRegrowthChanceMessage;
         public string AddMycotoxicityChanceMessage => _skillsData.IncreaseMycotoxinFungicideChanceMessage;
         public string AddMoistureGrowthBoostMessage => _skillsData.IncreaseMoistureGrowthBoostMessage;
+        public string IncreaseSporesChanceMessage => _skillsData.IncreaseSporesChanceMessage;
 
         public void IncreaseHypermutation()
         {
@@ -372,6 +383,14 @@ namespace Logic
         {
             GrowthScorecard.MoistureGrowthBoost +=
                 _skillsData.MoistureGrowthBoostPerAttributePoint;
+
+            AvailableMutationPoints--;
+        }
+
+        public void IncreaseSpores()
+        {
+            GrowthScorecard.SporesChancePercentage +=
+                _skillsData.SporesChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }

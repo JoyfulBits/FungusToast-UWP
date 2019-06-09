@@ -88,6 +88,13 @@ namespace ApiClient.Models
                 Upgrades.Add(skillId, skillUpgrade);
             }
         }
+
+        public void IncreaseSpores()
+        {
+            var key = (int)Skills.Spores;
+
+            AddSpentPoint(key);
+        }
     }
 
     /// <summary>
