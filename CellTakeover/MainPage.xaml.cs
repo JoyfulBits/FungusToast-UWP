@@ -143,12 +143,12 @@ namespace FungusToast
                 }
             }
 
-            const int totalExpectedSkills = 6;
+            var totalExpectedSkills = Enum.GetNames(typeof(Skills)).Length;
 
             if (totalExpectedSkills != skills.Count)
             {
                 throw new Exception(
-                    $"Expected that all '{totalExpectedSkills}' skills would be accounted for, but only '{skills.Count}' were set.");
+                    $"Expected that '{totalExpectedSkills}' skills would be accounted for, but '{skills.Count}' were set.");
             }
 
             return new SkillsData(
