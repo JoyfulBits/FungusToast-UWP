@@ -395,6 +395,11 @@ namespace Logic
             AvailableMutationPoints--;
         }
 
+        public void UseEyeDropper()
+        {
+            AvailableMutationPoints--;
+        }
+
         public bool IsLocalPlayer(List<string> userNames)
         {
             return userNames.Contains(Name);

@@ -8,6 +8,7 @@
         Regeneration = 4,
         Mycotoxicity = 5,
         Hydrophilia = 6,
-        Spores = 7
+        Spores = 7,
+        EyeDropper = 8
     }
 }

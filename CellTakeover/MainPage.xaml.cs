@@ -54,6 +54,7 @@ namespace FungusToast
         }; 
 
         private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<string, Dictionary<string, Button>>();
+        private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToActiveSkillsButtons = new Dictionary<string, Dictionary<string, Button>>();
         private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
         private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
         private readonly Dictionary<string, Button> _playerNumberToSkillTreeButton = new Dictionary<string, Button>();
@@ -136,6 +137,8 @@ namespace FungusToast
                         break;
                     case (int)Skills.Spores:
                         sporesChancePerAttributePoint = skill.IncreasePerPoint;
+                        break;
+                    case (int)Skills.EyeDropper:
                         break;
                     default:
                         throw new Exception(
@@ -270,6 +273,7 @@ namespace FungusToast
             {
                 _playerNumberToColorBrushDictionary.Add(player.PlayerId, new SolidColorBrush(player.Color));
                 _playerNumberToMutationButtons.Add(player.PlayerId, new Dictionary<string, Button>());
+                _playerNumberToActiveSkillsButtons.Add(player.PlayerId, new Dictionary<string, Button>());
             }
 
             InitializeToastWithPlayerCells(game);
@@ -595,7 +599,19 @@ namespace FungusToast
             {
                 mutationButton.IsEnabled = false;
             }
-            else if (mutationButton.Name == "HydrophiliaButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerHydrophiliaPoint)
+            else if (mutationButton.Name == "HydrophiliaButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerEyeDropperPoint)
+            {
+                mutationButton.IsEnabled = false;
+            }
+            else
+            {
+                mutationButton.IsEnabled = true;
+            }
+        }
+
+        private void EnableActiveSkillsButtonButtonIfAppropriate(IPlayer player, Button mutationButton)
+        {
+            if (mutationButton.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerEyeDropperPoint)
             {
                 mutationButton.IsEnabled = false;
             }
@@ -695,22 +711,32 @@ namespace FungusToast
             await CheckForRemainingMutationPoints(player);
         }
 
-        private void Hydrophilia_Click(object sender, RoutedEventArgs e)
+        private async void Hydrophilia_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
             player.IncreaseHydrophilia();
             GetSkillExpenditureRequest(player.PlayerId).IncreaseHydrophilia();
-            
-            EnableWaterDropper(player);
+
+            await CheckForRemainingMutationPoints(player);
         }
 
-        private void EnableWaterDropper(IPlayer activePlayer)
+        private void EyeDropper_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.UseEyeDropper();
+            GetSkillExpenditureRequest(player.PlayerId).UseEyeDropper();
+
+            EnableEyeDropper(player);
+        }
+
+        private void EnableEyeDropper(IPlayer activePlayer)
         {
             DisableSkillTrees();
 
             ViewModel.ActivePlayerId = activePlayer.PlayerId;
-            ViewModel.ActiveCellChangesRemaining = SkillsData.WaterDropletsPerHydrophiliaPoint;
+            ViewModel.ActiveCellChangesRemaining = SkillsData.WaterDropletsPerEyeDropperPoint;
 
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Person, 1);
         }
@@ -800,6 +826,24 @@ namespace FungusToast
             }
         }
 
+        private void ActiveSkillsButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            var playerButtons = _playerNumberToActiveSkillsButtons[player.PlayerId];
+
+            if (player.AvailableMutationPoints > 0 && player.IsLocalPlayer(_usersPlayingLocalGame))
+            {
+                EnableActiveSkillsButtonButtonIfAppropriate(player, button);
+            }
+
+            //--make sure the buttons are only added to the dictionary once
+            if (!playerButtons.ContainsKey(button.Name))
+            {
+                playerButtons.Add(button.Name, button);
+            }
+        }
+
         private async void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
         {
             var mutationPointMessageTextBlock = sender as TextBlock;
@@ -841,6 +885,11 @@ namespace FungusToast
             var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             _visibleDialog = contentDialog;
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
+        }
+
+        private void ActiveSkillsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void SkillTreeButton_Loaded(object sender, RoutedEventArgs e)

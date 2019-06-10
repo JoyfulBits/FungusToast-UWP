@@ -8,6 +8,7 @@ namespace Logic
     {
         string Name { get; set; }
         bool IsHuman { get; }
+        bool IsLocalPlayer(List<string> userName);
         int AvailableMutationPoints { get; set; }
         Color Color { get; set; }
         string PlayerId { get; set; }
@@ -45,6 +46,6 @@ namespace Logic
         void IncreaseMycotoxicity();
         void IncreaseHydrophilia();
         void IncreaseSpores();
-        bool IsLocalPlayer(List<string> userName);
+        void UseEyeDropper();
     }
 }
