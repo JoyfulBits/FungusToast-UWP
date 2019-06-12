@@ -91,7 +91,7 @@ namespace ApiClient.Models
 
         public void IncreaseSpores()
         {
-            var key = (int)Skills.Hydrophilia;
+            var key = (int)Skills.Spores;
 
             AddSpentPoint(key);
         }
