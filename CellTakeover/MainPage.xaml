@@ -136,7 +136,7 @@
                     <Grid Name="{x:Bind PlayerId}" Padding="10" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
                         <Grid.RowDefinitions>
                             <RowDefinition></RowDefinition>
-                            <RowDefinition Height="55"></RowDefinition>
+                            <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
@@ -156,38 +156,50 @@
                                            VerticalAlignment="Center"></TextBlock>
                         </StackPanel>
 
-                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                Tag="{x:Bind PlayerId}"
-                                ToolTipService.ToolTip="View this player's skill tree and use mutation points to improve your organism"
-                                Click="SkillTreeButton_OnClick"
-                                Loaded="SkillTreeButton_Loaded">
-                            <TextBlock 
-                                Foreground="DarkGreen"
-                                Style="{StaticResource BaseTextBlockStyle}"
-                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
-                                TextWrapping="NoWrap"></TextBlock>
-                        </Button>
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
 
-                        <Button Grid.Row="1" Grid.Column="1"
-                                Tag="{x:Bind PlayerId}"
-                                ToolTipService.ToolTip="Use active skills to manipulate the toast or fungal cells."
-                                Click="ActiveSkillsButton_OnClick"
-                                Loaded="ActiveSkillsButton_Loaded">
-                            <TextBlock 
-                                Foreground="DarkGreen"
-                                Style="{StaticResource BaseTextBlockStyle}"
-                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
-                                TextWrapping="NoWrap"></TextBlock>
-                        </Button>
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                    Foreground="DarkGreen"
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
+                                    TextWrapping="NoWrap"></TextBlock>
 
-                        <TextBlock Grid.Row="2" Grid.Column="1"
-                            Tag="{x:Bind PlayerId}"
-                            Opacity="0"
-                            Foreground="DarkGreen"
-                            Text="+1 Mutation Point!" 
-                            Loaded="MutationPointMessage_Loaded"></TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Tag="{x:Bind PlayerId}"
+                                   Opacity="0"
+                                   Foreground="DarkGreen"
+                                   Text="+1 Mutation Point!" 
+                                   Loaded="MutationPointMessage_Loaded"></TextBlock>
 
-                        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                                <Button Background="White" Padding="5"
+                                        Tag="{x:Bind PlayerId}"
+                                        ToolTipService.ToolTip="View this player's skill tree and use mutation points to passively improve your organism"
+                                        Click="SkillTreeButton_OnClick"
+                                        Loaded="SkillTreeButton_Loaded">
+                                    <Image Source="Assets/Skill Icons/skill_tree_icon.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
+                                </Button>
+
+                                <Button Background="White" Padding="5"
+                                        Tag="{x:Bind PlayerId}"
+                                        ToolTipService.ToolTip="Use active skills to manipulate the toast or fungal cells"
+                                        Click="ActiveSkillsButton_OnClick"
+                                        Loaded="ActiveSkillsButton_Loaded">
+                                    <Image Source="Assets/Skill Icons/test_tube.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
+                                </Button>
+                            </StackPanel>
+                            
+                        </Grid>
+
+                        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                 <ColumnDefinition Width="*"></ColumnDefinition>

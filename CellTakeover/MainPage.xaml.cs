@@ -54,10 +54,10 @@ namespace FungusToast
         }; 
 
         private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<string, Dictionary<string, Button>>();
-        private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToActiveSkillsButtons = new Dictionary<string, Dictionary<string, Button>>();
         private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
         private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
         private readonly Dictionary<string, Button> _playerNumberToSkillTreeButton = new Dictionary<string, Button>();
+        private readonly Dictionary<string, Button> _playerNumberToActiveSkillsButton = new Dictionary<string, Button>();
         private readonly Dictionary<string, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<string, SolidColorBrush>();
 
         /// <summary>
@@ -273,7 +273,6 @@ namespace FungusToast
             {
                 _playerNumberToColorBrushDictionary.Add(player.PlayerId, new SolidColorBrush(player.Color));
                 _playerNumberToMutationButtons.Add(player.PlayerId, new Dictionary<string, Button>());
-                _playerNumberToActiveSkillsButtons.Add(player.PlayerId, new Dictionary<string, Button>());
             }
 
             InitializeToastWithPlayerCells(game);
@@ -576,8 +575,11 @@ namespace FungusToast
             if (playerToUpdate.IsLocalPlayer(_usersPlayingLocalGame) && playerToUpdate.AvailableMutationPoints > 0)
             {
                 var skillTreeButton = _playerNumberToSkillTreeButton[playerToUpdate.PlayerId];
+                var activeSkillsButton = _playerNumberToActiveSkillsButton[playerToUpdate.PlayerId];
                 skillTreeButton.BorderBrush = _activeBorderBrush;
                 skillTreeButton.BorderThickness = _activeThickness;
+                activeSkillsButton.BorderBrush = _activeBorderBrush;
+                activeSkillsButton.BorderThickness = _activeThickness;
             }
         }
 
@@ -599,19 +601,7 @@ namespace FungusToast
             {
                 mutationButton.IsEnabled = false;
             }
-            else if (mutationButton.Name == "HydrophiliaButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerEyeDropperPoint)
-            {
-                mutationButton.IsEnabled = false;
-            }
-            else
-            {
-                mutationButton.IsEnabled = true;
-            }
-        }
-
-        private void EnableActiveSkillsButtonButtonIfAppropriate(IPlayer player, Button mutationButton)
-        {
-            if (mutationButton.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerEyeDropperPoint)
+            else if (mutationButton.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerEyeDropperPoint)
             {
                 mutationButton.IsEnabled = false;
             }
@@ -747,6 +737,7 @@ namespace FungusToast
             {
                 DisablePlayerMutationButtons(player);
                 _playerNumberToSkillTreeButton[player.PlayerId].IsEnabled = false;
+                _playerNumberToActiveSkillsButton[player.PlayerId].IsEnabled = false;
             }
         }
 
@@ -756,10 +747,13 @@ namespace FungusToast
             {
                 EnableMutationButtons(player);
                 var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
+                var activeSkillButton = _playerNumberToActiveSkillsButton[player.PlayerId];
                 if (player.IsLocalPlayer(_usersPlayingLocalGame) && player.AvailableMutationPoints > 0)
                 {
                     skillTreeButton.BorderBrush = _activeBorderBrush;
                     skillTreeButton.BorderThickness = _activeThickness;
+                    activeSkillButton.BorderBrush = _activeBorderBrush;
+                    activeSkillButton.BorderThickness = _activeThickness;
                 }
                 
                 skillTreeButton.IsEnabled = true;
@@ -801,8 +795,11 @@ namespace FungusToast
             }
 
             var skillTreeButton = _playerNumberToSkillTreeButton[player.PlayerId];
+            var activeSkillsButton = _playerNumberToActiveSkillsButton[player.PlayerId];
             skillTreeButton.BorderBrush = _normalBorderBrush;
             skillTreeButton.BorderThickness = _normalThickness;
+            activeSkillsButton.BorderBrush = _normalBorderBrush;
+            activeSkillsButton.BorderThickness = _normalThickness;
 
             var dialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             dialog.Hide();
@@ -829,19 +826,13 @@ namespace FungusToast
         private void ActiveSkillsButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var player = button.DataContext as IPlayer;
-            var playerButtons = _playerNumberToActiveSkillsButtons[player.PlayerId];
+            var playerId = button.Tag.ToString();
+            _playerNumberToActiveSkillsButton[playerId] = button;
+        }
 
-            if (player.AvailableMutationPoints > 0 && player.IsLocalPlayer(_usersPlayingLocalGame))
-            {
-                EnableActiveSkillsButtonButtonIfAppropriate(player, button);
-            }
-
-            //--make sure the buttons are only added to the dictionary once
-            if (!playerButtons.ContainsKey(button.Name))
-            {
-                playerButtons.Add(button.Name, button);
-            }
+        private void ActiveSkillsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private async void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
@@ -885,11 +876,6 @@ namespace FungusToast
             var contentDialog = _playerNumberToSkillTreeDialog[player.PlayerId];
             _visibleDialog = contentDialog;
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
-        }
-
-        private void ActiveSkillsButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private void SkillTreeButton_Loaded(object sender, RoutedEventArgs e)
