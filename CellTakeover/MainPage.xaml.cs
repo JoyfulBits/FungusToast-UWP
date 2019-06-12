@@ -621,7 +621,9 @@ namespace FungusToast
             }
 
             DisablePlayerMutationButtons(player);
-            
+            //--disable skill trees when spending points in case we render updates. Spending points -- especially on active skills -- could run into race conditions if the toast is updating
+            DisableSkillTrees();
+
             var skillUpdateResult = await _fungusToastApiClient.PushSkillExpenditures(_gameModel.Id, player.PlayerId, GetSkillExpenditureRequest(player.PlayerId));
 
             ResetSkillExpenditureRequest(player.PlayerId);
@@ -632,11 +634,12 @@ namespace FungusToast
 
                 await RenderUpdates(_gameModel);
 
-                if (await CheckForGameEnd())
-                {
-                    EnableMutationButtons(player);
-                }
+                await CheckForGameEnd();
+                
+                EnableMutationButtons(player); 
             }
+
+            EnableSkillTrees();
         }
 
         private async void IncreaseHypermutation_Click(object sender, RoutedEventArgs e)
