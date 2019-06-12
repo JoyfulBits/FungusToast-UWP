@@ -57,6 +57,9 @@ namespace FungusToast
         private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
         private readonly Dictionary<string, Border> _playerNumberToSkillsBorder = new Dictionary<string, Border>();
         private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
+
+        private readonly Dictionary<string, ContentDialog> _playerNumberToActiveSkillsDialog =
+            new Dictionary<string, ContentDialog>();
         private readonly Dictionary<string, Button> _playerNumberToSkillTreeButton = new Dictionary<string, Button>();
         private readonly Dictionary<string, Button> _playerNumberToActiveSkillsButton = new Dictionary<string, Button>();
         private readonly Dictionary<string, SolidColorBrush> _playerNumberToColorBrushDictionary = new Dictionary<string, SolidColorBrush>();
@@ -797,8 +800,10 @@ namespace FungusToast
             skillsBorder.BorderBrush = _normalBorderBrush;
             skillsBorder.BorderThickness = _normalThickness;
 
-            var dialog = _playerNumberToSkillTreeDialog[player.PlayerId];
-            dialog.Hide();
+            var skillTreeDialog = _playerNumberToSkillTreeDialog[player.PlayerId];
+            skillTreeDialog.Hide();
+            var activeSkillsDialog = _playerNumberToActiveSkillsDialog[player.PlayerId];
+            activeSkillsDialog.Hide();
         }
 
         private void MutationOptionButton_Loaded(object sender, RoutedEventArgs e)
@@ -819,28 +824,11 @@ namespace FungusToast
             }
         }
 
-        private void ActiveSkillsButton_Loaded(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var playerId = button.Tag.ToString();
-            _playerNumberToActiveSkillsButton[playerId] = button;
-        }
-
-        private void ActiveSkillsButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private async void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
+        private void MutationPointMessage_Loaded(object sender, RoutedEventArgs e)
         {
             var mutationPointMessageTextBlock = sender as TextBlock;
             var playerId = mutationPointMessageTextBlock.Tag.ToString();
             _playerNumberToMutationPointAnnouncementTextBlock[playerId] = mutationPointMessageTextBlock;
-
-            //if (_gameModel != null && _playerNumberToMutationPointAnnouncementTextBlock.Keys.Count == _gameModel.Players.Count)
-            //{
-            //    await RenderUpdates(_gameModel);
-            //}
         }
 
         private async void SkillsBorder_Loaded(object sender, RoutedEventArgs e)
@@ -872,7 +860,8 @@ namespace FungusToast
                 EnableMutationButtons(player);
             }
         }
-        private void SkillTreeDialog_OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+
+        private void Dialog_OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             _visibleDialog = null;
         }
@@ -891,6 +880,40 @@ namespace FungusToast
             var button = sender as Button;
             var playerId = button.Tag.ToString();
             _playerNumberToSkillTreeButton[playerId] = button;
+        }
+
+        private void ActiveSkillsButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var playerId = button.Tag.ToString();
+            _playerNumberToActiveSkillsButton[playerId] = button;
+        }
+
+        private async void ActiveSkillsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            var contentDialog = _playerNumberToActiveSkillsDialog[player.PlayerId];
+            _visibleDialog = contentDialog;
+            await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
+        }
+
+        private void ActiveSkillsDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            var dialog = sender as ContentDialog;
+            var playerId = dialog.Tag.ToString();
+            _playerNumberToActiveSkillsDialog[playerId] = dialog;
+        }
+
+        private void ActiveSkillsDialog_OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            var skillTreeDialog = sender as ContentDialog;
+            var player = skillTreeDialog.DataContext as IPlayer;
+
+            if (player.IsLocalPlayer(_usersPlayingLocalGame))
+            {
+                EnableMutationButtons(player);
+            }
         }
 
         private async Task<bool> CheckForGameEnd()

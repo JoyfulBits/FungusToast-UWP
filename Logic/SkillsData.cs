@@ -46,7 +46,10 @@
             $"Increase chance of growing into adjacent moist cells by {MoistureGrowthBoostPerAttributePoint}%.";
 
         public string IncreaseSporesChanceMessage =>
-            $"Increase chance of cells growing into a random empty space by {SporesChancePerAttributePoint}%.";
+            $"Increase chance of growth into random empty space by {SporesChancePerAttributePoint}%.";
+
+        public string AddWaterDropletMessage =>
+            $"Add {WaterDropletsPerEyeDropperPoint} water droplets to the toast, making it moist.";
 
         //TODO make this come from the API
         public static int WaterDropletsPerEyeDropperPoint = 5;

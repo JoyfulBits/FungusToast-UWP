@@ -331,6 +331,7 @@ namespace Logic
         public string AddMycotoxicityChanceMessage => _skillsData.IncreaseMycotoxinFungicideChanceMessage;
         public string AddMoistureGrowthBoostMessage => _skillsData.IncreaseMoistureGrowthBoostMessage;
         public string IncreaseSporesChanceMessage => _skillsData.IncreaseSporesChanceMessage;
+        public string AddWaterDropletMessage => _skillsData.AddWaterDropletMessage;
 
         public void IncreaseHypermutation()
         {

@@ -76,7 +76,7 @@ namespace ApiClient.Models
 
         public void AddMoistureDroplet(int gridCellIndex)
         {
-            var skillId = (int)Skills.Hydrophilia;
+            var skillId = (int)Skills.EyeDropper;
             if (Upgrades.ContainsKey(skillId))
             {
                 Upgrades[skillId].ActiveCellChanges.Add(gridCellIndex);
