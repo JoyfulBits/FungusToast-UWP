@@ -1,8 +1,8 @@
 ﻿namespace Logic
 {
-    public class SkillsData
+    public class PassiveSkillsData
     {
-        public SkillsData(float mutationPercentageChancePerAttributePoint,
+        public PassiveSkillsData(float mutationPercentageChancePerAttributePoint,
             float cornerGrowthChancePerAttributePoint,
             float reducedApoptosisPercentagePerAttributePoint,
             float regenerationChancePerAttributePoint,
@@ -47,11 +47,5 @@
 
         public string IncreaseSporesChanceMessage =>
             $"Increase chance of growth into random empty space by {SporesChancePerAttributePoint}%.";
-
-        public string AddWaterDropletMessage =>
-            $"Add {WaterDropletsPerEyeDropperPoint} water droplets to the toast, making it moist.";
-
-        //TODO make this come from the API
-        public static int WaterDropletsPerEyeDropperPoint = 5;
     }
 }

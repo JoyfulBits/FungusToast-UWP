@@ -8,7 +8,8 @@ namespace Logic
 {
     public class Player : IPlayer
     {
-        private readonly SkillsData _skillsData;
+        private readonly PassiveSkillsData _passiveSkillsData;
+        private readonly ActiveSkillsData _activeSkillsData;
         private Color _color;
         private string _playerId;
         private GrowthScorecard _growthScorecard;
@@ -31,11 +32,13 @@ namespace Logic
         private int _lostDeadCells;
         private int _stolenDeadCells;
         private float _sporesSkillLevel;
+        private int _actionPoints;
 
         public Player(string name, Color playerCellColor, string playerId,
-            bool isHuman, SkillsData skillsData)
+            bool isHuman, PassiveSkillsData passiveSkillsData, ActiveSkillsData activeSkillsData)
         {
-            _skillsData = skillsData;
+            _passiveSkillsData = passiveSkillsData;
+            this._activeSkillsData = activeSkillsData;
             Name = name;
             Color = playerCellColor;
             PlayerId = playerId;
@@ -62,6 +65,17 @@ namespace Logic
             {
                 if (value == _availableMutationPoints) return;
                 _availableMutationPoints = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int ActionPoints
+        {
+            get => _actionPoints;
+            set
+            {
+                if (value == _actionPoints) return;
+                _actionPoints = value;
                 OnPropertyChanged();
             }
         }
@@ -324,37 +338,37 @@ namespace Logic
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string AddMutationChanceMessage => _skillsData.IncreaseMutationChanceMessage;
-        public string AddCornerGrowthChanceMessage => _skillsData.IncreaseCornerGrowthChanceMessage;
-        public string DecreaseApoptosisChanceMessage => _skillsData.DecreaseApoptosisChanceMessage;
-        public string AddRegrowthChanceMessage => _skillsData.IncreaseRegrowthChanceMessage;
-        public string AddMycotoxicityChanceMessage => _skillsData.IncreaseMycotoxinFungicideChanceMessage;
-        public string AddMoistureGrowthBoostMessage => _skillsData.IncreaseMoistureGrowthBoostMessage;
-        public string IncreaseSporesChanceMessage => _skillsData.IncreaseSporesChanceMessage;
-        public string AddWaterDropletMessage => _skillsData.AddWaterDropletMessage;
+        public string AddMutationChanceMessage => _passiveSkillsData.IncreaseMutationChanceMessage;
+        public string AddCornerGrowthChanceMessage => _passiveSkillsData.IncreaseCornerGrowthChanceMessage;
+        public string DecreaseApoptosisChanceMessage => _passiveSkillsData.DecreaseApoptosisChanceMessage;
+        public string AddRegrowthChanceMessage => _passiveSkillsData.IncreaseRegrowthChanceMessage;
+        public string AddMycotoxicityChanceMessage => _passiveSkillsData.IncreaseMycotoxinFungicideChanceMessage;
+        public string AddMoistureGrowthBoostMessage => _passiveSkillsData.IncreaseMoistureGrowthBoostMessage;
+        public string IncreaseSporesChanceMessage => _passiveSkillsData.IncreaseSporesChanceMessage;
+        public string AddWaterDropletMessage => _activeSkillsData.AddWaterDropletMessage;
 
         public void IncreaseHypermutation()
         {
-            GrowthScorecard.MutationChancePercentage += _skillsData.MutationPercentageChancePerAttributePoint;
+            GrowthScorecard.MutationChancePercentage += _passiveSkillsData.MutationPercentageChancePerAttributePoint;
             AvailableMutationPoints--;
         }
 
         public void DecreaseApoptosisChance()
         {
-            GrowthScorecard.ApoptosisChancePercentage -= _skillsData.ReducedApoptosisPercentagePerAttributePoint;
+            GrowthScorecard.ApoptosisChancePercentage -= _passiveSkillsData.ReducedApoptosisPercentagePerAttributePoint;
             AvailableMutationPoints--;
         }
 
         public void IncreaseBudding()
         {
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopLeft] +=
-                _skillsData.CornerGrowthChancePerAttributePoint;
+                _passiveSkillsData.CornerGrowthChancePerAttributePoint;
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.TopRight] +=
-                _skillsData.CornerGrowthChancePerAttributePoint;
+                _passiveSkillsData.CornerGrowthChancePerAttributePoint;
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomRight] +=
-                _skillsData.CornerGrowthChancePerAttributePoint;
+                _passiveSkillsData.CornerGrowthChancePerAttributePoint;
             GrowthScorecard.GrowthChanceDictionary[RelativePosition.BottomLeft] +=
-                _skillsData.CornerGrowthChancePerAttributePoint;
+                _passiveSkillsData.CornerGrowthChancePerAttributePoint;
 
             AvailableMutationPoints--;
 
@@ -367,7 +381,7 @@ namespace Logic
         public void IncreaseRegeneration()
         {
             GrowthScorecard.RegenerationChancePercentage +=
-                _skillsData.RegenerationChancePerAttributePoint;
+                _passiveSkillsData.RegenerationChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }
@@ -375,7 +389,7 @@ namespace Logic
         public void IncreaseMycotoxicity()
         {
             GrowthScorecard.MycotoxinFungicideChancePercentage +=
-                _skillsData.MycotoxinFungicideChancePerAttributePoint;
+                _passiveSkillsData.MycotoxinFungicideChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }
@@ -383,7 +397,7 @@ namespace Logic
         public void IncreaseHydrophilia()
         {
             GrowthScorecard.MoistureGrowthBoost +=
-                _skillsData.MoistureGrowthBoostPerAttributePoint;
+                _passiveSkillsData.MoistureGrowthBoostPerAttributePoint;
 
             AvailableMutationPoints--;
         }
@@ -391,14 +405,14 @@ namespace Logic
         public void IncreaseSpores()
         {
             GrowthScorecard.SporesChancePercentage +=
-                _skillsData.SporesChancePerAttributePoint;
+                _passiveSkillsData.SporesChancePerAttributePoint;
 
             AvailableMutationPoints--;
         }
 
         public void UseEyeDropper()
         {
-            AvailableMutationPoints--;
+            ActionPoints--;
         }
 
         public bool IsLocalPlayer(List<string> userNames)

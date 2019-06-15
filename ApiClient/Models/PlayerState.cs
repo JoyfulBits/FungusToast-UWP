@@ -5,6 +5,7 @@
         public string Name { get; set; }
         public string Id { get; set; }
         public int MutationPoints { get; set; }
+        public int ActionPoints { get; set; }
         public bool Human { get; set; }
         public float TopLeftGrowthChance { get; set; }
         public float TopGrowthChance { get; set; }

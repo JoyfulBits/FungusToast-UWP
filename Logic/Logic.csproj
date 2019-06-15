@@ -126,6 +126,7 @@
     <Compile Include="CellRegrowthResult.cs" />
     <Compile Include="Exceptions\InvalidGameStateException.cs" />
     <Compile Include="IAiPlayer.cs" />
+    <Compile Include="ActiveSkillsData.cs" />
     <Compile Include="RandomNumberGenerator.cs" />
     <Compile Include="GridCell.cs" />
     <Compile Include="GrowthScorecard.cs" />
@@ -133,7 +134,7 @@
     <Compile Include="ICellRegrowthCalculator.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="ISurroundingCellCalculator.cs" />
-    <Compile Include="SkillsData.cs" />
+    <Compile Include="PassiveSkillsData.cs" />
     <Compile Include="NextGenerationResults.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerGrowthSummary.cs" />

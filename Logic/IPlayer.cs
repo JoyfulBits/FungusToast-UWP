@@ -10,6 +10,7 @@ namespace Logic
         bool IsHuman { get; }
         bool IsLocalPlayer(List<string> userName);
         int AvailableMutationPoints { get; set; }
+        int ActionPoints { get; set; }
         Color Color { get; set; }
         string PlayerId { get; set; }
         int LiveCells { get; set; }

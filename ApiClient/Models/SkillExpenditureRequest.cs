@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 
 namespace ApiClient.Models
 {
     public class SkillExpenditureRequest
     {
         public string PlayerId { get; }
-        public Dictionary<int, SkillUpgrade> Upgrades { get; } = new Dictionary<int, SkillUpgrade>();
+        public Dictionary<int, ActiveSkillChanges> ActiveSkillChanges { get; } = new Dictionary<int, ActiveSkillChanges>();
+        public Dictionary<int, int> SkillUpgrades = new Dictionary<int, int>();
 
         public SkillExpenditureRequest(string playerId)
         {
@@ -18,55 +15,67 @@ namespace ApiClient.Models
 
         public void IncreaseHypermutation()
         {
-            var key = (int)Skills.Hypermutation;
+            var key = (int)PassiveSkills.Hypermutation;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseRegeneration()
         {
-            var key = (int)Skills.Regeneration;
+            var key = (int)PassiveSkills.Regeneration;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseAntiApoptosis()
         {
-            var key = (int)Skills.AntiApoptosis;
+            var key = (int)PassiveSkills.AntiApoptosis;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseBudding()
         {
-            var key = (int)Skills.Budding;
+            var key = (int)PassiveSkills.Budding;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseMycotoxicity()
         {
-            var key = (int)Skills.Mycotoxicity;
+            var key = (int)PassiveSkills.Mycotoxicity;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseHydrophilia()
         {
-            var key = (int)Skills.Hydrophilia;
+            var key = (int)PassiveSkills.Hydrophilia;
 
             AddSpentPoint(key);
         }
 
-        private void AddSpentPoint(int skillId)
+        private void AddSpentPoint(int passiveSkillId)
         {
-            if (Upgrades.ContainsKey(skillId))
+            if (SkillUpgrades.ContainsKey(passiveSkillId))
             {
-                Upgrades[skillId].PointsSpent++;
+                SkillUpgrades[passiveSkillId]++;
             }
             else
             {
-                Upgrades[skillId] = new SkillUpgrade
+                SkillUpgrades[passiveSkillId] = 1;
+            }
+        }
+
+        private void AddSpentActionPoint(int activeSkillId)
+        {
+            if (ActiveSkillChanges.ContainsKey(activeSkillId))
+            {
+                ActiveSkillChanges[activeSkillId].PointsSpent++;
+            }
+            else
+            {
+                ActiveSkillChanges[activeSkillId] = new ActiveSkillChanges
                 {
                     PointsSpent = 1
                 };
@@ -76,41 +85,31 @@ namespace ApiClient.Models
 
         public void AddMoistureDroplet(int gridCellIndex)
         {
-            var skillId = (int)Skills.EyeDropper;
-            if (Upgrades.ContainsKey(skillId))
+            var skillId = (int)ActiveSkills.EyeDropper;
+            if (ActiveSkillChanges.ContainsKey(skillId))
             {
-                Upgrades[skillId].ActiveCellChanges.Add(gridCellIndex);
+                ActiveSkillChanges[skillId].ActiveCellChanges.Add(gridCellIndex);
             }
             else
             {
-                var skillUpgrade = new SkillUpgrade();
+                var skillUpgrade = new ActiveSkillChanges();
                 skillUpgrade.ActiveCellChanges.Add(gridCellIndex);
-                Upgrades.Add(skillId, skillUpgrade);
+                ActiveSkillChanges.Add(skillId, skillUpgrade);
             }
         }
 
         public void IncreaseSpores()
         {
-            var key = (int)Skills.Spores;
+            var key = (int)PassiveSkills.Spores;
 
             AddSpentPoint(key);
         }
 
         public void UseEyeDropper()
         {
-            var key = (int)Skills.EyeDropper;
+            var key = (int)ActiveSkills.EyeDropper;
 
-            AddSpentPoint(key);
+            AddSpentActionPoint(key);
         }
-    }
-
-    /// <summary>
-    /// Created for API serialization purposes only
-    /// </summary>
-    public class PlayerSkillActiveCellChanges
-    {
-        public string PlayerId { get; set; }
-        public int SkillId { get; set; }
-        public List<int> Indexes { get; set; }
     }
 }

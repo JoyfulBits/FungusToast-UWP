@@ -31,9 +31,14 @@ namespace ApiClient
             return await _gamesApiClient.PushSkillExpenditures(gameId, playerId, skillExpenditureRequest, _baseApiUrl);
         }
 
-        public async Task<List<Skill>> GetSkills()
+        public async Task<List<PassiveSkill>> GetPassiveSkills()
         {
-            return await _gamesApiClient.GetSkills(_baseApiUrl);
+            return await _gamesApiClient.GetPassiveSkills(_baseApiUrl);
+        }
+
+        public async Task<List<ActiveSkill>> GetActiveSkills()
+        {
+            return await _gamesApiClient.GetActiveSkills(_baseApiUrl);
         }
 
         public async Task<JoinGameResult> JoinGame(JoinGameRequest joinGameRequest)

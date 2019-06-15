@@ -1,6 +1,6 @@
 ﻿namespace ApiClient.Models
 {
-    public enum Skills
+    public enum PassiveSkills
     {
         Hypermutation = 1,
         Budding = 2,
@@ -8,7 +8,6 @@
         Regeneration = 4,
         Mycotoxicity = 5,
         Hydrophilia = 6,
-        Spores = 7,
-        EyeDropper = 8
+        Spores = 7
     }
 }

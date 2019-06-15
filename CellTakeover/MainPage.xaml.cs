@@ -55,6 +55,9 @@ namespace FungusToast
 
         private readonly Dictionary<string, Dictionary<string, Button>> _playerNumberToMutationButtons = new Dictionary<string, Dictionary<string, Button>>();
         private readonly Dictionary<string, TextBlock> _playerNumberToMutationPointAnnouncementTextBlock = new Dictionary<string, TextBlock>();
+
+        private readonly Dictionary<string, TextBlock> _playerNumberToActionPointAnnouncementTextBlock =
+            new Dictionary<string, TextBlock>();
         private readonly Dictionary<string, Border> _playerNumberToSkillsBorder = new Dictionary<string, Border>();
         private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
 
@@ -79,7 +82,8 @@ namespace FungusToast
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Transparent);
         private readonly Thickness _normalThickness = new Thickness(8);
         private IFungusToastApiClient _fungusToastApiClient;
-        private SkillsData _skillsData;
+        private PassiveSkillsData _passiveSkillsData;
+        private ActiveSkillsData _activeSkillsData;
 
         private readonly ApplicationDataContainer _applicationDataContainer = ApplicationData.Current.LocalSettings;
         private const string SettingsContainerName = "SettingsContainer";
@@ -105,9 +109,39 @@ namespace FungusToast
             _fungusToastApiClient = new FungusToastApiClient(GameSettings.BaseURL, new GamesApiClient(new Serializer()));
         }
 
-        private async Task<SkillsData> InitializeSkills()
+        private async Task<ActiveSkillsData> InitializeActiveSkillsData()
         {
-            var skills = await _fungusToastApiClient.GetSkills();
+            var activeSkills = await _fungusToastApiClient.GetActiveSkills();
+            int numberOfWaterDropletsPerEyeDropperAction = 0;
+
+            foreach (var activeSkill in activeSkills)
+            {
+                switch (activeSkill.Id)
+                {
+                    case (int) ActiveSkills.EyeDropper:
+                        numberOfWaterDropletsPerEyeDropperAction = activeSkill.NumberOfToastChanges;
+                        break;
+                    default:
+                        throw new Exception(
+                            $"There is a new active skill in the API that is not accounted for in the UWP app. The active skill id is '{activeSkill.Id}' and the name is '{activeSkill.Name}'");
+                }
+            }
+
+            var totalExpectedActiveSkills = Enum.GetNames(typeof(ActiveSkills)).Length;
+
+            if (totalExpectedActiveSkills != activeSkills.Count)
+            {
+                throw new Exception(
+                    $"Expected that '{totalExpectedActiveSkills}' active skills would be accounted for, but '{activeSkills.Count}' were set.");
+            }
+
+            var activeSkillsData = new ActiveSkillsData(numberOfWaterDropletsPerEyeDropperAction);
+            return activeSkillsData;
+        }
+
+        private async Task<PassiveSkillsData> InitializePassiveSkillsData()
+        {
+            var passiveSkills = await _fungusToastApiClient.GetPassiveSkills();
 
             float mutationPercentageChancePerAttributePoint = 0F;
             float cornerGrowthChancePerAttributePoint = 0F;
@@ -117,48 +151,46 @@ namespace FungusToast
             float moistureGrowthBoostPerAttributePoint = 0F;
             float sporesChancePerAttributePoint = 0F;
 
-            foreach (var skill in skills)
+            foreach (var passiveSkill in passiveSkills)
             {
-                switch (skill.Id)
+                switch (passiveSkill.Id)
                 {
-                    case (int)Skills.AntiApoptosis:
-                        reducedApoptosisPercentagePerAttributePoint = skill.IncreasePerPoint;
+                    case (int) PassiveSkills.AntiApoptosis:
+                        reducedApoptosisPercentagePerAttributePoint = passiveSkill.IncreasePerPoint;
                         break;
-                    case (int)Skills.Budding:
-                        cornerGrowthChancePerAttributePoint = skill.IncreasePerPoint;
+                    case (int) PassiveSkills.Budding:
+                        cornerGrowthChancePerAttributePoint = passiveSkill.IncreasePerPoint;
                         break;
-                    case (int)Skills.Hypermutation:
-                        mutationPercentageChancePerAttributePoint = skill.IncreasePerPoint;
+                    case (int) PassiveSkills.Hypermutation:
+                        mutationPercentageChancePerAttributePoint = passiveSkill.IncreasePerPoint;
                         break;
-                    case (int)Skills.Mycotoxicity:
-                        mycotoxinFungicideChancePerAttributePoint = skill.IncreasePerPoint;
+                    case (int) PassiveSkills.Mycotoxicity:
+                        mycotoxinFungicideChancePerAttributePoint = passiveSkill.IncreasePerPoint;
                         break;
-                    case (int)Skills.Regeneration:
-                        regenerationChancePerAttributePoint = skill.IncreasePerPoint;
+                    case (int) PassiveSkills.Regeneration:
+                        regenerationChancePerAttributePoint = passiveSkill.IncreasePerPoint;
                         break;
-                    case (int)Skills.Hydrophilia:
-                        moistureGrowthBoostPerAttributePoint = skill.IncreasePerPoint;
+                    case (int) PassiveSkills.Hydrophilia:
+                        moistureGrowthBoostPerAttributePoint = passiveSkill.IncreasePerPoint;
                         break;
-                    case (int)Skills.Spores:
-                        sporesChancePerAttributePoint = skill.IncreasePerPoint;
-                        break;
-                    case (int)Skills.EyeDropper:
+                    case (int) PassiveSkills.Spores:
+                        sporesChancePerAttributePoint = passiveSkill.IncreasePerPoint;
                         break;
                     default:
                         throw new Exception(
-                            $"There is a new skill in the API that is not accounted for in the UWP app. The skill id is '{skill.Id}' and the name is '{skill.Name}'");
+                            $"There is a new skill in the API that is not accounted for in the UWP app. The skill id is '{passiveSkill.Id}' and the name is '{passiveSkill.Name}'");
                 }
             }
 
-            var totalExpectedSkills = Enum.GetNames(typeof(Skills)).Length;
+            var totalExpectedPassiveSkills = Enum.GetNames(typeof(PassiveSkills)).Length;
 
-            if (totalExpectedSkills != skills.Count)
+            if (totalExpectedPassiveSkills != passiveSkills.Count)
             {
                 throw new Exception(
-                    $"Expected that '{totalExpectedSkills}' skills would be accounted for, but '{skills.Count}' were set.");
+                    $"Expected that '{totalExpectedPassiveSkills}' passive skills would be accounted for, but '{passiveSkills.Count}' were set.");
             }
 
-            return new SkillsData(
+            var passiveSkillsData = new PassiveSkillsData(
                 mutationPercentageChancePerAttributePoint,
                 cornerGrowthChancePerAttributePoint,
                 reducedApoptosisPercentagePerAttributePoint,
@@ -166,6 +198,7 @@ namespace FungusToast
                 mycotoxinFungicideChancePerAttributePoint,
                 moistureGrowthBoostPerAttributePoint,
                 sporesChancePerAttributePoint);
+            return passiveSkillsData;
         }
 
         private SkillExpenditureRequest GetSkillExpenditureRequest(string playerId)
@@ -188,7 +221,8 @@ namespace FungusToast
 
         private async void MainGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            _skillsData = await InitializeSkills();
+            _passiveSkillsData = await InitializePassiveSkillsData();
+            _activeSkillsData = await InitializeActiveSkillsData();
 
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
@@ -266,7 +300,7 @@ namespace FungusToast
             {
                 var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
-                    playerState.Human, _skillsData);
+                    playerState.Human, _passiveSkillsData, _activeSkillsData);
                 UpdatePlayer(player, playerState, game.StartingPlayerStats);
                 players.Add(player);
             }
@@ -351,6 +385,11 @@ namespace FungusToast
         private async Task RenderUpdates(GameModel game)
         {
             List<Task> tasks = new List<Task>();
+
+            foreach (var player in game.Players)
+            {
+                await RenderActionPointEarned(player.Id, player.ActionPoints);
+            }
             foreach (var growthCycle in game.GrowthCycles)
             {
                 foreach (var toastChange in growthCycle.ToastChanges)
@@ -426,6 +465,21 @@ namespace FungusToast
 
                 mutationPointAnnouncementMessage.Opacity = 1;
                 await mutationPointAnnouncementMessage.Fade(0, 1500).StartAsync();
+            }
+        }
+
+        private async Task RenderActionPointEarned(string playerId, int actionPoints)
+        {
+            if (actionPoints > 0)
+            {
+                var actionPointAnnouncementMessage =
+                    _playerNumberToMutationPointAnnouncementTextBlock[playerId];
+                actionPointAnnouncementMessage.Text = $"+{actionPoints} Action Point!";
+                ViewModel.Players.First(player => player.PlayerId == playerId).ActionPoints +=
+                    actionPoints;
+
+                actionPointAnnouncementMessage.Opacity = 1;
+                await actionPointAnnouncementMessage.Fade(0, 1500).StartAsync();
             }
         }
 
@@ -603,7 +657,7 @@ namespace FungusToast
             {
                 mutationButton.IsEnabled = false;
             }
-            else if (mutationButton.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < SkillsData.WaterDropletsPerEyeDropperPoint)
+            else if (mutationButton.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
             {
                 mutationButton.IsEnabled = false;
             }
@@ -731,7 +785,7 @@ namespace FungusToast
             DisableSkillTrees();
 
             ViewModel.ActivePlayerId = activePlayer.PlayerId;
-            ViewModel.ActiveCellChangesRemaining = SkillsData.WaterDropletsPerEyeDropperPoint;
+            ViewModel.ActiveCellChangesRemaining = _activeSkillsData.WaterDropletsPerEyeDropperPoint;
 
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Person, 1);
         }
@@ -832,6 +886,13 @@ namespace FungusToast
             var mutationPointMessageTextBlock = sender as TextBlock;
             var playerId = mutationPointMessageTextBlock.Tag.ToString();
             _playerNumberToMutationPointAnnouncementTextBlock[playerId] = mutationPointMessageTextBlock;
+        }
+
+        private void ActionPointMessage_Loaded(object sender, RoutedEventArgs e)
+        {
+            var textBlock = sender as TextBlock;
+            var playerId = textBlock.Tag.ToString();
+            _playerNumberToActionPointAnnouncementTextBlock[playerId] = textBlock;
         }
 
         private async void SkillsBorder_Loaded(object sender, RoutedEventArgs e)
