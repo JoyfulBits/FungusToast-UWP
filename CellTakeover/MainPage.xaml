@@ -335,18 +335,20 @@
                                            Text="{x:Bind Path=ActionPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Action Points: {0}'}"
                                            TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                <TextBlock Grid.Row="2" Grid.Column="0" 
+                                           HorizontalAlignment="Center"
                                        Tag="{x:Bind PlayerId}"
                                        Opacity="0"
                                        Foreground="DarkGreen"
-                                       Text="+1 Mutation Point!" 
+                                       Text="+1!" 
                                        Loaded="MutationPointMessage_Loaded"></TextBlock>
 
                                 <TextBlock Grid.Row="2" Grid.Column="1"
+                                           HorizontalAlignment="Center"
                                            Tag="{x:Bind PlayerId}"
                                            Opacity="0"
                                            Foreground="DarkGreen"
-                                           Text="+1 Action Point!" 
+                                           Text="+1!" 
                                            Loaded="ActionPointMessage_Loaded"></TextBlock>
 
                             </Grid>
