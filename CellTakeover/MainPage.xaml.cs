@@ -655,49 +655,49 @@ namespace FungusToast
 
         private void EnableMutationButtons(IPlayer player)
         {
-            if (player.AvailableMutationPoints > 0)
+            var buttons = _playerNumberToMutationButtons[player.PlayerId];
+            foreach (var mutationButton in buttons)
             {
-                var buttons = _playerNumberToMutationButtons[player.PlayerId];
-                foreach (var mutationButton in buttons)
-                {
-                    EnableMutationButtonIfAppropriate(player, mutationButton.Value);
-                }
+                EnableMutationButtonIfAppropriate(player, mutationButton.Value);
             }
         }
 
-        private void EnableActiveSkillsButtons(IPlayer player)
+        private void EnableMutationButtonIfAppropriate(IPlayer player, Button button)
         {
-            if (player.ActionPoints > 0)
+            if (player.AvailableMutationPoints == 0)
             {
-                var buttons = _playerNumberToActiveSkillsButtons[player.PlayerId];
-                foreach (var activeSkillButton in buttons)
-                {
-                    EnableActiveSkillButtonIfAppropriate(activeSkillButton.Value);
-                }
-            }
-        }
-
-        private void EnableMutationButtonIfAppropriate(IPlayer player, Button mutationButton)
-        {
-            if (mutationButton.Name == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
+                button.IsEnabled = false;
+            }else if (button.Name == "AntiApoptosisButton" && player.GrowthScorecard.ApoptosisChancePercentage <= 0)
             {
-                mutationButton.IsEnabled = false;
+                button.IsEnabled = false;
             }
             else
             {
-                mutationButton.IsEnabled = true;
+                button.IsEnabled = true;
             }
         }
 
-        private void EnableActiveSkillButtonIfAppropriate(Button mutationButton)
+        private void UpdateActiveSkillButtons(IPlayer player)
         {
-            if (mutationButton.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
+            var buttons = _playerNumberToActiveSkillsButtons[player.PlayerId];
+            foreach (var activeSkillButton in buttons)
             {
-                mutationButton.IsEnabled = false;
+                EnableActiveSkillButtonIfAppropriate(player, activeSkillButton.Value);
+            }
+        }
+
+        private void EnableActiveSkillButtonIfAppropriate(IPlayer player, Button button)
+        {
+            if (player.ActionPoints == 0)
+            {
+                button.IsEnabled = false;
+            }else if (button.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
+            {
+                button.IsEnabled = false;
             }
             else
             {
-                mutationButton.IsEnabled = true;
+                button.IsEnabled = true;
             }
         }
 
@@ -709,14 +709,7 @@ namespace FungusToast
                 DisablePlayerMutationButtons(player);
             }
 
-            var hasActionPointsLeft = player.ActionPoints > 0;
-
-            if (!hasActionPointsLeft)
-            {
-                DisablePlayerActionButtons(player);
-            }
-
-            if (hasMutationPointsLeft || hasActionPointsLeft)
+            if (hasMutationPointsLeft)
             {
                 return;
             }
@@ -737,7 +730,7 @@ namespace FungusToast
                 await CheckForGameEnd();
                 
                 EnableMutationButtons(player);
-                EnableActiveSkillsButtons(player);
+                UpdateActiveSkillButtons(player);
             }
 
             EnableSkillTrees();
@@ -860,7 +853,7 @@ namespace FungusToast
             foreach (var player in ViewModel.Players)
             {
                 EnableMutationButtons(player);
-                EnableActiveSkillsButtons(player);
+                UpdateActiveSkillButtons(player);
                 var skillTreeButton = _playerNumberToPassiveSkillTreeDialogButton[player.PlayerId];
                 var activeSkillButton = _playerNumberToActiveSkillsDialogButton[player.PlayerId];
                 if (player.IsLocalPlayer(_usersPlayingLocalGame) && player.HasPointsToSpend)
@@ -875,16 +868,17 @@ namespace FungusToast
             }
         }
 
-        private async void GridCellOnClick(object sender, RoutedEventArgs e)
+        private void GridCellOnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var gridCellIndex = int.Parse(button.Tag.ToString());
 
-            //--as of 2019-05-23, the only active skill is Hydrophilia, so we can assume they are adding a water droplet. Will need to make this more scalable at some point.
+            //--as of 2019-05-23, the only active skill is Eye Dropper, so we can assume they are adding a water droplet. Will need to make this more scalable at some point.
             if (ViewModel.ActivePlayerId == null || button.Background != _emptyCellBrush || button.Background == _moistCellBrush) return;
 
             GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddMoistureDroplet(gridCellIndex);
             ViewModel.ActiveCellChangesRemaining--;
+
             button.Background = _moistCellBrush;
             var toolTip = new ToolTip
             {
@@ -895,8 +889,9 @@ namespace FungusToast
             {
                 EnableSkillTrees();
                 Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 2);
-                await CheckForRemainingMutationPoints(ViewModel.ActivePlayer);
+                var player = ViewModel.GetPlayer(ViewModel.ActivePlayerId);
                 ViewModel.ActivePlayerId = null;
+                UpdateActiveSkillButtons(player);
             }
         }
 
@@ -1003,7 +998,7 @@ namespace FungusToast
             _visibleDialog = null;
         }
 
-        private async void SkillTreeButton_OnClick(object sender, RoutedEventArgs e)
+        private async void PassiveSkillTreeDialogButton_OnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var player = button.DataContext as IPlayer;
@@ -1012,23 +1007,29 @@ namespace FungusToast
             await contentDialog.ShowAsync(ContentDialogPlacement.Popup);
         }
 
-        private void SkillTreeButton_Loaded(object sender, RoutedEventArgs e)
+        private void PassiveSkillTreeDialogButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var playerId = button.Tag.ToString();
             _playerNumberToPassiveSkillTreeDialogButton[playerId] = button;
         }
 
-        private void ActiveSkillsButton_Loaded(object sender, RoutedEventArgs e)
+        private void ActiveSkillTreeDialogButton_Loaded(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var playerId = button.Tag.ToString();
             _playerNumberToActiveSkillsDialogButton[playerId] = button;
+        }
+
+        private void ActiveSkillButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var playerId = button.Tag.ToString();
             var player = ViewModel.GetPlayer(playerId);
 
             if (player.ActionPoints > 0 && player.IsLocalPlayer(_usersPlayingLocalGame))
             {
-                EnableActiveSkillButtonIfAppropriate(button);
+                EnableActiveSkillButtonIfAppropriate(player, button);
             }
 
             var playerButtons = _playerNumberToActiveSkillsButtons[player.PlayerId];
@@ -1062,7 +1063,7 @@ namespace FungusToast
 
             if (player.IsLocalPlayer(_usersPlayingLocalGame))
             {
-                EnableActiveSkillsButtons(player);
+                UpdateActiveSkillButtons(player);
             }
         }
 
