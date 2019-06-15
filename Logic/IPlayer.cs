@@ -40,6 +40,7 @@ namespace Logic
         float MycotoxinsSkillLevel { get; set; }
         float HydrophiliaSkillLevel { get; set; }
         float SporesSkillLevel { get; set; }
+        bool HasPointsToSpend { get; }
         void IncreaseHypermutation();
         void DecreaseApoptosisChance();
         void IncreaseBudding();

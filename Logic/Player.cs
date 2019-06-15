@@ -221,6 +221,8 @@ namespace Logic
             }
         }
 
+        public bool HasPointsToSpend => AvailableMutationPoints > 0 || ActionPoints > 0;
+
         public int LiveCells
         {
             get => _liveCells;
