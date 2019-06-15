@@ -13,6 +13,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using ApiClient;
+using ApiClient.Exceptions;
 using ApiClient.Models;
 using ApiClient.Serialization;
 using Logic;
@@ -229,11 +230,21 @@ namespace FungusToast
             //--if there is an active game then load that, otherwise prompt to start a new game
             if (_settingsDataContainer.Values.TryGetValue(ActiveGameIdSetting, out var activeGameId))
             {
-                _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
-                _usersPlayingLocalGame = _gameModel.Players.Where(player => _validUserNames.Contains(player.Name))
-                    .Select(player => player.Name).ToList();
+                try
+                {
+                    _gameModel = await _fungusToastApiClient.GetGameState(int.Parse(activeGameId.ToString()));
+                    _usersPlayingLocalGame = _gameModel.Players.Where(player => _validUserNames.Contains(player.Name))
+                        .Select(player => player.Name).ToList();
 
-                InitializeGame(_gameModel);
+                    InitializeGame(_gameModel);
+                }
+                catch (GameNotFoundException gameNotFoundException)
+                {
+                    //--this should only happen if the database was reset while a game was in progress. This happens a lot while the game is actively being developed.
+                    Debug.WriteLine(gameNotFoundException);
+                    ClearGame();
+                    await GameSettingsDialog.ShowAsync();
+                }
             }
             else
             {
@@ -389,11 +400,6 @@ namespace FungusToast
         {
             List<Task> tasks = new List<Task>();
 
-            foreach (var player in game.Players)
-            {
-                await RenderActionPointEarned(player.Id, 1);//player.ActionPoints);
-            }
-
             foreach (var growthCycle in game.GrowthCycles)
             {
                 foreach (var toastChange in growthCycle.ToastChanges)
@@ -404,6 +410,11 @@ namespace FungusToast
                 foreach (var mutationPointEarned in growthCycle.MutationPointsEarned)
                 {
                     tasks.Add(RenderMutationPointEarned(mutationPointEarned));
+                }
+
+                foreach (var actionPointEarned in growthCycle.ActionPointsEarned)
+                {
+                    tasks.Add(RenderActionPointEarned(actionPointEarned));
                 }
 
                 //--attempt to render this prior to the next await so the UI catches the change
@@ -472,15 +483,15 @@ namespace FungusToast
             }
         }
 
-        private async Task RenderActionPointEarned(string playerId, int actionPoints)
+        private async Task RenderActionPointEarned(KeyValuePair<string, int> actionPointEarned)
         {
-            if (actionPoints > 0)
+            if (actionPointEarned.Value > 0)
             {
                 var actionPointAnnouncementMessage =
-                    _playerNumberToMutationPointAnnouncementTextBlock[playerId];
-                actionPointAnnouncementMessage.Text = $"+{actionPoints}!";
-                ViewModel.GetPlayer(playerId).ActionPoints +=
-                    actionPoints;
+                    _playerNumberToMutationPointAnnouncementTextBlock[actionPointEarned.Key];
+                actionPointAnnouncementMessage.Text = $"+{actionPointEarned.Value}!";
+                ViewModel.GetPlayer(actionPointEarned.Key).ActionPoints +=
+                    actionPointEarned.Value;
 
                 actionPointAnnouncementMessage.Opacity = 1;
                 await actionPointAnnouncementMessage.Fade(0, 1500).StartAsync();
