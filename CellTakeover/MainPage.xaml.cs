@@ -61,7 +61,8 @@ namespace FungusToast
 
         private readonly Dictionary<string, TextBlock> _playerNumberToActionPointAnnouncementTextBlock =
             new Dictionary<string, TextBlock>();
-        private readonly Dictionary<string, Border> _playerNumberToSkillsBorder = new Dictionary<string, Border>();
+        private readonly Dictionary<string, Border> _playerNumberToPassiveSkillsBorder = new Dictionary<string, Border>();
+        private readonly Dictionary<string, Border> _playerNumberToActiveSkillsBorder = new Dictionary<string, Border>();
         private readonly Dictionary<string, ContentDialog> _playerNumberToSkillTreeDialog = new Dictionary<string, ContentDialog>();
 
         private readonly Dictionary<string, ContentDialog> _playerNumberToActiveSkillsDialog =
@@ -80,10 +81,10 @@ namespace FungusToast
         private readonly SolidColorBrush _emptyCellBrush = new SolidColorBrush(Colors.White);
 
         private readonly Brush _activeBorderBrush = new SolidColorBrush(Colors.Green);
-        private readonly Thickness _activeThickness = new Thickness(8);
+        private readonly Thickness _activeThickness = new Thickness(5);
 
         private readonly SolidColorBrush _normalBorderBrush = new SolidColorBrush(Colors.Transparent);
-        private readonly Thickness _normalThickness = new Thickness(8);
+        private readonly Thickness _normalThickness = new Thickness(5);
         private IFungusToastApiClient _fungusToastApiClient;
         private PassiveSkillsData _passiveSkillsData;
         private ActiveSkillsData _activeSkillsData;
@@ -644,12 +645,23 @@ namespace FungusToast
 
             playerToUpdate.GrowthScorecard = updatedGrowthScorecard;
 
-            if (playerToUpdate.IsLocalPlayer(_usersPlayingLocalGame) && playerToUpdate.AvailableMutationPoints > 0)
+            if (playerToUpdate.IsLocalPlayer(_usersPlayingLocalGame))
             {
-                var skillsBorder = _playerNumberToSkillsBorder[playerToUpdate.PlayerId];
+                if (playerToUpdate.AvailableMutationPoints > 0)
+                {
+                    var skillsBorder = _playerNumberToPassiveSkillsBorder[playerToUpdate.PlayerId];
 
-                skillsBorder.BorderBrush = _activeBorderBrush;
-                skillsBorder.BorderThickness = _activeThickness;
+                    skillsBorder.BorderBrush = _activeBorderBrush;
+                    skillsBorder.BorderThickness = _activeThickness;
+                }
+
+                if (playerToUpdate.ActionPoints > 0)
+                {
+                    var skillsBorder = _playerNumberToActiveSkillsBorder[playerToUpdate.PlayerId];
+
+                    skillsBorder.BorderBrush = _activeBorderBrush;
+                    skillsBorder.BorderThickness = _activeThickness;
+                }
             }
         }
 
@@ -839,12 +851,13 @@ namespace FungusToast
                 _playerNumberToPassiveSkillTreeDialogButton[player.PlayerId].IsEnabled = false;
                 _playerNumberToActiveSkillsDialogButton[player.PlayerId].IsEnabled = false;
 
-                if (!player.HasPointsToSpend)
-                {
-                    var skillsBorder = _playerNumberToSkillsBorder[player.PlayerId];
-                    skillsBorder.BorderBrush = _normalBorderBrush;
-                    skillsBorder.BorderThickness = _normalThickness;
-                }
+                var passiveSkillsBorder = _playerNumberToPassiveSkillsBorder[player.PlayerId];
+                passiveSkillsBorder.BorderBrush = _normalBorderBrush;
+                passiveSkillsBorder.BorderThickness = _normalThickness;
+
+                var activeSkillsBorder = _playerNumberToActiveSkillsBorder[player.PlayerId];
+                activeSkillsBorder.BorderBrush = _normalBorderBrush;
+                activeSkillsBorder.BorderThickness = _normalThickness;
             }
         }
 
@@ -856,11 +869,21 @@ namespace FungusToast
                 UpdateActiveSkillButtons(player);
                 var skillTreeButton = _playerNumberToPassiveSkillTreeDialogButton[player.PlayerId];
                 var activeSkillButton = _playerNumberToActiveSkillsDialogButton[player.PlayerId];
-                if (player.IsLocalPlayer(_usersPlayingLocalGame) && player.HasPointsToSpend)
+                if (player.IsLocalPlayer(_usersPlayingLocalGame))
                 {
-                    var skillsBorder = _playerNumberToSkillsBorder[player.PlayerId];
-                    skillsBorder.BorderBrush = _activeBorderBrush;
-                    skillsBorder.BorderThickness = _activeThickness;
+                    if (player.AvailableMutationPoints > 0)
+                    {
+                        var passiveSkillsBorder = _playerNumberToPassiveSkillsBorder[player.PlayerId];
+                        passiveSkillsBorder.BorderBrush = _activeBorderBrush;
+                        passiveSkillsBorder.BorderThickness = _activeThickness;
+                    }
+
+                    if (player.ActionPoints > 0)
+                    {
+                        var activeSkillsBorder = _playerNumberToActiveSkillsBorder[player.PlayerId];
+                        activeSkillsBorder.BorderBrush = _activeBorderBrush;
+                        activeSkillsBorder.BorderThickness = _activeThickness;
+                    }
                 }
                 
                 skillTreeButton.IsEnabled = true;
@@ -963,13 +986,19 @@ namespace FungusToast
             _playerNumberToActionPointAnnouncementTextBlock[playerId] = textBlock;
         }
 
-        private async void SkillsBorder_Loaded(object sender, RoutedEventArgs e)
+        private void SkillsBorder_Loaded(object sender, RoutedEventArgs e)
         {
             var skillsBorder = sender as Border;
             var playerId = skillsBorder.Tag.ToString();
-            _playerNumberToSkillsBorder[playerId] = skillsBorder;
+            _playerNumberToPassiveSkillsBorder[playerId] = skillsBorder;
+        }
 
-            if (_gameModel != null && _playerNumberToSkillsBorder.Keys.Count == _gameModel.Players.Count)
+        private async void ActiveSkillsBorder_Loaded(object sender, RoutedEventArgs e)
+        {
+            var activeSkillsBorder = sender as Border;
+            var playerId = activeSkillsBorder.Tag.ToString();
+            _playerNumberToActiveSkillsBorder[playerId] = activeSkillsBorder;
+            if (_gameModel != null && _playerNumberToActiveSkillsBorder.Keys.Count == _gameModel.Players.Count)
             {
                 await RenderUpdates(_gameModel);
             }

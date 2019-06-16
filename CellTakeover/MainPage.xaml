@@ -284,75 +284,85 @@
                                            VerticalAlignment="Center"></TextBlock>
                         </StackPanel>
 
-                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                BorderThickness="8"
-                                BorderBrush="Transparent"
-                                Padding="5"
-                                Tag="{x:Bind PlayerId}"
-                                Loaded="SkillsBorder_Loaded">
-                            <Grid >
-                                <Grid.RowDefinitions>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Row="0" Grid.Column="0"
+                                    BorderThickness="5"
+                                    BorderBrush="Transparent"
+                                    Padding="5"
+                                    Tag="{x:Bind PlayerId}"
+                                    Loaded="SkillsBorder_Loaded">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Button
+                                        Background="White" Padding="5"
+                                        HorizontalAlignment="Center"
+                                            Tag="{x:Bind PlayerId}"
+                                            ToolTipService.ToolTip="View this player's skill tree and use mutation points to passively improve your organism"
+                                            Click="PassiveSkillTreeDialogButton_OnClick"
+                                            Loaded="PassiveSkillTreeDialogButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/skill_tree_icon.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
+                                    </Button>
 
-                                <Button Grid.Row="0" Grid.Column="0"
-                                    Background="White" Padding="5"
-                                        Tag="{x:Bind PlayerId}"
-                                        ToolTipService.ToolTip="View this player's skill tree and use mutation points to passively improve your organism"
-                                        Click="PassiveSkillTreeDialogButton_OnClick"
-                                        Loaded="PassiveSkillTreeDialogButton_Loaded">
-                                    <Image Source="Assets/Skill Icons/skill_tree_icon.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
-                                </Button>
+                                    <TextBlock
+                                                Foreground="DarkGreen"
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                ToolTipService.ToolTip="This is the number of available points the player can spend right now on passive and active skills"
+                                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
+                                                TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Grid.Row="1" Grid.Column="0"
-                                        Foreground="DarkGreen"
-                                        Style="{StaticResource BaseTextBlockStyle}"
-                                        ToolTipService.ToolTip="This is the number of available points the player can spend right now on passive and active skills"
-                                        Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
-                                        TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock
+                                               HorizontalAlignment="Center"
+                                               Tag="{x:Bind PlayerId}"
+                                               Opacity="0"
+                                               Foreground="DarkGreen"
+                                               Text="+1!" 
+                                               Loaded="MutationPointMessage_Loaded"></TextBlock>
+                            </StackPanel>
+                            </Border>
 
-                                <Button Grid.Row="0" Grid.Column="1"
-                                    Background="White" Padding="5"
-                                        Tag="{x:Bind PlayerId}"
-                                        ToolTipService.ToolTip="Use active skills to manipulate the toast or fungal cells"
-                                        Click="ActiveSkillsButton_OnClick"
-                                        Loaded="ActiveSkillTreeDialogButton_Loaded">
-                                    <Image Source="Assets/Skill Icons/test_tube.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
-                                </Button>
+                            <Border Grid.Row="0" Grid.Column="2"
+                                    BorderThickness="5"
+                                    BorderBrush="Transparent"
+                                    Padding="5"
+                                    Tag="{x:Bind PlayerId}"
+                                    Loaded="ActiveSkillsBorder_Loaded">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Button
+                                            Background="White" Padding="5"
+                                            HorizontalAlignment="Center"
+                                                Tag="{x:Bind PlayerId}"
+                                                ToolTipService.ToolTip="Use active skills to manipulate the toast or fungal cells"
+                                                Click="ActiveSkillsButton_OnClick"
+                                                Loaded="ActiveSkillTreeDialogButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/test_tube.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
+                                    </Button>
 
-                                <TextBlock Grid.Row="1" Grid.Column="1"
+                                    <TextBlock
                                            Foreground="DarkGreen"
                                            Style="{StaticResource BaseTextBlockStyle}"
                                            ToolTipService.ToolTip="This is the number of available points the player can spend right now on passive and active skills"
                                            Text="{x:Bind Path=ActionPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Action Points: {0}'}"
                                            TextWrapping="Wrap"></TextBlock>
 
-                                <TextBlock Grid.Row="2" Grid.Column="0" 
-                                           HorizontalAlignment="Center"
-                                       Tag="{x:Bind PlayerId}"
-                                       Opacity="0"
-                                       Foreground="DarkGreen"
-                                       Text="+1!" 
-                                       Loaded="MutationPointMessage_Loaded"></TextBlock>
-
-                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                    <TextBlock
                                            HorizontalAlignment="Center"
                                            Tag="{x:Bind PlayerId}"
                                            Opacity="0"
                                            Foreground="DarkGreen"
                                            Text="+1!" 
                                            Loaded="ActionPointMessage_Loaded"></TextBlock>
-
-                            </Grid>
-                        </Border>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
 
                         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
