@@ -100,7 +100,7 @@ namespace ApiClient
             }
         }
 
-        public virtual async Task<List<Skill>> GetSkills(string baseApiUrl)
+        public virtual async Task<List<PassiveSkill>> GetPassiveSkills(string baseApiUrl)
         {
             using (var client = new HttpClient())
             {
@@ -117,7 +117,34 @@ namespace ApiClient
 
                             if (data != null)
                             {
-                                return _serialization.DeserializeObject<List<Skill>>(data);
+                                return _serialization.DeserializeObject<List<PassiveSkill>>(data);
+                            }
+                        }
+                    }
+
+                    throw new ApiException(uri, HttpMethod.Post, string.Empty, response.StatusCode, string.Empty);
+                }
+            }
+        }
+
+        public virtual async Task<List<ActiveSkill>> GetActiveSkills(string baseApiUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                var uri = new Uri(baseApiUrl + "/active-skills");
+                using (var response = await client.GetAsync(uri))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        using (var content = response.Content)
+                        {
+                            var data = await content.ReadAsStringAsync();
+                            Debug.WriteLine($"GET request sent to '{uri.AbsolutePath}'.");
+                            Debug.WriteLine($"Got response: '{data}'");
+
+                            if (data != null)
+                            {
+                                return _serialization.DeserializeObject<List<ActiveSkill>>(data);
                             }
                         }
                     }

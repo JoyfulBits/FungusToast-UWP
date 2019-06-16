@@ -141,5 +141,10 @@ namespace FungusToast
         public int ActiveCellChangesRemaining { get; set; }
 
         public IPlayer ActivePlayer => Players.FirstOrDefault(player => player.PlayerId == ActivePlayerId);
+
+        public IPlayer GetPlayer(string playerId)
+        {
+            return Players.First(player => player.PlayerId == playerId);
+        }
     }
 }

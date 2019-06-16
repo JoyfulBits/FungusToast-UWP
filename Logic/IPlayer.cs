@@ -8,7 +8,9 @@ namespace Logic
     {
         string Name { get; set; }
         bool IsHuman { get; }
+        bool IsLocalPlayer(List<string> userName);
         int AvailableMutationPoints { get; set; }
+        int ActionPoints { get; set; }
         Color Color { get; set; }
         string PlayerId { get; set; }
         int LiveCells { get; set; }
@@ -38,6 +40,7 @@ namespace Logic
         float MycotoxinsSkillLevel { get; set; }
         float HydrophiliaSkillLevel { get; set; }
         float SporesSkillLevel { get; set; }
+        bool HasPointsToSpend { get; }
         void IncreaseHypermutation();
         void DecreaseApoptosisChance();
         void IncreaseBudding();
@@ -45,6 +48,6 @@ namespace Logic
         void IncreaseMycotoxicity();
         void IncreaseHydrophilia();
         void IncreaseSpores();
-        bool IsLocalPlayer(List<string> userName);
+        void UseEyeDropper();
     }
 }

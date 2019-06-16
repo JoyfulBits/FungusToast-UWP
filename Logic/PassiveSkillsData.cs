@@ -1,8 +1,8 @@
 ﻿namespace Logic
 {
-    public class SkillsData
+    public class PassiveSkillsData
     {
-        public SkillsData(float mutationPercentageChancePerAttributePoint,
+        public PassiveSkillsData(float mutationPercentageChancePerAttributePoint,
             float cornerGrowthChancePerAttributePoint,
             float reducedApoptosisPercentagePerAttributePoint,
             float regenerationChancePerAttributePoint,
@@ -43,12 +43,9 @@
             $"Increase chance of killing an adjacent enemy cell by {MycotoxinFungicideChancePerAttributePoint}%.";
 
         public string IncreaseMoistureGrowthBoostMessage =>
-            $"Place {WaterDropletsPerHydrophiliaPoint} water drops and increase moist growth by {MoistureGrowthBoostPerAttributePoint}%.";
+            $"Increase chance of growing into adjacent moist cells by {MoistureGrowthBoostPerAttributePoint}%.";
 
         public string IncreaseSporesChanceMessage =>
-            $"Increase chance of cells growing into a random empty space by {SporesChancePerAttributePoint}%.";
-
-        //TODO make this come from the API
-        public static int WaterDropletsPerHydrophiliaPoint = 3;
+            $"Increase chance of growth into random empty space by {SporesChancePerAttributePoint}%.";
     }
 }

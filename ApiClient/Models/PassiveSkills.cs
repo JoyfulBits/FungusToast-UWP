@@ -1,6 +1,6 @@
 ﻿namespace ApiClient.Models
 {
-    public enum Skills
+    public enum PassiveSkills
     {
         Hypermutation = 1,
         Budding = 2,

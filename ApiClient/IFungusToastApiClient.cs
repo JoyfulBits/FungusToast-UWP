@@ -10,7 +10,8 @@ namespace ApiClient
         Task<GameModel> GetGameState(int gameId);
         Task<GameModel> CreateGame(NewGameRequest newGame);
         Task<SkillUpdateResult> PushSkillExpenditures(int gameId, string playerId, SkillExpenditureRequest skillExpenditureRequest);
-        Task<List<Skill>> GetSkills();
+        Task<List<PassiveSkill>> GetPassiveSkills();
+        Task<List<ActiveSkill>> GetActiveSkills();
         Task<JoinGameResult> JoinGame(JoinGameRequest joinGameRequest);
     }
 }

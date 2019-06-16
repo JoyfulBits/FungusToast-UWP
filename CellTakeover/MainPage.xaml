@@ -136,7 +136,7 @@
                     <Grid Name="{x:Bind PlayerId}" Padding="10" BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
                         <Grid.RowDefinitions>
                             <RowDefinition></RowDefinition>
-                            <RowDefinition Height="55"></RowDefinition>
+                            <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
@@ -147,6 +147,134 @@
                             <ColumnDefinition Width="230"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
+                        <Grid.Resources>
+                            <Style TargetType="Image" x:Key="MutationImage">
+                                <Setter Property="Width" Value="75"></Setter>
+                                <Setter Property="Height" Value="75"></Setter>
+                                <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
+                                <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                            </Style>
+
+                            <Style TargetType="StackPanel" x:Key="MutationChoiceStackPanel">
+                                <Setter Property="Width" Value="600"></Setter>
+                                <Setter Property="Orientation" Value="Horizontal"></Setter>
+                                <Setter Property="BorderThickness" Value="0 0 0 1"></Setter>
+                                <Setter Property="BorderBrush" Value="Black"></Setter>
+                            </Style>
+                            <!-- Default style for Windows.UI.Xaml.Controls.ContentDialog -->
+                            <Style TargetType="ContentDialog" x:Key="ScrollableContentDialogStyle">
+                                <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                                <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Top" />
+                                <Setter Property="IsTabStop" Value="False" />
+                                <Setter Property="MaxHeight" Value="{ThemeResource ContentDialogMaxHeight}" />
+                                <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
+                                <Setter Property="MaxWidth" Value="{ThemeResource ContentDialogMaxWidth}" />
+                                <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ContentDialog">
+                                            <Border x:Name="Container">
+                                                <Grid x:Name="LayoutRoot">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border x:Name="BackgroundElement"
+                                        Background="{TemplateBinding Background}"
+                                        FlowDirection="{TemplateBinding FlowDirection}"
+                                        BorderThickness="{ThemeResource ContentDialogBorderWidth}"
+                                        BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}"
+                                        MaxWidth="{TemplateBinding MaxWidth}"
+                                        MaxHeight="{TemplateBinding MaxHeight}"
+                                        MinWidth="{TemplateBinding MinWidth}"
+                                        MinHeight="{TemplateBinding MinHeight}" >
+                                                        <Grid x:Name="DialogSpace" VerticalAlignment="Stretch">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="*" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+                                                            <ScrollViewer x:Name="ContentScrollViewer"
+                                                      HorizontalScrollBarVisibility="Auto"
+                                                      VerticalScrollBarVisibility="Auto"
+                                                      ZoomMode="Disabled"
+                                                      Margin="{ThemeResource ContentDialogContentScrollViewerMargin}"
+                                                      IsTabStop="False">
+                                                                <Grid>
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="Auto" />
+                                                                        <RowDefinition Height="Auto" />
+                                                                    </Grid.RowDefinitions>
+                                                                    <ContentControl x:Name="Title"
+                                                                Margin="{ThemeResource ContentDialogTitleMargin}"
+                                                                Content="{TemplateBinding Title}"
+                                                                ContentTemplate="{TemplateBinding TitleTemplate}"
+                                                                FontSize="20"
+                                                                FontFamily="Segoe UI"
+                                                                FontWeight="Normal"
+                                                                Foreground="{TemplateBinding Foreground}"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Top"
+                                                                IsTabStop="False"
+                                                                MaxHeight="{ThemeResource ContentDialogTitleMaxHeight}" >
+                                                                        <ContentControl.Template>
+                                                                            <ControlTemplate TargetType="ContentControl">
+                                                                                <ContentPresenter
+                                                                Content="{TemplateBinding Content}"
+                                                                MaxLines="2"
+                                                                TextWrapping="Wrap"
+                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                Margin="{TemplateBinding Padding}"
+                                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                                            </ControlTemplate>
+                                                                        </ContentControl.Template>
+                                                                    </ContentControl>
+                                                                    <ContentPresenter x:Name="Content"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                                                  FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                                  Margin="{ThemeResource ContentDialogContentMargin}"
+                                                                  Foreground="{TemplateBinding Foreground}"
+                                                                  Grid.Row="1"
+                                                                  TextWrapping="Wrap" />
+                                                                </Grid>
+                                                            </ScrollViewer>
+                                                            <Grid x:Name="CommandSpace" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition/>
+                                                                    <ColumnDefinition/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Border x:Name="Button1Host"
+                                                    Margin="{ThemeResource ContentDialogButton1HostMargin}"
+                                                    MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
+                                                    MaxWidth="{ThemeResource ContentDialogButtonMaxWidth}"
+                                                    Height="{ThemeResource ContentDialogButtonHeight}"
+                                                    HorizontalAlignment="Stretch" />
+                                                                <Border x:Name="Button2Host"
+                                                    Margin="{ThemeResource ContentDialogButton2HostMargin}"
+                                                    MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
+                                                    MaxWidth="{ThemeResource ContentDialogButtonMaxWidth}"
+                                                    Height="{ThemeResource ContentDialogButtonHeight}"
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Stretch" />
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+
                         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                             <Rectangle Fill="{x:Bind Color, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
                                            Margin="0 0 5 0" Width="20" Height="20" 
@@ -156,24 +284,85 @@
                                            VerticalAlignment="Center"></TextBlock>
                         </StackPanel>
 
-                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                Tag="{x:Bind PlayerId}"
-                                ToolTipService.ToolTip="View this player's skill tree and use mutation points to improve your organism"
-                                Click="SkillTreeButton_OnClick"
-                                Loaded="SkillTreeButton_Loaded">
-                            <TextBlock 
-                                Foreground="DarkGreen"
-                                Style="{StaticResource BaseTextBlockStyle}"
-                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
-                                TextWrapping="NoWrap"></TextBlock>
-                        </Button>
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Row="0" Grid.Column="0"
+                                    BorderThickness="5"
+                                    BorderBrush="Transparent"
+                                    Padding="5"
+                                    Tag="{x:Bind PlayerId}"
+                                    Loaded="SkillsBorder_Loaded">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Button
+                                        Background="White" Padding="5"
+                                        HorizontalAlignment="Center"
+                                            Tag="{x:Bind PlayerId}"
+                                            ToolTipService.ToolTip="View this player's skill tree and use mutation points to passively improve your organism"
+                                            Click="PassiveSkillTreeDialogButton_OnClick"
+                                            Loaded="PassiveSkillTreeDialogButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/skill_tree_icon.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
+                                    </Button>
 
-                        <TextBlock Grid.Row="1" Grid.Column="1"
-                            Tag="{x:Bind PlayerId}"
-                            Opacity="0"
-                            Foreground="DarkGreen"
-                            Text="+1 Mutation Point!" 
-                            Loaded="MutationPointMessage_Loaded"></TextBlock>
+                                    <TextBlock
+                                                Foreground="DarkGreen"
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                ToolTipService.ToolTip="This is the number of available points the player can spend right now on passive and active skills"
+                                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}"
+                                                TextWrapping="Wrap"></TextBlock>
+
+                                    <TextBlock
+                                               HorizontalAlignment="Center"
+                                               Tag="{x:Bind PlayerId}"
+                                               Opacity="0"
+                                               Foreground="DarkGreen"
+                                               Text="+1!" 
+                                               Loaded="MutationPointMessage_Loaded"></TextBlock>
+                            </StackPanel>
+                            </Border>
+
+                            <Border Grid.Row="0" Grid.Column="2"
+                                    BorderThickness="5"
+                                    BorderBrush="Transparent"
+                                    Padding="5"
+                                    Tag="{x:Bind PlayerId}"
+                                    Loaded="ActiveSkillsBorder_Loaded">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Button
+                                            Background="White" Padding="5"
+                                            HorizontalAlignment="Center"
+                                                Tag="{x:Bind PlayerId}"
+                                                ToolTipService.ToolTip="Use active skills to manipulate the toast or fungal cells"
+                                                Click="ActiveSkillsButton_OnClick"
+                                                Loaded="ActiveSkillTreeDialogButton_Loaded">
+                                        <Image Source="Assets/Skill Icons/test_tube.png" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Image>
+                                    </Button>
+
+                                    <TextBlock
+                                           Foreground="DarkGreen"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           ToolTipService.ToolTip="This is the number of available points the player can spend right now on passive and active skills"
+                                           Text="{x:Bind Path=ActionPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Action Points: {0}'}"
+                                           TextWrapping="Wrap"></TextBlock>
+
+                                    <TextBlock
+                                           HorizontalAlignment="Center"
+                                           Tag="{x:Bind PlayerId}"
+                                           Opacity="0"
+                                           Foreground="DarkGreen"
+                                           Text="+1!" 
+                                           Loaded="ActionPointMessage_Loaded"></TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
 
                         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
@@ -273,122 +462,7 @@
                                        CloseButtonText="Close"
                                        Loaded="SkillTreeDialog_Loaded"
                                        Opened="SkillTreeDialog_OnOpened"
-                                       Closed="SkillTreeDialog_OnClosed">
-                                <ContentDialog.Resources>
-                                    <!-- Default style for Windows.UI.Xaml.Controls.ContentDialog -->
-                                    <Style TargetType="ContentDialog" x:Key="ScrollableContentDialogStyle">
-                                        <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}" />
-                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
-                                        <Setter Property="HorizontalAlignment" Value="Center" />
-                                        <Setter Property="VerticalAlignment" Value="Top" />
-                                        <Setter Property="IsTabStop" Value="False" />
-                                        <Setter Property="MaxHeight" Value="{ThemeResource ContentDialogMaxHeight}" />
-                                        <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
-                                        <Setter Property="MaxWidth" Value="{ThemeResource ContentDialogMaxWidth}" />
-                                        <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ContentDialog">
-                                                    <Border x:Name="Container">
-                                                        <Grid x:Name="LayoutRoot">
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="Auto" />
-                                                            </Grid.RowDefinitions>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="Auto" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Border x:Name="BackgroundElement"
-                                        Background="{TemplateBinding Background}"
-                                        FlowDirection="{TemplateBinding FlowDirection}"
-                                        BorderThickness="{ThemeResource ContentDialogBorderWidth}"
-                                        BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}"
-                                        MaxWidth="{TemplateBinding MaxWidth}"
-                                        MaxHeight="{TemplateBinding MaxHeight}"
-                                        MinWidth="{TemplateBinding MinWidth}"
-                                        MinHeight="{TemplateBinding MinHeight}" >
-                                                                <Grid x:Name="DialogSpace" VerticalAlignment="Stretch">
-                                                                    <Grid.RowDefinitions>
-                                                                        <RowDefinition Height="Auto" />
-                                                                        <RowDefinition Height="*" />
-                                                                        <RowDefinition Height="Auto" />
-                                                                    </Grid.RowDefinitions>
-                                                                    <ScrollViewer x:Name="ContentScrollViewer"
-                                                      HorizontalScrollBarVisibility="Auto"
-                                                      VerticalScrollBarVisibility="Auto"
-                                                      ZoomMode="Disabled"
-                                                      Margin="{ThemeResource ContentDialogContentScrollViewerMargin}"
-                                                      IsTabStop="False">
-                                                                        <Grid>
-                                                                            <Grid.RowDefinitions>
-                                                                                <RowDefinition Height="Auto" />
-                                                                                <RowDefinition Height="Auto" />
-                                                                            </Grid.RowDefinitions>
-                                                                            <ContentControl x:Name="Title"
-                                                                Margin="{ThemeResource ContentDialogTitleMargin}"
-                                                                Content="{TemplateBinding Title}"
-                                                                ContentTemplate="{TemplateBinding TitleTemplate}"
-                                                                FontSize="20"
-                                                                FontFamily="Segoe UI"
-                                                                FontWeight="Normal"
-                                                                Foreground="{TemplateBinding Foreground}"
-                                                                HorizontalAlignment="Left"
-                                                                VerticalAlignment="Top"
-                                                                IsTabStop="False"
-                                                                MaxHeight="{ThemeResource ContentDialogTitleMaxHeight}" >
-                                                                                <ContentControl.Template>
-                                                                                    <ControlTemplate TargetType="ContentControl">
-                                                                                        <ContentPresenter
-                                                                Content="{TemplateBinding Content}"
-                                                                MaxLines="2"
-                                                                TextWrapping="Wrap"
-                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                Margin="{TemplateBinding Padding}"
-                                                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                                                                    </ControlTemplate>
-                                                                                </ContentControl.Template>
-                                                                            </ContentControl>
-                                                                            <ContentPresenter x:Name="Content"
-                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                  Content="{TemplateBinding Content}"
-                                                                  FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                                                  FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                                  Margin="{ThemeResource ContentDialogContentMargin}"
-                                                                  Foreground="{TemplateBinding Foreground}"
-                                                                  Grid.Row="1"
-                                                                  TextWrapping="Wrap" />
-                                                                        </Grid>
-                                                                    </ScrollViewer>
-                                                                    <Grid x:Name="CommandSpace" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-                                                                        <Grid.ColumnDefinitions>
-                                                                            <ColumnDefinition/>
-                                                                            <ColumnDefinition/>
-                                                                        </Grid.ColumnDefinitions>
-                                                                        <Border x:Name="Button1Host"
-                                                    Margin="{ThemeResource ContentDialogButton1HostMargin}"
-                                                    MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
-                                                    MaxWidth="{ThemeResource ContentDialogButtonMaxWidth}"
-                                                    Height="{ThemeResource ContentDialogButtonHeight}"
-                                                    HorizontalAlignment="Stretch" />
-                                                                        <Border x:Name="Button2Host"
-                                                    Margin="{ThemeResource ContentDialogButton2HostMargin}"
-                                                    MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
-                                                    MaxWidth="{ThemeResource ContentDialogButtonMaxWidth}"
-                                                    Height="{ThemeResource ContentDialogButtonHeight}"
-                                                    Grid.Column="1"
-                                                    HorizontalAlignment="Stretch" />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Border>
-                                                        </Grid>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ContentDialog.Resources>
-
+                                       Closed="Dialog_OnClosed">
                                 <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                               VerticalScrollBarVisibility="Auto">
                                     <Grid>
@@ -405,21 +479,6 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="600"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        <Grid.Resources>
-                                            <Style TargetType="Image" x:Key="MutationImage">
-                                                <Setter Property="Width" Value="75"></Setter>
-                                                <Setter Property="Height" Value="75"></Setter>
-                                                <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
-                                                <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-                                            </Style>
-
-                                            <Style TargetType="StackPanel" x:Key="MutationChoiceStackPanel">
-                                                <Setter Property="Width" Value="600"></Setter>
-                                                <Setter Property="Orientation" Value="Horizontal"></Setter>
-                                                <Setter Property="BorderThickness" Value="0 0 0 1"></Setter>
-                                                <Setter Property="BorderBrush" Value="Black"></Setter>
-                                            </Style>
-                                        </Grid.Resources>
 
                                         <TextBlock Grid.Row="0" Grid.Column="0" 
                                                Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
@@ -584,7 +643,7 @@
                                             Background="White"
                                             Name="HydrophiliaButton"
                                             IsEnabled="False"
-                                            ToolTipService.ToolTip="Hydrophilia increases the chances that your mold will grow into adjacent moist cells. Each point of Hydrophilia also allows you to place 3 water droplets on the toast. Use this to guide your mold into strategic positions!"
+                                            ToolTipService.ToolTip="Hydrophilia increases the chances that your mold will grow into adjacent moist cells."
                                             Click="Hydrophilia_Click"
                                             Loaded="MutationOptionButton_Loaded">
                                             <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
@@ -638,6 +697,57 @@
                                                            TextWrapping="Wrap"></TextBlock>
                                                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Increased Spore Chance:"></TextBlock>
                                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Path=GrowthScorecard.SporesChancePercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0}%'}" ></TextBlock>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+                                </ScrollViewer>
+                            </ContentDialog>
+
+                            <ContentDialog Grid.Column="0" Grid.ColumnSpan="2" Title="{x:Bind Path=Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=' {0} Skill Tree'}" 
+                                       Tag="{x:Bind PlayerId}"
+                                       CloseButtonText="Close"
+                                       Loaded="ActiveSkillsDialog_Loaded"
+                                       Opened="ActiveSkillsDialog_OnOpened"
+                                       Closed="Dialog_OnClosed">
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="500"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" 
+                                               Text="{x:Bind Path=AvailableMutationPoints, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Mutation Points: {0}'}" 
+                                               Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+
+                                        <Button Grid.Row="1" Grid.Column="0"
+                                            Background="White"
+                                            Tag="{x:Bind PlayerId}"
+                                            Name="EyeDropper"
+                                            IsEnabled="False"
+                                            ToolTipService.ToolTip="Allows the player place water drops on any open space of the toast to create moist spots. This skill pairs well with the Hydrophilia passive skill."
+                                            Click="EyeDropper_Click"
+                                            Loaded="ActiveSkillButton_Loaded">
+                                            <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                                <Image Source="Assets/Skill Icons/pasteur-pipette.png" Style="{StaticResource MutationImage}"></Image>
+                                                <Grid Padding="5">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                                           Text="Eye Dropper"  
+                                                           Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" 
+                                                           Text="{x:Bind AddWaterDropletMessage, Mode=OneTime}"
+                                                           TextWrapping="Wrap"></TextBlock>
                                                 </Grid>
                                             </StackPanel>
                                         </Button>
