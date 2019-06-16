@@ -310,11 +310,26 @@ namespace FungusToast
                 .OrderByDescending(player => player.Human)
                 .ThenBy(player => player.Id)
                 .ToList();
+
+            //--get the number of action points earned for each player and reduce the player's starting action points by this amount so we can render updates
+            //  back up to this number. Since mutation points always start at 0 each round, we don't have this same complication.
+            var playerIdToStartingActionPoints = reorderedPlayers.ToDictionary(x => x.Id, y => y.ActionPoints);
+            foreach (var growthCycle in game.GrowthCycles)
+            {
+                foreach (var keyValuePair in growthCycle.ActionPointsEarned)
+                {
+                    playerIdToStartingActionPoints[keyValuePair.Key] -= keyValuePair.Value;
+                }
+            }
+
             for (var i = 1; i <= reorderedPlayers.Count; i++)
             {
                 var playerState = reorderedPlayers[i - 1];
                 var player = new Player(playerState.Name, _availableColors[i - 1], playerState.Id,
                     playerState.Human, _passiveSkillsData, _activeSkillsData);
+
+                player.ActionPoints = playerIdToStartingActionPoints[player.PlayerId];
+
                 UpdatePlayer(player, playerState, game.StartingPlayerStats);
                 players.Add(player);
             }
@@ -408,6 +423,7 @@ namespace FungusToast
                     tasks.Add(RenderToastChange(toastChange));
                 }
 
+                //--since players must always spend all mutation points each round, we can assume we are starting at 0 and render all of the growth cycle mutation points
                 foreach (var mutationPointEarned in growthCycle.MutationPointsEarned)
                 {
                     tasks.Add(RenderMutationPointEarned(mutationPointEarned));
@@ -489,7 +505,7 @@ namespace FungusToast
             if (actionPointEarned.Value > 0)
             {
                 var actionPointAnnouncementMessage =
-                    _playerNumberToMutationPointAnnouncementTextBlock[actionPointEarned.Key];
+                    _playerNumberToActionPointAnnouncementTextBlock[actionPointEarned.Key];
                 actionPointAnnouncementMessage.Text = $"+{actionPointEarned.Value}!";
                 ViewModel.GetPlayer(actionPointEarned.Key).ActionPoints +=
                     actionPointEarned.Value;
@@ -645,22 +661,38 @@ namespace FungusToast
 
             playerToUpdate.GrowthScorecard = updatedGrowthScorecard;
 
-            if (playerToUpdate.IsLocalPlayer(_usersPlayingLocalGame))
+            UpdateActiveSkillBorders(playerToUpdate);
+        }
+
+        private void UpdateActiveSkillBorders(IPlayer playerToUpdate)
+        {
+            //--make sure there are values loaded into the dictionary (due to timing issue when the game is loaded and already in progress
+            if (playerToUpdate.IsLocalPlayer(_usersPlayingLocalGame) 
+                && _playerNumberToPassiveSkillsBorder.Count > 0
+                && _playerNumberToActiveSkillsBorder.Count > 0)
             {
+                var passiveSkillsBorder = _playerNumberToPassiveSkillsBorder[playerToUpdate.PlayerId];
                 if (playerToUpdate.AvailableMutationPoints > 0)
                 {
-                    var skillsBorder = _playerNumberToPassiveSkillsBorder[playerToUpdate.PlayerId];
-
-                    skillsBorder.BorderBrush = _activeBorderBrush;
-                    skillsBorder.BorderThickness = _activeThickness;
+                    passiveSkillsBorder.BorderBrush = _activeBorderBrush;
+                    passiveSkillsBorder.BorderThickness = _activeThickness;
+                }
+                else
+                {
+                    passiveSkillsBorder.BorderBrush = _normalBorderBrush;
+                    passiveSkillsBorder.BorderThickness = _normalThickness;
                 }
 
+                var activeSkillsBorder = _playerNumberToActiveSkillsBorder[playerToUpdate.PlayerId];
                 if (playerToUpdate.ActionPoints > 0)
                 {
-                    var skillsBorder = _playerNumberToActiveSkillsBorder[playerToUpdate.PlayerId];
-
-                    skillsBorder.BorderBrush = _activeBorderBrush;
-                    skillsBorder.BorderThickness = _activeThickness;
+                    activeSkillsBorder.BorderBrush = _activeBorderBrush;
+                    activeSkillsBorder.BorderThickness = _activeThickness;
+                }
+                else
+                {
+                    activeSkillsBorder.BorderBrush = _normalBorderBrush;
+                    activeSkillsBorder.BorderThickness = _normalThickness;
                 }
             }
         }

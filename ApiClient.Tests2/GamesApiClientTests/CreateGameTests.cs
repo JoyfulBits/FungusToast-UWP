@@ -106,6 +106,7 @@ namespace ApiClient.Tests.GamesApiClientTests
 
             //--we will start the game with some mutation points
             player.MutationPoints.ShouldBeGreaterThan(0);
+            player.ActionPoints.ShouldBeGreaterThan(0);
 
             //--you can only grow up/down/left/right to begin
             player.TopLeftGrowthChance.ShouldBe(0);
