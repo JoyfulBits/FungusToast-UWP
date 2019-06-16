@@ -691,7 +691,7 @@ namespace FungusToast
             if (player.ActionPoints == 0)
             {
                 button.IsEnabled = false;
-            }else if (button.Name == "EyeDropperButton" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
+            }else if (button.Name == "EyeDropper" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
             {
                 button.IsEnabled = false;
             }
