@@ -15,28 +15,28 @@ namespace ApiClient.Models
 
         public void IncreaseHypermutation()
         {
-            var key = (int)PassiveSkills.Hypermutation;
+            const int key = (int)PassiveSkills.Hypermutation;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseRegeneration()
         {
-            var key = (int)PassiveSkills.Regeneration;
+            const int key = (int)PassiveSkills.Regeneration;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseAntiApoptosis()
         {
-            var key = (int)PassiveSkills.AntiApoptosis;
+            const int key = (int)PassiveSkills.AntiApoptosis;
 
             AddSpentPoint(key);
         }
 
         public void IncreaseBudding()
         {
-            var key = (int)PassiveSkills.Budding;
+            const int key = (int)PassiveSkills.Budding;
 
             AddSpentPoint(key);
         }
@@ -50,7 +50,7 @@ namespace ApiClient.Models
 
         public void IncreaseHydrophilia()
         {
-            var key = (int)PassiveSkills.Hydrophilia;
+            const int key = (int)PassiveSkills.Hydrophilia;
 
             AddSpentPoint(key);
         }
@@ -82,32 +82,49 @@ namespace ApiClient.Models
             }
         }
 
-
         public void AddMoistureDroplet(int gridCellIndex)
         {
-            var skillId = (int)ActiveSkills.EyeDropper;
-            if (ActiveSkillChanges.ContainsKey(skillId))
+            AddActiveCellChange(
+                gridCellIndex, (int) ActiveSkills.EyeDropper);
+        }
+
+        public void AddDeadCell(int gridCellIndex)
+        {
+            AddActiveCellChange(
+                gridCellIndex, (int)ActiveSkills.DeadCell);
+        }
+
+        public void AddActiveCellChange(int gridCellIndex, int activeSkillId)
+        {
+            if (ActiveSkillChanges.ContainsKey(activeSkillId))
             {
-                ActiveSkillChanges[skillId].ActiveCellChanges.Add(gridCellIndex);
+                ActiveSkillChanges[activeSkillId].ActiveCellChanges.Add(gridCellIndex);
             }
             else
             {
                 var skillUpgrade = new ActiveSkillChanges();
                 skillUpgrade.ActiveCellChanges.Add(gridCellIndex);
-                ActiveSkillChanges.Add(skillId, skillUpgrade);
+                ActiveSkillChanges.Add(activeSkillId, skillUpgrade);
             }
         }
 
         public void IncreaseSpores()
         {
-            var key = (int)PassiveSkills.Spores;
+            const int key = (int)PassiveSkills.Spores;
 
             AddSpentPoint(key);
         }
 
         public void UseEyeDropper()
         {
-            var key = (int)ActiveSkills.EyeDropper;
+            const int key = (int)ActiveSkills.EyeDropper;
+
+            AddSpentActionPoint(key);
+        }
+
+        public void UseDeadCell()
+        {
+            const int key = (int)ActiveSkills.DeadCell;
 
             AddSpentActionPoint(key);
         }

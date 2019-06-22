@@ -348,6 +348,7 @@ namespace Logic
         public string AddMoistureGrowthBoostMessage => _passiveSkillsData.IncreaseMoistureGrowthBoostMessage;
         public string IncreaseSporesChanceMessage => _passiveSkillsData.IncreaseSporesChanceMessage;
         public string AddWaterDropletMessage => _activeSkillsData.AddWaterDropletMessage;
+        public string AddDeadCellMessage => _activeSkillsData.AddDeadCellMessage;
 
         public void IncreaseHypermutation()
         {
@@ -413,6 +414,11 @@ namespace Logic
         }
 
         public void UseEyeDropper()
+        {
+            ActionPoints--;
+        }
+
+        public void UseDeadCell()
         {
             ActionPoints--;
         }

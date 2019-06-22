@@ -2,6 +2,7 @@
 {
     public enum ActiveSkills
     {
-        EyeDropper = 1
+        EyeDropper = 1,
+        DeadCell = 2
     }
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ApiClient.Models;
 using Logic;
 using Logic.Annotations;
 
@@ -138,6 +139,7 @@ namespace FungusToast
         }
 
         public string ActivePlayerId { get; set; }
+        public ActiveSkills? ActiveSkill { get; set; }
         public int ActiveCellChangesRemaining { get; set; }
 
         public IPlayer ActivePlayer => Players.FirstOrDefault(player => player.PlayerId == ActivePlayerId);

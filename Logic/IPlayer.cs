@@ -32,7 +32,7 @@ namespace Logic
         string BottomGrowthChance { get; }
         string BottomLeftGrowthChance { get;  }
         string LeftGrowthChance { get; }
-        //TODO These skill level fields aren't actually used yet, and don't actually come back from the API. Probably delete?
+        //TODO Will eventually show the skill level next to each skill. These don't come back from the API yet.
         float HyperMutationSkillLevel { get; set; }
         float AntiApoptosisSkillLevel { get; set; }
         float RegenerationSkillLevel { get; set; }
@@ -49,5 +49,6 @@ namespace Logic
         void IncreaseHydrophilia();
         void IncreaseSpores();
         void UseEyeDropper();
+        void UseDeadCell();
     }
 }

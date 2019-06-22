@@ -116,7 +116,8 @@ namespace FungusToast
         private async Task<ActiveSkillsData> InitializeActiveSkillsData()
         {
             var activeSkills = await _fungusToastApiClient.GetActiveSkills();
-            int numberOfWaterDropletsPerEyeDropperAction = 0;
+            var numberOfWaterDropletsPerEyeDropperAction = 0;
+            var numberOfDeadCellsPerDeadCellAction = 0;
 
             foreach (var activeSkill in activeSkills)
             {
@@ -124,6 +125,9 @@ namespace FungusToast
                 {
                     case (int) ActiveSkills.EyeDropper:
                         numberOfWaterDropletsPerEyeDropperAction = activeSkill.NumberOfToastChanges;
+                        break;
+                    case (int)ActiveSkills.DeadCell:
+                        numberOfDeadCellsPerDeadCellAction = activeSkill.NumberOfToastChanges;
                         break;
                     default:
                         throw new Exception(
@@ -139,8 +143,7 @@ namespace FungusToast
                     $"Expected that '{totalExpectedActiveSkills}' active skills would be accounted for, but '{activeSkills.Count}' were set.");
             }
 
-            var activeSkillsData = new ActiveSkillsData(numberOfWaterDropletsPerEyeDropperAction);
-            return activeSkillsData;
+           return new ActiveSkillsData(numberOfWaterDropletsPerEyeDropperAction, numberOfDeadCellsPerDeadCellAction);
         }
 
         private async Task<PassiveSkillsData> InitializePassiveSkillsData()
@@ -861,15 +864,26 @@ namespace FungusToast
             player.UseEyeDropper();
             GetSkillExpenditureRequest(player.PlayerId).UseEyeDropper();
 
-            EnableEyeDropper(player);
+            EnableActiveSkill(player, ActiveSkills.EyeDropper, _activeSkillsData.WaterDropletsPerEyeDropperPoint);
         }
 
-        private void EnableEyeDropper(IPlayer activePlayer)
+        private void DeadCell_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.UseDeadCell();
+            GetSkillExpenditureRequest(player.PlayerId).UseDeadCell();
+
+            EnableActiveSkill(player, ActiveSkills.DeadCell, _activeSkillsData.NumberOfDeadCellsPerDeadCellAction);
+        }
+
+        private void EnableActiveSkill(IPlayer activePlayer, ActiveSkills activeSkill, int numberOfActions)
         {
             DisableSkillTrees();
 
             ViewModel.ActivePlayerId = activePlayer.PlayerId;
-            ViewModel.ActiveCellChangesRemaining = _activeSkillsData.WaterDropletsPerEyeDropperPoint;
+            ViewModel.ActiveSkill = activeSkill;
+            ViewModel.ActiveCellChangesRemaining = numberOfActions;
 
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Person, 1);
         }
@@ -928,17 +942,30 @@ namespace FungusToast
             var button = sender as Button;
             var gridCellIndex = int.Parse(button.Tag.ToString());
 
-            //--as of 2019-05-23, the only active skill is Eye Dropper, so we can assume they are adding a water droplet. Will need to make this more scalable at some point.
+            //--as of 2019-06-22, the only active skills are Eye Dropper and Dead Cell, and these both require an empty space to click on
             if (ViewModel.ActivePlayerId == null || button.Background != _emptyCellBrush || button.Background == _moistCellBrush) return;
 
-            GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddMoistureDroplet(gridCellIndex);
             ViewModel.ActiveCellChangesRemaining--;
+            var toolTip = new ToolTip();
 
-            button.Background = _moistCellBrush;
-            var toolTip = new ToolTip
+            switch (ViewModel.ActiveSkill.Value)
             {
-                Content = "This cell is moist. See the Hydrophilia skill."
-            };
+                case ActiveSkills.EyeDropper:
+                    GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddMoistureDroplet(gridCellIndex);
+                    toolTip.Content = "This cell is moist. See the Hydrophilia skill.";
+                    button.Background = _moistCellBrush;
+                    break;
+                case ActiveSkills.DeadCell:
+                    GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddDeadCell(gridCellIndex);
+                    toolTip.Content = "This dead cell was placed by the Dead Cell active skill.";
+                    button.Background = _deadCellBrush;
+                    button.Content = _deadCellSymbol;
+                    break;
+                default:
+                    throw new Exception(
+                        $"There is an active player but the active skill with id {ViewModel.ActiveSkill.Value} is not valid.");
+            }
+
             ToolTipService.SetToolTip(button, toolTip);
             if (ViewModel.ActiveCellChangesRemaining == 0)
             {
@@ -946,6 +973,7 @@ namespace FungusToast
                 Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 2);
                 var player = ViewModel.GetPlayer(ViewModel.ActivePlayerId);
                 ViewModel.ActivePlayerId = null;
+                ViewModel.ActiveSkill = null;
                 UpdateActiveSkillButtons(player);
             }
         }

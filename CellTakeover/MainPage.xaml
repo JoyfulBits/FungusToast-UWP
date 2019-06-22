@@ -732,7 +732,7 @@
                                             Tag="{x:Bind PlayerId}"
                                             Name="EyeDropper"
                                             IsEnabled="False"
-                                            ToolTipService.ToolTip="Allows the player place water drops on any open space of the toast to create moist spots. This skill pairs well with the Hydrophilia passive skill."
+                                            ToolTipService.ToolTip="Allows the player to place water droplets on any open space of the toast to create moist spots. This skill pairs well with the Hydrophilia passive skill."
                                             Click="EyeDropper_Click"
                                             Loaded="ActiveSkillButton_Loaded">
                                             <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
@@ -747,6 +747,31 @@
                                                            Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
                                                     <TextBlock Grid.Row="1" Grid.Column="0" 
                                                            Text="{x:Bind AddWaterDropletMessage, Mode=OneTime}"
+                                                           TextWrapping="Wrap"></TextBlock>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button Grid.Row="2" Grid.Column="0"
+                                            Background="White"
+                                            Tag="{x:Bind PlayerId}"
+                                            Name="DeadCell"
+                                            IsEnabled="False"
+                                            ToolTipService.ToolTip="Allows the player to place a dead cell on any open space of the toast. May be useful for blocking the growth of another fungus."
+                                            Click="DeadCell_Click"
+                                            Loaded="ActiveSkillButton_Loaded">
+                                            <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                                <Image Source="Assets/Skill Icons/cotton_swab.png" Style="{StaticResource MutationImage}"></Image>
+                                                <Grid Padding="5">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                                           Text="Dead Cell"  
+                                                           Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" 
+                                                           Text="{x:Bind AddDeadCellMessage, Mode=OneTime}"
                                                            TextWrapping="Wrap"></TextBlock>
                                                 </Grid>
                                             </StackPanel>
