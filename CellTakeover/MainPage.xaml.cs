@@ -738,7 +738,11 @@ namespace FungusToast
             if (player.ActionPoints == 0)
             {
                 button.IsEnabled = false;
-            }else if (button.Name == "EyeDropper" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
+            }else if(button.Name == "EyeDropper" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
+            {
+                button.IsEnabled = false;
+            }else if (button.Name == "DeadCell" &&
+                      ViewModel.TotalEmptyCells < _activeSkillsData.NumberOfDeadCellsPerDeadCellAction)
             {
                 button.IsEnabled = false;
             }
@@ -950,6 +954,7 @@ namespace FungusToast
 
             switch (ViewModel.ActiveSkill.Value)
             {
+                //TODO update total empty and/or moist cells here
                 case ActiveSkills.EyeDropper:
                     GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddMoistureDroplet(gridCellIndex);
                     toolTip.Content = "This cell is moist. See the Hydrophilia skill.";
