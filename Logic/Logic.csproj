@@ -120,6 +120,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ActiveSkillData.cs" />
     <Compile Include="AiType.cs" />
     <Compile Include="BioCell.cs" />
     <Compile Include="CellGrowthResult.cs" />

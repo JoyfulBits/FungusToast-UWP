@@ -1,21 +1,29 @@
-﻿namespace Logic
+﻿using System.Collections.Generic;
+
+namespace Logic
 {
     public class ActiveSkillsData
     {
-        public ActiveSkillsData(int waterDropletsPerEyeDropperPoint, int numberOfDeadCellsPerDeadCellAction)
+        public Dictionary<int, ActiveSkillData> SkillIdToActiveSkillData { get; }
+
+        public ActiveSkillsData(Dictionary<int, ActiveSkillData> skillIdToActiveSkillData)//int waterDropletsPerEyeDropperPoint, int numberOfDeadCellsPerDeadCellAction)
         {
-            WaterDropletsPerEyeDropperPoint = waterDropletsPerEyeDropperPoint;
-            NumberOfDeadCellsPerDeadCellAction = numberOfDeadCellsPerDeadCellAction;
+            SkillIdToActiveSkillData = skillIdToActiveSkillData;
         }
 
-        public int WaterDropletsPerEyeDropperPoint { get; }
-        public int NumberOfDeadCellsPerDeadCellAction { get; }
+        public string GetActiveSkillMessage(int activeSkillId)
+        {
+            return SkillIdToActiveSkillData[activeSkillId].Message;
+        }
 
+        public int GetNumberOfActionsPerActionPoint(int activeSkillId)
+        {
+            return SkillIdToActiveSkillData[activeSkillId].ActionsPerActionPoint;
+        }
 
-        public string AddWaterDropletMessage =>
-            $"Add {WaterDropletsPerEyeDropperPoint} water droplets to the toast, making it moist.";
-
-        public string AddDeadCellMessage =>
-            $"Add {NumberOfDeadCellsPerDeadCellAction} dead cell(s) to an empty space on the toast.";
+        public int GetMinimumRound(int activeSkillId)
+        {
+            return SkillIdToActiveSkillData[activeSkillId].MinimumRound;
+        }
     }
 }
