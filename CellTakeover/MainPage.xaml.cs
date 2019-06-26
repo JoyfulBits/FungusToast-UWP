@@ -116,23 +116,31 @@ namespace FungusToast
         private async Task<ActiveSkillsData> InitializeActiveSkillsData()
         {
             var activeSkills = await _fungusToastApiClient.GetActiveSkills();
-            var numberOfWaterDropletsPerEyeDropperAction = 0;
-            var numberOfDeadCellsPerDeadCellAction = 0;
+
+            var skillIdToActiveSkillData = new Dictionary<int, ActiveSkillData>();
 
             foreach (var activeSkill in activeSkills)
             {
+                var activeSkillData = new ActiveSkillData
+                {
+                    ActionsPerActionPoint = activeSkill.NumberOfToastChanges,
+                    MinimumRound = activeSkill.MinimumRound
+                };
+
                 switch (activeSkill.Id)
                 {
                     case (int) ActiveSkills.EyeDropper:
-                        numberOfWaterDropletsPerEyeDropperAction = activeSkill.NumberOfToastChanges;
+                        activeSkillData.Message = $"Add {activeSkillData.ActionsPerActionPoint} water droplets to the toast, making it moist.";
                         break;
                     case (int)ActiveSkills.DeadCell:
-                        numberOfDeadCellsPerDeadCellAction = activeSkill.NumberOfToastChanges;
+                        activeSkillData.Message = $"Add {activeSkillData.ActionsPerActionPoint} dead cell(s) to an empty space on the toast.";
                         break;
                     default:
                         throw new Exception(
                             $"There is a new active skill in the API that is not accounted for in the UWP app. The active skill id is '{activeSkill.Id}' and the name is '{activeSkill.Name}'");
                 }
+
+                skillIdToActiveSkillData.Add(activeSkill.Id, activeSkillData);
             }
 
             var totalExpectedActiveSkills = Enum.GetNames(typeof(ActiveSkills)).Length;
@@ -143,7 +151,7 @@ namespace FungusToast
                     $"Expected that '{totalExpectedActiveSkills}' active skills would be accounted for, but '{activeSkills.Count}' were set.");
             }
 
-           return new ActiveSkillsData(numberOfWaterDropletsPerEyeDropperAction, numberOfDeadCellsPerDeadCellAction);
+           return new ActiveSkillsData(skillIdToActiveSkillData);
         }
 
         private async Task<PassiveSkillsData> InitializePassiveSkillsData()
@@ -736,21 +744,15 @@ namespace FungusToast
 
         private void EnableActiveSkillButtonIfAppropriate(IPlayer player, Button button)
         {
-            if (player.ActionPoints == 0)
-            {
-                button.IsEnabled = false;
-            }else if(button.Name == "EyeDropper" && ViewModel.TotalEmptyCells < _activeSkillsData.WaterDropletsPerEyeDropperPoint)
-            {
-                button.IsEnabled = false;
-            }else if (button.Name == "DeadCell" &&
-                      ViewModel.TotalEmptyCells < _activeSkillsData.NumberOfDeadCellsPerDeadCellAction)
-            {
-                button.IsEnabled = false;
-            }
-            else
-            {
-                button.IsEnabled = true;
-            }
+            button.IsEnabled = player.ActionPoints >= 0
+                               && ActiveSkillShouldBeEnabled(button.Name);
+        }
+
+        private bool ActiveSkillShouldBeEnabled(string buttonName)
+        {
+            int activeSkillId = _activeSkillButtonNameToActiveSkillId[buttonName];
+            return ViewModel.TotalEmptyCells >= _activeSkillsData.GetNumberOfActionsPerActionPoint(activeSkillId)
+                   && ViewModel.RoundNumber >= _activeSkillsData.GetMinimumRound(activeSkillId);
         }
 
         private async Task CheckForRemainingMutationPoints(IPlayer player)
@@ -869,7 +871,7 @@ namespace FungusToast
             player.UseEyeDropper();
             GetSkillExpenditureRequest(player.PlayerId).UseEyeDropper();
 
-            EnableActiveSkill(player, ActiveSkills.EyeDropper, _activeSkillsData.WaterDropletsPerEyeDropperPoint);
+            EnableActiveSkill(player, ActiveSkills.EyeDropper, _activeSkillsData.GetNumberOfActionsPerActionPoint((int)ActiveSkills.EyeDropper));
         }
 
         private void DeadCell_Click(object sender, RoutedEventArgs e)
@@ -879,7 +881,7 @@ namespace FungusToast
             player.UseDeadCell();
             GetSkillExpenditureRequest(player.PlayerId).UseDeadCell();
 
-            EnableActiveSkill(player, ActiveSkills.DeadCell, _activeSkillsData.NumberOfDeadCellsPerDeadCellAction);
+            EnableActiveSkill(player, ActiveSkills.DeadCell, _activeSkillsData.GetNumberOfActionsPerActionPoint((int)ActiveSkills.DeadCell));
         }
 
         private void EnableActiveSkill(IPlayer activePlayer, ActiveSkills activeSkill, int numberOfActions)
@@ -1230,6 +1232,12 @@ namespace FungusToast
             3,
             4,
             5
+        };
+
+        private readonly Dictionary<string, int> _activeSkillButtonNameToActiveSkillId = new Dictionary<string, int>
+        {
+            {"EyeDropper", (int)ActiveSkills.EyeDropper},
+            {"DeadCell", (int)ActiveSkills.DeadCell},
         };
 
 

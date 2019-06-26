@@ -347,8 +347,10 @@ namespace Logic
         public string AddMycotoxicityChanceMessage => _passiveSkillsData.IncreaseMycotoxinFungicideChanceMessage;
         public string AddMoistureGrowthBoostMessage => _passiveSkillsData.IncreaseMoistureGrowthBoostMessage;
         public string IncreaseSporesChanceMessage => _passiveSkillsData.IncreaseSporesChanceMessage;
-        public string AddWaterDropletMessage => _activeSkillsData.AddWaterDropletMessage;
-        public string AddDeadCellMessage => _activeSkillsData.AddDeadCellMessage;
+        //TODO need to pull out the ActiveSkills class into a common place that can be referenced from both Logic and ApiClient
+        public string AddWaterDropletMessage => _activeSkillsData.GetActiveSkillMessage(1);
+        //TODO need to pull out the ActiveSkills class into a common place that can be referenced from both Logic and ApiClient
+        public string AddDeadCellMessage => _activeSkillsData.GetActiveSkillMessage(2);
 
         public void IncreaseHypermutation()
         {
