@@ -21,6 +21,7 @@ namespace FungusToast
         private int _totalLiveCells;
         private int _roundNumber;
         private int _totalRegeneratedCells;
+        private int _totalMoistCells;
         public Dictionary<int, BioCell> CurrentLiveCells { get; } = new Dictionary<int, BioCell>();
         public Dictionary<int, BioCell> CurrentDeadCells { get; } = new Dictionary<int, BioCell>();
 
@@ -80,6 +81,28 @@ namespace FungusToast
             }
         }
 
+        public int TotalRegeneratedCells
+        {
+            get => _totalRegeneratedCells;
+            set
+            {
+                if (value == _totalRegeneratedCells) return;
+                _totalRegeneratedCells = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int TotalMoistCells
+        {
+            get => _totalMoistCells;
+            set
+            {
+                if (value == _totalMoistCells) return;
+                _totalMoistCells = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -123,17 +146,6 @@ namespace FungusToast
             {
                 if (value == _roundNumber) return;
                 _roundNumber = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public int TotalRegeneratedCells
-        {
-            get => _totalRegeneratedCells;
-            set
-            {
-                if (value == _totalRegeneratedCells) return;
-                _totalRegeneratedCells = value;
                 OnPropertyChanged();
             }
         }

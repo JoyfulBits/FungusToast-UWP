@@ -549,6 +549,7 @@ namespace FungusToast
             ViewModel.TotalDeadCells = game.TotalDeadCells;
             ViewModel.TotalEmptyCells = game.TotalEmptyCells;
             ViewModel.TotalLiveCells = game.TotalLiveCells;
+            ViewModel.TotalMoistCells = game.TotalMoistCells;
             ViewModel.TotalRegeneratedCells = game.TotalRegeneratedCells;
             if (game.EndOfGameCountDown.HasValue)
             {
@@ -954,17 +955,20 @@ namespace FungusToast
 
             switch (ViewModel.ActiveSkill.Value)
             {
-                //TODO update total empty and/or moist cells here
                 case ActiveSkills.EyeDropper:
                     GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddMoistureDroplet(gridCellIndex);
                     toolTip.Content = "This cell is moist. See the Hydrophilia skill.";
                     button.Background = _moistCellBrush;
+                    ViewModel.TotalMoistCells++;
+                    ViewModel.TotalEmptyCells--;
                     break;
                 case ActiveSkills.DeadCell:
                     GetSkillExpenditureRequest(ViewModel.ActivePlayerId).AddDeadCell(gridCellIndex);
                     toolTip.Content = "This dead cell was placed by the Dead Cell active skill.";
                     button.Background = _deadCellBrush;
                     button.Content = _deadCellSymbol;
+                    ViewModel.TotalDeadCells++;
+                    ViewModel.TotalEmptyCells--;
                     break;
                 default:
                     throw new Exception(
