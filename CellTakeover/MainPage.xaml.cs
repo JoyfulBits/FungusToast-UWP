@@ -744,7 +744,7 @@ namespace FungusToast
 
         private void EnableActiveSkillButtonIfAppropriate(IPlayer player, Button button)
         {
-            button.IsEnabled = player.ActionPoints >= 0
+            button.IsEnabled = player.ActionPoints > 0
                                && ActiveSkillShouldBeEnabled(button.Name);
         }
 
