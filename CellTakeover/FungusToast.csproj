@@ -134,8 +134,10 @@
     <None Include="CellTakeover_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Skill Icons\bright_lamp.png" />
     <Content Include="Assets\Skill Icons\budding.png" />
     <Content Include="Assets\Skill Icons\cotton_swab.png" />
+    <Content Include="Assets\Skill Icons\dark_lamp.png" />
     <Content Include="Assets\Skill Icons\hypermutation.png" />
     <Content Include="Assets\Skill Icons\moisture_affinity.png" />
     <Content Include="Assets\Skill Icons\pasteur-pipette.png" />
