@@ -163,7 +163,7 @@ namespace FungusToast
             }
         }
 
-        public string LightGrowthImpactPercentage => ((50 - LightLevel) * 0.1).ToString("N2");
+        public string LightGrowthImpactPercentage => ((50 - LightLevel) * 0.2).ToString("N2");
 
         public string ActivePlayerId { get; set; }
         public ActiveSkills? ActiveSkill { get; set; }

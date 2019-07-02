@@ -136,10 +136,10 @@ namespace FungusToast
                         activeSkillData.Message = $"Add {activeSkillData.ActionsPerActionPoint} dead cell(s) to an empty space on the toast.";
                         break;
                     case (int)ActiveSkills.IncreaseLight:
-                        activeSkillData.Message = "Turn up the UV lamp lighting level to decrease all growth by 0.1%";
+                        activeSkillData.Message = "Turn up the UV lamp lighting level to decrease all growth by 0.2%";
                         break;
                     case (int)ActiveSkills.DecreaseLight:
-                        activeSkillData.Message = "Lower the UV lamp lighting level to increase all growth by 0.1%";
+                        activeSkillData.Message = "Lower the UV lamp lighting level to increase all growth by 0.2%";
                         break;
                     default:
                         throw new Exception(
