@@ -50,5 +50,7 @@ namespace Logic
         void IncreaseSpores();
         void UseEyeDropper();
         void UseDeadCell();
+        void UseIncreaseLighting();
+        void UseDecreaseLighting();
     }
 }

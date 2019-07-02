@@ -135,6 +135,12 @@ namespace FungusToast
                     case (int)ActiveSkills.DeadCell:
                         activeSkillData.Message = $"Add {activeSkillData.ActionsPerActionPoint} dead cell(s) to an empty space on the toast.";
                         break;
+                    case (int)ActiveSkills.IncreaseLight:
+                        activeSkillData.Message = "Turn up the UV lamp lighting level to decrease all growth by 0.2%";
+                        break;
+                    case (int)ActiveSkills.DecreaseLight:
+                        activeSkillData.Message = "Lower the UV lamp lighting level to increase all growth by 0.2%";
+                        break;
                     default:
                         throw new Exception(
                             $"There is a new active skill in the API that is not accounted for in the UWP app. The active skill id is '{activeSkill.Id}' and the name is '{activeSkill.Name}'");
@@ -559,6 +565,7 @@ namespace FungusToast
             ViewModel.TotalLiveCells = game.TotalLiveCells;
             ViewModel.TotalMoistCells = game.TotalMoistCells;
             ViewModel.TotalRegeneratedCells = game.TotalRegeneratedCells;
+            ViewModel.LightLevel = game.LightLevel;
             if (game.EndOfGameCountDown.HasValue)
             {
                 ViewModel.GameEndCountDown = game.EndOfGameCountDown.Value;
@@ -744,7 +751,7 @@ namespace FungusToast
 
         private void EnableActiveSkillButtonIfAppropriate(IPlayer player, Button button)
         {
-            button.IsEnabled = player.ActionPoints >= 0
+            button.IsEnabled = player.ActionPoints > 0
                                && ActiveSkillShouldBeEnabled(button.Name);
         }
 
@@ -882,6 +889,34 @@ namespace FungusToast
             GetSkillExpenditureRequest(player.PlayerId).UseDeadCell();
 
             EnableActiveSkill(player, ActiveSkills.DeadCell, _activeSkillsData.GetNumberOfActionsPerActionPoint((int)ActiveSkills.DeadCell));
+        }
+
+        private void IncreaseLighting_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.UseIncreaseLighting();
+            GetSkillExpenditureRequest(player.PlayerId).UseIncreaseLighting();
+            ViewModel.LightLevel++;
+
+            if (ViewModel.ActiveCellChangesRemaining == 0)
+            {
+                UpdateActiveSkillButtons(player);
+            }
+        }
+
+        private void DecreaseLighting_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var player = button.DataContext as IPlayer;
+            player.UseDecreaseLighting();
+            GetSkillExpenditureRequest(player.PlayerId).UseDecreaseLighting();
+            ViewModel.LightLevel--;
+
+            if (ViewModel.ActiveCellChangesRemaining == 0)
+            {
+                UpdateActiveSkillButtons(player);
+            }
         }
 
         private void EnableActiveSkill(IPlayer activePlayer, ActiveSkills activeSkill, int numberOfActions)
@@ -1238,6 +1273,8 @@ namespace FungusToast
         {
             {"EyeDropper", (int)ActiveSkills.EyeDropper},
             {"DeadCell", (int)ActiveSkills.DeadCell},
+            {"IncreaseLighting", (int)ActiveSkills.IncreaseLight},
+            {"DecreaseLighting", (int)ActiveSkills.DecreaseLight}
         };
 
 

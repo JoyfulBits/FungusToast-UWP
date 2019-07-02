@@ -718,6 +718,8 @@
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="500"></ColumnDefinition>
@@ -752,7 +754,57 @@
                                             </StackPanel>
                                         </Button>
 
-                                        <Button Grid.Row="2" Grid.Column="0"
+                                        <Button Grid.Row="3" Grid.Column="0"
+                                            Background="White"
+                                            Tag="{x:Bind PlayerId}"
+                                            Name="IncreaseLighting"
+                                            IsEnabled="False"
+                                            ToolTipService.ToolTip="Increases the lighting level of the UV lamp. This will slightly decrease overall cell growth for all fungi."
+                                            Click="IncreaseLighting_Click"
+                                            Loaded="ActiveSkillButton_Loaded">
+                                            <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                                <Image Source="Assets/Skill Icons/bright_lamp.png" Style="{StaticResource MutationImage}"></Image>
+                                                <Grid Padding="5">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                                           Text="Increase Lighting"  
+                                                           Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" 
+                                                           Text="{x:Bind IncreaseLightingMessage, Mode=OneTime}"
+                                                           TextWrapping="Wrap"></TextBlock>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button Grid.Row="4" Grid.Column="0"
+                                            Background="White"
+                                            Tag="{x:Bind PlayerId}"
+                                            Name="DecreaseLighting"
+                                            IsEnabled="False"
+                                            ToolTipService.ToolTip="Decreases the lighting level of the UV lamp. This will slightly increase overall cell growth for all fungi."
+                                            Click="DecreaseLighting_Click"
+                                            Loaded="ActiveSkillButton_Loaded">
+                                            <StackPanel Style="{StaticResource MutationChoiceStackPanel}">
+                                                <Image Source="Assets/Skill Icons/dark_lamp.png" Style="{StaticResource MutationImage}"></Image>
+                                                <Grid Padding="5">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                                           Text="Decrease Lighting"  
+                                                           Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" 
+                                                           Text="{x:Bind DecreaseLightingMessage, Mode=OneTime}"
+                                                           TextWrapping="Wrap"></TextBlock>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button Grid.Row="5" Grid.Column="0"
                                             Background="White"
                                             Tag="{x:Bind PlayerId}"
                                             Name="DeadCell"
@@ -790,6 +842,7 @@
 
         <Grid Grid.Row="0" Grid.Column="2" RowSpan="2" HorizontalAlignment="Left">
             <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="50"></RowDefinition>
@@ -851,6 +904,14 @@
             <TextBlock Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right"
                            Style="{StaticResource SubtitleTextBlockStyle}" 
                            Text="{x:Bind ViewModel.TotalDeadCells, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" 
+                       Style="{StaticResource SubtitleTextBlockStyle}" 
+                       Text="Light Level:" ></TextBlock>
+            <TextBlock Grid.Row="6" Grid.Column="1" HorizontalAlignment="Right"
+                       ToolTipService.ToolTip="{x:Bind Path=ViewModel.LightGrowthImpactPercentage, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='The UV lamp light level can be impacted by the use of active skills. More light slows fungal growth and less light increases it. The current lighting level is impacting overall growth rates by {0}%.'}"
+                       Style="{StaticResource SubtitleTextBlockStyle}" 
+                       Text="{x:Bind ViewModel.LightLevel, Mode=OneWay}" TextWrapping="Wrap"></TextBlock>
         </Grid>
     </Grid>
 </Page>

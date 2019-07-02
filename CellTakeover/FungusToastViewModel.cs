@@ -22,6 +22,7 @@ namespace FungusToast
         private int _roundNumber;
         private int _totalRegeneratedCells;
         private int _totalMoistCells;
+        private int _lightLevel;
         public Dictionary<int, BioCell> CurrentLiveCells { get; } = new Dictionary<int, BioCell>();
         public Dictionary<int, BioCell> CurrentDeadCells { get; } = new Dictionary<int, BioCell>();
 
@@ -149,6 +150,20 @@ namespace FungusToast
                 OnPropertyChanged();
             }
         }
+
+        public int LightLevel
+        {
+            get => _lightLevel;
+            set
+            {
+                if (value == _lightLevel) return;
+                _lightLevel = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LightGrowthImpactPercentage));
+            }
+        }
+
+        public string LightGrowthImpactPercentage => ((50 - LightLevel) * 0.2).ToString("N2");
 
         public string ActivePlayerId { get; set; }
         public ActiveSkills? ActiveSkill { get; set; }

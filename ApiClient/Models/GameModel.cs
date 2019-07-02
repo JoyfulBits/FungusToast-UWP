@@ -26,5 +26,6 @@ namespace ApiClient.Models
         public int TotalMoistCells { get; set; }
         public string JoinGamePassword { get; set; }
         public int? EndOfGameCountDown { get; set; }
+        public int LightLevel { get; set; }
     }
 }

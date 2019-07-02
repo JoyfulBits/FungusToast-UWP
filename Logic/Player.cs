@@ -351,6 +351,8 @@ namespace Logic
         public string AddWaterDropletMessage => _activeSkillsData.GetActiveSkillMessage(1);
         //TODO need to pull out the ActiveSkills class into a common place that can be referenced from both Logic and ApiClient
         public string AddDeadCellMessage => _activeSkillsData.GetActiveSkillMessage(2);
+        public string IncreaseLightingMessage => _activeSkillsData.GetActiveSkillMessage(3);
+        public string DecreaseLightingMessage => _activeSkillsData.GetActiveSkillMessage(4);
 
         public void IncreaseHypermutation()
         {
@@ -421,6 +423,16 @@ namespace Logic
         }
 
         public void UseDeadCell()
+        {
+            ActionPoints--;
+        }
+
+        public void UseIncreaseLighting()
+        {
+            ActionPoints--;
+        }
+
+        public void UseDecreaseLighting()
         {
             ActionPoints--;
         }

@@ -128,5 +128,19 @@ namespace ApiClient.Models
 
             AddSpentActionPoint(key);
         }
+
+        public void UseIncreaseLighting()
+        {
+            const int key = (int)ActiveSkills.IncreaseLight;
+
+            AddSpentActionPoint(key);
+        }
+
+        public void UseDecreaseLighting()
+        {
+            const int key = (int)ActiveSkills.DecreaseLight;
+
+            AddSpentActionPoint(key);
+        }
     }
 }
